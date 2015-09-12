@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FeedEye</string>
+    <string name="splash_version">版本号：</string>
+    <string name="unknown_version">未知版本</string>
+
+</resources>

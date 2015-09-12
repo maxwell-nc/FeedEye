@@ -1,0 +1,79 @@
+package pres.nc.maxwell.feedeye.activity;
+
+
+import pres.nc.maxwell.feedeye.R;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.Window;
+import android.widget.TextView;
+
+public class SplashActivity extends Activity {
+
+	private TextView tv_splash_ver;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		//不显示标题栏
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_splash);
+		
+		initView();
+		showVersionInSplash();
+
+		new Thread() {
+
+			// TODO: 以后可能回从服务器检查更新
+			@Override
+			public void run() {
+				SystemClock.sleep(2000);
+				Intent intent = new Intent(getApplicationContext(),
+						MainActivity.class);
+				startActivity(intent);
+				finish();
+			};
+
+		}.start();
+
+	}
+
+	/**
+	 * 初始化View
+	 */
+	private void initView() {
+		tv_splash_ver = (TextView) this.findViewById(R.id.tv_splash_ver);
+		if (null==tv_splash_ver) {
+			System.out.println(R.id.tv_splash_ver);
+		}
+	}
+
+	/**
+	 * 在Splash界面显示版本号
+	 */
+	private void showVersionInSplash() {
+
+		PackageInfo packageInfo = null;
+		try {
+			packageInfo = getPackageManager().getPackageInfo(getPackageName(),
+					0);
+		} catch (NameNotFoundException e) {
+			// can not reach
+			e.printStackTrace();
+		}
+		
+		if (packageInfo != null) {
+			String versionName = getResources().getString(
+					R.string.splash_version)
+					+ packageInfo.versionName;
+			tv_splash_ver.setText(versionName);
+		} else {
+			tv_splash_ver.setText(R.string.unknown_version);
+		}
+
+	}
+
+}
