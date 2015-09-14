@@ -46,9 +46,6 @@ public class SplashActivity extends Activity {
 	 */
 	private void initView() {
 		tv_splash_ver = (TextView) this.findViewById(R.id.tv_splash_ver);
-		if (null==tv_splash_ver) {
-			System.out.println(R.id.tv_splash_ver);
-		}
 	}
 
 	/**
