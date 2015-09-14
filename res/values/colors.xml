@@ -4,4 +4,5 @@
     <color name="theme_color">#FF196DCA</color>
     <color name="grey">#FF999999</color>
 	<color name="light_grey">#11999999</color>
+	<color name="hr_line">#66999999</color>
 </resources>
