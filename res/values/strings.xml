@@ -4,5 +4,9 @@
     <string name="app_name">FeedEye</string>
     <string name="splash_version">版本号：</string>
     <string name="unknown_version">未知版本</string>
+    <string name="navi_feed">订阅</string>
+    <string name="navi_discover">发现</string>
+    <string name="navi_favor">收藏</string>
+    <string name="navi_setting">设置</string>
 
 </resources>

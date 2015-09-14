@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="theme_color">#FF196DCA</color>
+    <color name="grey">#FF999999</color>
+	<color name="light_grey">#11999999</color>
+</resources>

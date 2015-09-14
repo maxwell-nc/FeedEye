@@ -3,6 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </android.support.v4.view.ViewPager>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_grey"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rb_feed"
+            style="@style/btn_navigation_sytle"
+            android:drawableTop="@drawable/btn_navigation_feed"
+            android:text="@string/navi_feed" />
+
+        <RadioButton
+            android:id="@+id/rb_discover"
+            style="@style/btn_navigation_sytle"
+            android:drawableTop="@drawable/btn_navigation_discover"
+            android:text="@string/navi_discover" />
+
+        <RadioButton
+            android:id="@+id/rb_favor"
+            style="@style/btn_navigation_sytle"
+            android:drawableTop="@drawable/btn_navigation_favor"
+            android:text="@string/navi_favor" />
+
+        <RadioButton
+            android:id="@+id/rb_setting"
+            style="@style/btn_navigation_sytle"
+            android:drawableTop="@drawable/btn_navigation_setting"
+            android:text="@string/navi_setting" />
+    </RadioGroup>
 
 </LinearLayout>
