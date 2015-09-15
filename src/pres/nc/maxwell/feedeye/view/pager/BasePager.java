@@ -36,6 +36,7 @@ public class BasePager {
 	public BasePager(Activity mActivity) {
 		this.mActivity = mActivity;
 		initView();
+		initData();
 	}
 
 	/**
@@ -52,6 +53,13 @@ public class BasePager {
 		mContainer = (FrameLayout) mBaseView.findViewById(R.id.fl_container);
 	}
 
+	
+	/**
+	 * 初始化数据，子类实现
+	 */
+	protected void initData() {
+	}
+	
 	/**
 	 * 返回Pager的View对象
 	 * @return 用于填充的Pager
