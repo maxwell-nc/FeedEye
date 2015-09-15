@@ -6,6 +6,7 @@ import java.util.List;
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
+import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -30,7 +31,6 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		initView();
-
 		initData();
 	}
 
@@ -54,14 +54,9 @@ public class MainActivity extends Activity {
 		mPagerList = new ArrayList<BasePager>();
 
 		// 添加布局进ViewPager
-		for (int i = 0; i < 4; i++) {
-			mPagerList.add(new BasePager(this) {
-
-				@Override
-				public View getView() {
-					return mView;
-				}
-			});
+		mPagerList.add(new FeedPager(this));
+		for (int i = 1; i < 4; i++) {
+			mPagerList.add(new BasePager(this));
 		}
 
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
@@ -128,7 +123,7 @@ class PagerInflateAdapter extends PagerAdapter{
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		BasePager pager = mPagerList.get(position);
-		pager.getTitleView().setText("测试列表" + position);
+		//pager.getTitleView().setText("测试列表" + position);
 
 		View view = pager.getView();
 		container.addView(view);

@@ -8,10 +8,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public abstract class BasePager {
+public class BasePager {
 
-	private Activity mActivity;
-	protected View mView;				// 整个布局
+	protected Activity mActivity;
+	protected View mBaseView;			// 整个布局
 	protected TextView mTitle;			// 标题
 	protected ImageView mShareButton;	// 分享按钮
 	protected FrameLayout mContainer;	// 布局容器
@@ -34,9 +34,7 @@ public abstract class BasePager {
 	 * @param mActivity
 	 */
 	public BasePager(Activity mActivity) {
-
 		this.mActivity = mActivity;
-		
 		initView();
 	}
 
@@ -44,21 +42,31 @@ public abstract class BasePager {
 	 * 初始化布局中相同的部分
 	 */
 	protected void initView() {
-		mView = View.inflate(mActivity, R.layout.pager_base, null);
+		mBaseView = View.inflate(mActivity, R.layout.pager_base, null);
 		
 		//检查View对象是否为null
-		LogUtils.v("BasePager", mView==null?"null":"not null");
+		LogUtils.v("BasePager", mBaseView==null?"null":"not null");
 		
-		mTitle = (TextView) mView.findViewById(R.id.tv_title);
-		mShareButton = (ImageView) mView.findViewById(R.id.iv_share);
-		mContainer = (FrameLayout) mView.findViewById(R.id.fl_container);
+		mTitle = (TextView) mBaseView.findViewById(R.id.tv_title);
+		mShareButton = (ImageView) mBaseView.findViewById(R.id.iv_share);
+		mContainer = (FrameLayout) mBaseView.findViewById(R.id.fl_container);
 	}
 
 	/**
-	 * 子类实现，填充布局中的FrameLayout（不同的部分）
-	 * 
-	 * @return 用于填充的View
+	 * 返回Pager的View对象
+	 * @return 用于填充的Pager
 	 */
-	public abstract View getView();
+	public View getView(){
+		return mBaseView;
+	}
 
+	/**
+	 * 填充FrameLayout部分，由继承的子类调用
+	 * @param resourceId 资源id
+	 * @return 返回填充的对象引用
+	 */
+	protected View setContainerContent(int resourceId){
+		return View.inflate(mActivity, resourceId, mContainer);
+	}
+	
 }
