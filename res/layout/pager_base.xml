@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:background="@color/theme_color" >
 
         <TextView
@@ -15,7 +15,6 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="订阅列表"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 

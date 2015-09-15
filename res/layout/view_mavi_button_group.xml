@@ -20,6 +20,7 @@
         <RadioButton
             android:id="@+id/rb_feed"
             style="@style/btn_navigation_sytle"
+            android:checked="true"
             android:drawableTop="@drawable/btn_navigation_feed"
             android:text="@string/navi_feed" />
 

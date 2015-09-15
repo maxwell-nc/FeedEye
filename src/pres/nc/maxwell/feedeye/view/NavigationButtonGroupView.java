@@ -22,23 +22,23 @@ public class NavigationButtonGroupView extends FrameLayout {
 	private RadioButton mNaviBtnFavor;
 	private RadioButton mNaviBtnSetting;
 
-	public RadioGroup getmNaviBtnGroup() {
+	public RadioGroup getNaviBtnGroupView() {
 		return mNaviBtnGroup;
 	}
 
-	public RadioButton getmNaviBtnFeed() {
+	public RadioButton getNaviBtnFeedView() {
 		return mNaviBtnFeed;
 	}
 
-	public RadioButton getmNaviBtnDiscover() {
+	public RadioButton getNaviBtnDiscoverView() {
 		return mNaviBtnDiscover;
 	}
 
-	public RadioButton getmNaviBtnFavor() {
+	public RadioButton getNaviBtnFavorView() {
 		return mNaviBtnFavor;
 	}
 
-	public RadioButton getmNaviBtnSetting() {
+	public RadioButton getNaviBtnSettingView() {
 		return mNaviBtnSetting;
 	}
 

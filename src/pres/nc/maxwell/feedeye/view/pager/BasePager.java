@@ -16,6 +16,19 @@ public abstract class BasePager {
 	protected ImageView mShareButton;	// 分享按钮
 	protected FrameLayout mContainer;	// 布局容器
 
+
+	public TextView getTitleView() {
+		return mTitle;
+	}
+
+	public ImageView getShareButtonView() {
+		return mShareButton;
+	}
+
+	public FrameLayout getContainerView() {
+		return mContainer;
+	}
+
 	/**
 	 * 构造函数，传入使用ViewPager的Activity
 	 * @param mActivity
@@ -48,6 +61,4 @@ public abstract class BasePager {
 	 */
 	public abstract View getView();
 
-	
-	
 }
