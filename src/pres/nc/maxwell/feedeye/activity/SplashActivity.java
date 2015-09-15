@@ -30,7 +30,7 @@ public class SplashActivity extends Activity {
 			// TODO: 以后可能回从服务器检查更新
 			@Override
 			public void run() {
-				SystemClock.sleep(2000);
+				SystemClock.sleep(1500);
 				Intent intent = new Intent(getApplicationContext(),
 						MainActivity.class);
 				startActivity(intent);
