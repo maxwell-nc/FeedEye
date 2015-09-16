@@ -18,9 +18,22 @@ public class NoScrollViewPager extends ViewPager {
 		super(context, attrs);
 	}
 
+	
+	/**
+	 * 禁止拦截触摸事件
+	 */
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		//return super.onInterceptTouchEvent(ev);
+		return false;
+	}
+	
+	
+	/**
+	 * 禁止响应触摸事件
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		//禁止调用父类方法来实现不滚动
 		//return super.onTouchEvent(ev);
 		return false;
 	}
