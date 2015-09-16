@@ -22,7 +22,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/iv_item_feed_title"
+            android:id="@+id/tv_item_feed_title"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -33,7 +33,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/iv_item_feed_preview"
+            android:id="@+id/tv_item_feed_preview"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -54,7 +54,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/iv_item_feed_time"
+            android:id="@+id/tv_item_feed_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
