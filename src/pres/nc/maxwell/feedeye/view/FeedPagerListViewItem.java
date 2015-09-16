@@ -22,27 +22,27 @@ public class FeedPagerListViewItem {
 	private TextView mItemTime;		//Ê±¼ä
 	private ImageView mItemCount;	//Î´¶ÁÊý
 	
-	public ImageView getmItemPic() {
+	public ImageView getItemPic() {
 		return mItemPic;
 	}
 
 
-	public TextView getmItemTitle() {
+	public TextView getItemTitle() {
 		return mItemTitle;
 	}
 
 
-	public TextView getmItemPreview() {
+	public TextView getItemPreview() {
 		return mItemPreview;
 	}
 
 
-	public TextView getmItemTime() {
+	public TextView getItemTime() {
 		return mItemTime;
 	}
 
 
-	public ImageView getmItemCount() {
+	public ImageView getItemCount() {
 		return mItemCount;
 	}
 
