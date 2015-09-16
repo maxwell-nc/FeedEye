@@ -13,7 +13,7 @@ public class BasePager {
 	protected Activity mActivity;
 	protected View mBaseView;			// 整个布局
 	protected TextView mTitle;			// 标题
-	protected ImageView mShareButton;	// 分享按钮
+	protected ImageView mFuncButton;	// 功能按钮
 	protected FrameLayout mContainer;	// 布局容器
 
 
@@ -21,8 +21,8 @@ public class BasePager {
 		return mTitle;
 	}
 
-	public ImageView getShareButtonView() {
-		return mShareButton;
+	public ImageView getFuncButtonView() {
+		return mFuncButton;
 	}
 
 	public FrameLayout getContainerView() {
@@ -49,7 +49,7 @@ public class BasePager {
 		LogUtils.v("BasePager", mBaseView==null?"null":"not null");
 		
 		mTitle = (TextView) mBaseView.findViewById(R.id.tv_title);
-		mShareButton = (ImageView) mBaseView.findViewById(R.id.iv_share);
+		mFuncButton = (ImageView) mBaseView.findViewById(R.id.iv_func_btn);
 		mContainer = (FrameLayout) mBaseView.findViewById(R.id.fl_container);
 	}
 

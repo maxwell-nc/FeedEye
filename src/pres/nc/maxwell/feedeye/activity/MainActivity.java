@@ -40,7 +40,6 @@ public class MainActivity extends Activity {
 	private void initView() {
 		mContentPager = (ViewPager) findViewById(R.id.vp_content);
 		mNaviBtnGroup = (NavigationButtonGroupView) findViewById(R.id.btn_navi_group);
-
 	}
 
 	/**
@@ -77,21 +76,23 @@ class CheckedChange implements OnCheckedChangeListener {
 		this.mContentPager = mContentPager;
 	}
 
+	/**
+	 * 点击切换界面，去掉ViewPager的切换效果
+	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-
 		switch (checkedId) {
 		case R.id.rb_feed:// 订阅
-			mContentPager.setCurrentItem(0, true);
+			mContentPager.setCurrentItem(0, false);
 			break;
 		case R.id.rb_discover:// 发现
-			mContentPager.setCurrentItem(1, true);
+			mContentPager.setCurrentItem(1, false);
 			break;
 		case R.id.rb_favor:// 收藏
-			mContentPager.setCurrentItem(2, true);
+			mContentPager.setCurrentItem(2, false);
 			break;
 		case R.id.rb_setting:// 设置
-			mContentPager.setCurrentItem(3, true);
+			mContentPager.setCurrentItem(3, false);
 			break;
 		}
 	}
