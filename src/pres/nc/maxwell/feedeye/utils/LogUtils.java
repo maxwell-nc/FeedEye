@@ -2,6 +2,9 @@ package pres.nc.maxwell.feedeye.utils;
 
 import android.util.Log;
 
+/**
+ * 日志管理工具类
+ */
 public class LogUtils {
 
 	/**

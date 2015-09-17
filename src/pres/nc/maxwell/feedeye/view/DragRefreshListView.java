@@ -1,6 +1,7 @@
 package pres.nc.maxwell.feedeye.view;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -33,6 +34,8 @@ public class DragRefreshListView extends ListView {
 
 	private int dragState = STATE_DRAGING; // 当前刷新状态
 
+	private onRefreshingListener refreshingListener;//刷新监听器
+	
 	/**
 	 * 动画集
 	 */
@@ -105,7 +108,9 @@ public class DragRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:// 触摸按住移动
 
-			int deltaY = (int) (ev.getY() - downY);
+			// 除以2为了减慢下拉速度
+			int deltaY = (int) (ev.getY() - downY) / 2;
+
 			int paddingTop = -mHeaderViewHeight + deltaY;
 			// LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
 
@@ -124,17 +129,17 @@ public class DragRefreshListView extends ListView {
 					dragState = STATE_DRAGING;
 					changeHeaderView();
 				}
-
+				return true;
 			}
 
 			break;
 
 		case MotionEvent.ACTION_UP:// 触摸松开
 
-			if (dragState == STATE_DRAGING) {
+			if (dragState == STATE_DRAGING) {// 不刷新
 				mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
 
-			} else if (dragState == STATE_AREADY_REFRESH) {
+			} else if (dragState == STATE_AREADY_REFRESH) {// 刷新
 				mHeaderView.setPadding(0, 0, 0, 0);
 				dragState = STATE_REFRESHING;
 				changeHeaderView();
@@ -156,21 +161,64 @@ public class DragRefreshListView extends ListView {
 
 		case STATE_DRAGING:// 下拉状态
 			mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
-
+			mHeaderTipsText.setText("下拉刷新");
 			break;
 
 		case STATE_AREADY_REFRESH:// 松开就刷新状态
 			mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
-
+			mHeaderTipsText.setText("松开刷新");
 			break;
 
 		case STATE_REFRESHING:// 刷新中状态
 			mHeaderArrowPic.clearAnimation();
+			mHeaderTipsText.setText("正在刷新...");
 			mHeaderArrowPic.setVisibility(View.INVISIBLE);
 			mHeaderRotatewPic.setVisibility(View.VISIBLE);
 
+			/**
+			 * 调用外部写的方法
+			 */
+			if(refreshingListener!=null){
+				refreshingListener.onRefresh();
+			}
+			
 			break;
 
 		}
+	}
+
+
+	
+	/**
+	 * 刷新逻辑完成，调用此方法重置HeaderView状态,注意必须在主线程运行此方法
+	 */
+	public void completeRefresh(){
+		
+		mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
+		dragState = STATE_DRAGING;
+		
+		mHeaderArrowPic.setVisibility(View.VISIBLE);
+		mHeaderRotatewPic.setVisibility(View.INVISIBLE);
+		
+		mHeaderTipsText.setText("下拉刷新");
+		mHeaderTimeText.setText("最后刷新时间："+SystemInfoUtils.getCurrentTime());
+	}
+	
+	
+	/**
+	 * 提供监听器给调用者填入刷新逻辑
+	 */
+	public interface onRefreshingListener {
+		/**
+		 * 刷新时的操作，操作后需要调用completeRefresh()方法
+		 */
+		void onRefresh();
+	}
+
+	/**
+	 * 监听方法，给外部监听刷新时间
+	 */
+	public void setOnRefreshingListener(onRefreshingListener refreshingListener) {
+		this.refreshingListener = refreshingListener;
 	}
 }

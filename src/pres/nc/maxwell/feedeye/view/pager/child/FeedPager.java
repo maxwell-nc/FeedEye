@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.onRefreshingListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 订阅页面的Pager
@@ -56,6 +58,35 @@ public class FeedPager extends BasePager {
 
 		//设置ListView适配器
 		mListView.setAdapter(new FeedPagerListViewAdapter());
+		
+		mListView.setOnRefreshingListener(new onRefreshingListener() {
+			
+			@Override
+			public void onRefresh() {
+				
+				//TODO：暂时模拟刷新操作
+				new Thread(){
+					public void run() {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						
+						//修改UI必须在主线程执行
+						mActivity.runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								mListView.completeRefresh();
+								Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT).show();
+							}
+						});
+						
+					};
+				}.start();
+			}
+		});
 
 	}
 
