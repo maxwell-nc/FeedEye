@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
-import pres.nc.maxwell.feedeye.view.DragRefreshListView.onRefreshingListener;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
@@ -51,7 +51,7 @@ public class FeedPager extends BasePager {
 		super.initData();
 
 		// TODO:暂时填充测试数据
-		for (int i = 0; i < 150; i++) {
+		for (int i = 0; i < 15; i++) {
 			FeedPagerListViewItem item = new FeedPagerListViewItem(mActivity);
 			mItemList.add(item);
 		}
@@ -59,10 +59,10 @@ public class FeedPager extends BasePager {
 		//设置ListView适配器
 		mListView.setAdapter(new FeedPagerListViewAdapter());
 		
-		mListView.setOnRefreshingListener(new onRefreshingListener() {
+		mListView.setOnRefreshListener(new OnRefreshListener() {
 			
 			@Override
-			public void onRefresh() {
+			public void onDragRefresh() {
 				
 				//TODO：暂时模拟刷新操作
 				new Thread(){
@@ -80,6 +80,31 @@ public class FeedPager extends BasePager {
 							public void run() {
 								mListView.completeRefresh();
 								Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT).show();
+							}
+						});
+						
+					};
+				}.start();
+			}
+
+			@Override
+			public void onLoadingMore() {
+				//TODO：暂时模拟刷新操作
+				new Thread(){
+					public void run() {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						
+						//修改UI必须在主线程执行
+						mActivity.runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								mListView.completeRefresh();
+								Toast.makeText(mActivity, "加载更多成功", Toast.LENGTH_SHORT).show();
 							}
 						});
 						
@@ -108,7 +133,7 @@ public class FeedPager extends BasePager {
 
 		@Override
 		public int getCount() {
-			return 150;
+			return mItemList.size();
 		}
 
 		@Override

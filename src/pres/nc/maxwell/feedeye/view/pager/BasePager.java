@@ -46,7 +46,7 @@ public class BasePager {
 		mBaseView = View.inflate(mActivity, R.layout.pager_base, null);
 		
 		//检查View对象是否为null
-		LogUtils.v("BasePager", mBaseView==null?"null":"not null");
+		LogUtils.v("BasePager", mBaseView==null?"BaseView null":"BaseView not null");
 		
 		mTitle = (TextView) mBaseView.findViewById(R.id.tv_title);
 		mFuncButton = (ImageView) mBaseView.findViewById(R.id.iv_func_btn);
