@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <pres.nc.maxwell.feedeye.view.DragRefreshListView
         android:id="@+id/lv_feed_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-    </ListView>
+    </pres.nc.maxwell.feedeye.view.DragRefreshListView>
 
 </merge>
