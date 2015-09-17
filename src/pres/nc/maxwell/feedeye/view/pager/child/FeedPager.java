@@ -22,9 +22,12 @@ import android.widget.Toast;
 public class FeedPager extends BasePager {
 
 	private View mViewContent; // 填充到父布局中的FrameLayout中的View对象
-	
+
 	private DragRefreshListView mListView;// 订阅列表
 	private ArrayList<FeedPagerListViewItem> mItemList;// ListView中的Item集合
+	private ArrayList<FeedPagerListViewItem> mItemShowedList;// ListView中已显示的Item集合
+
+	private final int SHOW_ITEM_COUNT = 20;// 一次展示的Item数量
 
 	public DragRefreshListView getListView() {
 		return mListView;
@@ -40,10 +43,11 @@ public class FeedPager extends BasePager {
 
 		mTitle.setText("订阅列表");
 		mViewContent = setContainerContent(R.layout.pager_main_feed);
-		mListView = (DragRefreshListView) mViewContent.findViewById(R.id.lv_feed_list);
+		mListView = (DragRefreshListView) mViewContent
+				.findViewById(R.id.lv_feed_list);
 
 		mItemList = new ArrayList<FeedPagerListViewItem>();
-
+		mItemShowedList = new ArrayList<FeedPagerListViewItem>();
 	}
 
 	@Override
@@ -51,70 +55,102 @@ public class FeedPager extends BasePager {
 		super.initData();
 
 		// TODO:暂时填充测试数据
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 500; i++) {
 			FeedPagerListViewItem item = new FeedPagerListViewItem(mActivity);
 			mItemList.add(item);
 		}
 
-		//设置ListView适配器
-		mListView.setAdapter(new FeedPagerListViewAdapter());
+		// 先加载前20个
+		insertItem();
 		
+		// 设置ListView适配器
+		mListView.setAdapter(new FeedPagerListViewAdapter());
+
 		mListView.setOnRefreshListener(new OnRefreshListener() {
-			
+
 			@Override
 			public void onDragRefresh() {
-				
-				//TODO：暂时模拟刷新操作
-				new Thread(){
+
+				// TODO：暂时模拟刷新操作
+				new Thread() {
 					public void run() {
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						
-						//修改UI必须在主线程执行
+
+						// 修改UI必须在主线程执行
 						mActivity.runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								mListView.completeRefresh();
-								Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT).show();
+								Toast.makeText(mActivity, "刷新成功",
+										Toast.LENGTH_SHORT).show();
 							}
 						});
-						
+
 					};
 				}.start();
 			}
 
 			@Override
 			public void onLoadingMore() {
-				//TODO：暂时模拟刷新操作
-				new Thread(){
+				// TODO：暂时模拟刷新操作
+				new Thread() {
 					public void run() {
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						
-						//修改UI必须在主线程执行
+
+						//模拟插入数据
+						insertItem();
+
+						// 修改UI必须在主线程执行
 						mActivity.runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								mListView.completeRefresh();
-								Toast.makeText(mActivity, "加载更多成功", Toast.LENGTH_SHORT).show();
+
+								Toast.makeText(mActivity, "加载更多成功",
+										Toast.LENGTH_SHORT).show();
 							}
 						});
-						
-					};
+
+					}
+
+					
 				}.start();
 			}
 		});
 
 	}
 
+	/**
+	 * 模拟插入数据
+	 */
+	private void insertItem() {
+		int addCount = 0;
+		
+		if (mItemList.size() > SHOW_ITEM_COUNT) {
+			addCount = SHOW_ITEM_COUNT;
+		} else {
+			addCount = mItemList.size();
+		}
+
+		for (int i = 0; i < addCount; i++) {
+			mItemShowedList.add(mItemList.get(i));
+		}
+		for (int i = addCount-1 ; i >= 0 ; i--) {
+			mItemList.remove(i);
+		}
+	};
+	
+	
 	/**
 	 * 利用ViewHolder优化ListView，减少findViewById的次数
 	 */
@@ -133,7 +169,11 @@ public class FeedPager extends BasePager {
 
 		@Override
 		public int getCount() {
-			return mItemList.size();
+
+			// 打印要显示的数目
+			//LogUtils.w("FeedPager", "ListCount:" + mItemShowedList.size());
+
+			return mItemShowedList.size();
 		}
 
 		@Override
@@ -158,7 +198,7 @@ public class FeedPager extends BasePager {
 				// 不可复用
 
 				// TODO:暂时填充测试数据
-				FeedPagerListViewItem item = mItemList.get(position);
+				FeedPagerListViewItem item = mItemShowedList.get(position);
 				item.getItemTitle().setText("测试对象是否正确");
 				if (position == 5) {
 
