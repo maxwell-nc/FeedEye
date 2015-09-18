@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 		}
 
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
-		
+
 	}
 
 }
@@ -98,11 +98,10 @@ class CheckedChange implements OnCheckedChangeListener {
 	}
 }
 
-
 /**
  * ViewPagerÃÓ≥‰“≥√Ê  ≈‰∆˜
  */
-class PagerInflateAdapter extends PagerAdapter{
+class PagerInflateAdapter extends PagerAdapter {
 
 	private List<BasePager> mPagerList;
 
@@ -124,16 +123,16 @@ class PagerInflateAdapter extends PagerAdapter{
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		BasePager pager = mPagerList.get(position);
-		//pager.getTitleView().setText("≤‚ ‘¡–±Ì" + position);
+		// pager.getTitleView().setText("≤‚ ‘¡–±Ì" + position);
 
 		View view = pager.getView();
 		container.addView(view);
+
 		return view;
 	}
 
 	@Override
-	public void destroyItem(ViewGroup container, int position,
-			Object object) {
+	public void destroyItem(ViewGroup container, int position, Object object) {
 		container.removeView((View) object);
 		// super.destroyItem(container, position, object);
 	}

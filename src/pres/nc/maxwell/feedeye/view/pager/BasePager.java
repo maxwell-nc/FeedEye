@@ -1,21 +1,21 @@
 package pres.nc.maxwell.feedeye.view.pager;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.utils.LogUtils;
 import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class BasePager {
 
 	protected Activity mActivity;
-	protected View mBaseView;			// 整个布局
-	protected TextView mTitle;			// 标题
-	protected ImageView mFuncButton;	// 功能按钮
-	protected FrameLayout mContainer;	// 布局容器
-
+	protected View mBaseView; // 整个布局
+	protected TextView mTitle; // 标题
+	protected ImageView mFuncButton; // 功能按钮
+	protected FrameLayout mContainer; // 布局容器
+	protected ProgressBar mLoadingBar; // 加载图标
 
 	public TextView getTitleView() {
 		return mTitle;
@@ -29,8 +29,13 @@ public class BasePager {
 		return mContainer;
 	}
 
+	public ProgressBar getLoadingBarView() {
+		return mLoadingBar;
+	}
+
 	/**
 	 * 构造函数，传入使用ViewPager的Activity
+	 * 
 	 * @param mActivity
 	 */
 	public BasePager(Activity mActivity) {
@@ -44,37 +49,41 @@ public class BasePager {
 	 */
 	protected void initView() {
 		mBaseView = View.inflate(mActivity, R.layout.pager_base, null);
-		
-		//检查View对象是否为null
-		LogUtils.v("BasePager", mBaseView==null?"BaseView null":"BaseView not null");
-		
+
+		// 检查View对象是否为null
+		// LogUtils.v("BasePager", mBaseView == null ? "BaseView null":
+		// "BaseView not null");
+
 		mTitle = (TextView) mBaseView.findViewById(R.id.tv_title);
 		mFuncButton = (ImageView) mBaseView.findViewById(R.id.iv_func_btn);
 		mContainer = (FrameLayout) mBaseView.findViewById(R.id.fl_container);
+		mLoadingBar = (ProgressBar) mBaseView.findViewById(R.id.pb_loading);
 	}
 
-	
 	/**
 	 * 初始化数据，子类实现
 	 */
 	protected void initData() {
 	}
-	
+
 	/**
 	 * 返回Pager的View对象
+	 * 
 	 * @return 用于填充的Pager
 	 */
-	public View getView(){
+	public View getView() {
 		return mBaseView;
 	}
 
 	/**
 	 * 填充FrameLayout部分，由继承的子类调用
-	 * @param resourceId 资源id
+	 * 
+	 * @param resourceId
+	 *            资源id
 	 * @return 返回填充的对象引用
 	 */
-	protected View setContainerContent(int resourceId){
+	protected View setContainerContent(int resourceId) {
 		return View.inflate(mActivity, resourceId, mContainer);
 	}
-	
+
 }

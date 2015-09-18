@@ -33,6 +33,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
+
+        <ProgressBar
+            android:id="@+id/pb_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/anim_refresh_rotate"
+            android:indeterminateDuration="500" />
+        
     </FrameLayout>
 
 </LinearLayout>

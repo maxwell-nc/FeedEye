@@ -64,73 +64,34 @@ public class FeedPager extends BasePager {
 
 		// 先加载前20个
 		insertItem();
-		
+
 		mListViewAdapter = new FeedPagerListViewAdapter();
 		// 设置ListView适配器
-		mListView.setAdapter(mListViewAdapter);
 
-		mListView.setOnRefreshListener(new OnRefreshListener() {
+		new Thread() {
+			public void run() {
 
-			@Override
-			public void onDragRefresh() {
+				// 延迟加载，防止进入时卡屏
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 
-				// TODO：暂时模拟刷新操作
-				new Thread() {
+				mActivity.runOnUiThread(new Runnable() {
 					public void run() {
-						try {
-							Thread.sleep(2000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
 
-						// 修改UI必须在主线程执行
-						mActivity.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								mListView.completeRefresh();
-								mListViewAdapter.notifyDataSetChanged();
-								Toast.makeText(mActivity, "刷新成功",
-										Toast.LENGTH_SHORT).show();
-							}
-						});
-
-					};
-				}.start();
-			}
-
-			@Override
-			public void onLoadingMore() {
-				// TODO：暂时模拟刷新操作
-				new Thread() {
-					public void run() {
-						try {
-							Thread.sleep(2000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-
-						//模拟插入数据
-						insertItem();
-
-						// 修改UI必须在主线程执行
-						mActivity.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								mListView.completeRefresh();
-								mListViewAdapter.notifyDataSetChanged();
-								Toast.makeText(mActivity, "加载更多成功",
-										Toast.LENGTH_SHORT).show();
-							}
-						});
+						mListView.setAdapter(mListViewAdapter);
+						// 不显示加载条
+						getLoadingBarView().setVisibility(View.INVISIBLE);
 
 					}
+				});
 
-					
-				}.start();
-			}
-		});
+			};
+		}.start();
+
+		mListView.setOnRefreshListener(new ListViewRefreshListener());
 
 	}
 
@@ -139,7 +100,7 @@ public class FeedPager extends BasePager {
 	 */
 	private void insertItem() {
 		int addCount = 0;
-		
+
 		if (mItemList.size() > SHOW_ITEM_COUNT) {
 			addCount = SHOW_ITEM_COUNT;
 		} else {
@@ -149,12 +110,11 @@ public class FeedPager extends BasePager {
 		for (int i = 0; i < addCount; i++) {
 			mItemShowedList.add(mItemList.get(i));
 		}
-		for (int i = addCount-1 ; i >= 0 ; i--) {
+		for (int i = addCount - 1; i >= 0; i--) {
 			mItemList.remove(i);
 		}
 	};
-	
-	
+
 	/**
 	 * 利用ViewHolder优化ListView，减少findViewById的次数
 	 */
@@ -175,7 +135,7 @@ public class FeedPager extends BasePager {
 		public int getCount() {
 
 			// 打印要显示的数目
-			//LogUtils.w("FeedPager", "ListCount:" + mItemShowedList.size());
+			// LogUtils.w("FeedPager", "ListCount:" + mItemShowedList.size());
 
 			return mItemShowedList.size();
 		}
@@ -192,7 +152,7 @@ public class FeedPager extends BasePager {
 				view = (RelativeLayout) convertView;
 				holder = (ViewHolder) view.getTag();
 
-				holder.mItemTitle.setText("复用对象"+position);
+				holder.mItemTitle.setText("复用对象" + position);
 				holder.mItemPic.setImageDrawable(mActivity.getResources()
 						.getDrawable(R.drawable.btn_navi_favor_selected));
 
@@ -205,7 +165,7 @@ public class FeedPager extends BasePager {
 				// TODO:暂时填充测试数据
 				FeedPagerListViewItem item = mItemShowedList.get(position);
 				item.initListViewItem();
-				item.getItemTitle().setText("新创建对象"+position);
+				item.getItemTitle().setText("新创建对象" + position);
 				if (position == 5) {
 
 					item.getItemPic().setImageDrawable(
@@ -240,5 +200,71 @@ public class FeedPager extends BasePager {
 			return null;
 		}
 
+	}
+
+	
+	/**
+	 * ListView刷新监听器，用于写下拉刷新逻辑和上拉加载逻辑 
+	 */
+	class ListViewRefreshListener implements OnRefreshListener {
+
+		@Override
+		public void onDragRefresh() {
+
+			// TODO：暂时模拟刷新操作
+			new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					// 修改UI必须在主线程执行
+					mActivity.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							mListView.completeRefresh();
+							mListViewAdapter.notifyDataSetChanged();
+							Toast.makeText(mActivity, "刷新成功",
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+
+				};
+			}.start();
+		}
+
+		@Override
+		public void onLoadingMore() {
+			// TODO：暂时模拟刷新操作
+			new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					// 模拟插入数据
+					insertItem();
+
+					// 修改UI必须在主线程执行
+					mActivity.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							mListView.completeRefresh();
+							mListViewAdapter.notifyDataSetChanged();
+							Toast.makeText(mActivity, "加载更多成功",
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+
+				}
+
+			}.start();
+		}
 	}
 }
