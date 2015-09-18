@@ -140,8 +140,8 @@ public class DragRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:// 触摸按住移动
 
-			//刷新时不允许再刷新
-			if(dragState == STATE_REFRESHING){
+			//刷新时或加载更多时不允许再刷新
+			if(dragState == STATE_REFRESHING || isLoadingMore ){
 				break;
 			}
 			

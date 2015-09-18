@@ -57,7 +57,7 @@ public class FeedPager extends BasePager {
 		super.initData();
 
 		// TODO:暂时填充测试数据
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 2000; i++) {
 			FeedPagerListViewItem item = new FeedPagerListViewItem(mActivity);
 			mItemList.add(item);
 		}
@@ -192,6 +192,7 @@ public class FeedPager extends BasePager {
 				view = (RelativeLayout) convertView;
 				holder = (ViewHolder) view.getTag();
 
+				holder.mItemTitle.setText("复用对象"+position);
 				holder.mItemPic.setImageDrawable(mActivity.getResources()
 						.getDrawable(R.drawable.btn_navi_favor_selected));
 
@@ -203,7 +204,8 @@ public class FeedPager extends BasePager {
 
 				// TODO:暂时填充测试数据
 				FeedPagerListViewItem item = mItemShowedList.get(position);
-				item.getItemTitle().setText("测试对象"+position);
+				item.initListViewItem();
+				item.getItemTitle().setText("新创建对象"+position);
 				if (position == 5) {
 
 					item.getItemPic().setImageDrawable(

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 
 /**
- * 封装FeedPager中的ListView的每一个Item对象View，提供子View的对象
+ * 封装FeedPager中的ListView的每一个Item对象View，提供子View的对象，initListViewItem必须手动调用初始化
  */
 public class FeedPagerListViewItem {
 	
@@ -65,15 +65,13 @@ public class FeedPagerListViewItem {
 	public FeedPagerListViewItem(Activity mActivity) {
 		super();
 		this.mActivity = mActivity;
-		
-		initListViewItem();
 	}
 
 
 	/**
-	 * 初始化ListView的Item的View对象
+	 * 初始化ListView的Item的View对象，不主动调用
 	 */
-	private void initListViewItem() {
+	public void initListViewItem() {
 		mListViewItem = View.inflate(mActivity, R.layout.view_lv_item_feed,
 				null);
 
