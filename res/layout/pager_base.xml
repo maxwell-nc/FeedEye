@@ -11,21 +11,32 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="220sp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="25sp" />
 
         <ImageView
-            android:id="@+id/iv_func_btn"
+            android:id="@+id/iv_func_btn_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="7dp"
-            android:src="@drawable/btn_title_share" />
+            android:layout_marginRight="5dp"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_func_btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="45dp"
+            android:visibility="invisible" />
     </RelativeLayout>
 
     <FrameLayout
@@ -38,11 +49,10 @@
             android:id="@+id/pb_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminate="true"
             android:layout_gravity="center"
+            android:indeterminate="true"
             android:indeterminateDrawable="@drawable/anim_refresh_rotate"
             android:indeterminateDuration="500" />
-        
     </FrameLayout>
 
 </LinearLayout>

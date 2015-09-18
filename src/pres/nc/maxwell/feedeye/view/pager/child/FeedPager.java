@@ -42,6 +42,8 @@ public class FeedPager extends BasePager {
 		super(mActivity);
 	}
 
+
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -55,8 +57,16 @@ public class FeedPager extends BasePager {
 
 		mItemList = new ArrayList<FeedPagerListViewItem>();
 		mItemShowedList = new ArrayList<FeedPagerListViewItem>();
+		
+		
+		useFunctionButton();
 	}
 
+	
+	
+	
+	
+	
 	@Override
 	protected void initData() {
 		super.initData();
@@ -94,6 +104,26 @@ public class FeedPager extends BasePager {
 		});
 		
 	}
+	
+	/**
+	 * 使用功能按钮，初始化按钮
+	 */
+	@Override
+	protected void useFunctionButton() {
+		
+		super.useFunctionButton();
+		
+		mFuncButtonLeft.setImageDrawable(mActivity.getResources()
+				.getDrawable(R.drawable.btn_title_add));
+		mFuncButtonLeft.setVisibility(View.VISIBLE);
+		
+		
+		mFuncButtonRight.setImageDrawable(mActivity.getResources()
+				.getDrawable(R.drawable.btn_title_search));
+		mFuncButtonRight.setVisibility(View.VISIBLE);
+	};
+	
+	
 
 	/**
 	 * 设置ListView适配器

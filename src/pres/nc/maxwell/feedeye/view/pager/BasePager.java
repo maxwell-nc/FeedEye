@@ -13,7 +13,8 @@ public class BasePager {
 	protected Activity mActivity;
 	protected View mBaseView; // 整个布局
 	protected TextView mTitle; // 标题
-	protected ImageView mFuncButton; // 功能按钮
+	protected ImageView mFuncButtonLeft; // 功能按钮左
+	protected ImageView mFuncButtonRight; // 功能按钮右
 	protected FrameLayout mContainer; // 布局容器
 	protected ProgressBar mLoadingBar; // 加载图标
 
@@ -21,8 +22,18 @@ public class BasePager {
 		return mTitle;
 	}
 
-	public ImageView getFuncButtonView() {
-		return mFuncButton;
+	/**
+	 * 必须先调用useFunctionButton()方法初始化功能按钮
+	 */
+	public ImageView getFuncButtonLeftView() {
+		return mFuncButtonLeft;
+	}
+
+	/**
+	 * 必须先调用useFunctionButton()方法初始化功能按钮
+	 */
+	public ImageView getFuncButtonRightView() {
+		return mFuncButtonRight;
 	}
 
 	public FrameLayout getContainerView() {
@@ -55,9 +66,18 @@ public class BasePager {
 		// "BaseView not null");
 
 		mTitle = (TextView) mBaseView.findViewById(R.id.tv_title);
-		mFuncButton = (ImageView) mBaseView.findViewById(R.id.iv_func_btn);
 		mContainer = (FrameLayout) mBaseView.findViewById(R.id.fl_container);
 		mLoadingBar = (ProgressBar) mBaseView.findViewById(R.id.pb_loading);
+	}
+
+	/**
+	 * 子类使用FunctionButton功能，初始化功能按钮View，不主动调用
+	 */
+	protected void useFunctionButton() {
+		mFuncButtonLeft = (ImageView) mBaseView
+				.findViewById(R.id.iv_func_btn_left);
+		mFuncButtonRight = (ImageView) mBaseView
+				.findViewById(R.id.iv_func_btn_right);
 	}
 
 	/**
