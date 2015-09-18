@@ -9,6 +9,7 @@ import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -31,6 +32,8 @@ public class FeedPager extends BasePager {
 
 	private FeedPagerListViewAdapter mListViewAdapter;
 
+	private ImageView mNothingImg;// ListView为空显示的提示图片
+
 	public DragRefreshListView getListView() {
 		return mListView;
 	}
@@ -48,6 +51,8 @@ public class FeedPager extends BasePager {
 		mListView = (DragRefreshListView) mViewContent
 				.findViewById(R.id.lv_feed_list);
 
+		mNothingImg = (ImageView) mViewContent.findViewById(R.id.iv_nothing);
+
 		mItemList = new ArrayList<FeedPagerListViewItem>();
 		mItemShowedList = new ArrayList<FeedPagerListViewItem>();
 	}
@@ -62,18 +67,47 @@ public class FeedPager extends BasePager {
 			mItemList.add(item);
 		}
 
-		// 先加载前20个
-		insertItem();
+		// 插入要加载的Item
+		insertMoreItem();
 
-		mListViewAdapter = new FeedPagerListViewAdapter();
-		// 设置ListView适配器
+		// 设置ListView适配器，添加数据
+		if (mItemShowedList.size() == 0) {// 无数据
+			// 不显示加载条
+			getLoadingBarView().setVisibility(View.INVISIBLE);
+			
+			// 提示没有数据，需要添加
+			mNothingImg.setVisibility(View.VISIBLE);
+		} else {// 有数据
+			setListViewData(500);
+		}
 
+		mListView.setOnRefreshListener(new ListViewRefreshListener());
+
+		//设置点击图片添加
+		mNothingImg.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//TODO:执行添加订阅操作
+			}
+			
+		});
+		
+	}
+
+	/**
+	 * 设置ListView适配器
+	 * 
+	 * @param delayTime
+	 *            延迟时间
+	 */
+	private void setListViewData(final int delayTime) {
 		new Thread() {
 			public void run() {
 
 				// 延迟加载，防止进入时卡屏
 				try {
-					Thread.sleep(500);
+					Thread.sleep(delayTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -81,24 +115,23 @@ public class FeedPager extends BasePager {
 				mActivity.runOnUiThread(new Runnable() {
 					public void run() {
 
+						mListViewAdapter = new FeedPagerListViewAdapter();
+						// 设置ListView适配器
 						mListView.setAdapter(mListViewAdapter);
+
 						// 不显示加载条
 						getLoadingBarView().setVisibility(View.INVISIBLE);
-
 					}
 				});
 
 			};
 		}.start();
-
-		mListView.setOnRefreshListener(new ListViewRefreshListener());
-
 	}
 
 	/**
-	 * 模拟插入数据
+	 * 如果有更多数据则插入更多数据
 	 */
-	private void insertItem() {
+	private void insertMoreItem() {
 		int addCount = 0;
 
 		if (mItemList.size() > SHOW_ITEM_COUNT) {
@@ -202,9 +235,8 @@ public class FeedPager extends BasePager {
 
 	}
 
-	
 	/**
-	 * ListView刷新监听器，用于写下拉刷新逻辑和上拉加载逻辑 
+	 * ListView刷新监听器，用于写下拉刷新逻辑和上拉加载逻辑
 	 */
 	class ListViewRefreshListener implements OnRefreshListener {
 
@@ -248,7 +280,7 @@ public class FeedPager extends BasePager {
 					}
 
 					// 模拟插入数据
-					insertItem();
+					insertMoreItem();
 
 					// 修改UI必须在主线程执行
 					mActivity.runOnUiThread(new Runnable() {

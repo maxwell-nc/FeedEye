@@ -10,4 +10,13 @@
         android:layout_height="match_parent" >
     </pres.nc.maxwell.feedeye.view.DragRefreshListView>
 
+    <ImageView
+        android:id="@+id/iv_nothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/img_nothing_listview" 
+        android:visibility="invisible"
+        />
+
 </merge>
