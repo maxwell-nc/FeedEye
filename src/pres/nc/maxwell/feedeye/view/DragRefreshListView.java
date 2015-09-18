@@ -1,7 +1,6 @@
 package pres.nc.maxwell.feedeye.view;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -53,7 +52,6 @@ public class DragRefreshListView extends ListView {
 		initView();
 	}
 
-
 	public DragRefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
@@ -65,11 +63,11 @@ public class DragRefreshListView extends ListView {
 	private void initView() {
 		initHeaderView();
 		initFooterView();
-		
-		//设置滚动监听监听
-		setOnScrollListener(new DefaultOnScrollListener());		
+
+		// 设置滚动监听监听
+		setOnScrollListener(new DefaultOnScrollListener());
 	}
-	
+
 	/**
 	 * 初始化HeaderView
 	 */
@@ -142,6 +140,11 @@ public class DragRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:// 触摸按住移动
 
+			//刷新时不允许再刷新
+			if(dragState == STATE_REFRESHING){
+				break;
+			}
+			
 			// 除以2为了减慢下拉速度
 			int deltaY = (int) (ev.getY() - downY) / 2;
 
@@ -267,7 +270,7 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * 用于监听滚动事件，上拉加载更多 
+	 * 用于监听滚动事件，上拉加载更多
 	 */
 	class DefaultOnScrollListener implements OnScrollListener {
 		/**
@@ -276,21 +279,17 @@ public class DragRefreshListView extends ListView {
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-			LogUtils.v("DragRefreshListView", "In");
-
 			// 当滑行空闲时并且不在加载中，最后一条项目在底部时
 			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
 					&& getLastVisiblePosition() == (getCount() - 1)
-					&& !isLoadingMore) {
-
-				LogUtils.v("DragRefreshListView", "Show footerView");
+					&& !isLoadingMore && dragState != STATE_REFRESHING) {
 
 				isLoadingMore = true;
 
-				// 显示
+				// 显示FooterView
 				mFooterView.setPadding(0, 0, 0, 0);
 				setSelection(getCount());
-				
+
 				/**
 				 * 调用外部写的方法
 				 */

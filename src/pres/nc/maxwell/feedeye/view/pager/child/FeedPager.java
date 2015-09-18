@@ -29,6 +29,8 @@ public class FeedPager extends BasePager {
 
 	private final int SHOW_ITEM_COUNT = 20;// 一次展示的Item数量
 
+	private FeedPagerListViewAdapter mListViewAdapter;
+
 	public DragRefreshListView getListView() {
 		return mListView;
 	}
@@ -63,8 +65,9 @@ public class FeedPager extends BasePager {
 		// 先加载前20个
 		insertItem();
 		
+		mListViewAdapter = new FeedPagerListViewAdapter();
 		// 设置ListView适配器
-		mListView.setAdapter(new FeedPagerListViewAdapter());
+		mListView.setAdapter(mListViewAdapter);
 
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
@@ -86,6 +89,7 @@ public class FeedPager extends BasePager {
 							@Override
 							public void run() {
 								mListView.completeRefresh();
+								mListViewAdapter.notifyDataSetChanged();
 								Toast.makeText(mActivity, "刷新成功",
 										Toast.LENGTH_SHORT).show();
 							}
@@ -115,7 +119,7 @@ public class FeedPager extends BasePager {
 							@Override
 							public void run() {
 								mListView.completeRefresh();
-
+								mListViewAdapter.notifyDataSetChanged();
 								Toast.makeText(mActivity, "加载更多成功",
 										Toast.LENGTH_SHORT).show();
 							}
@@ -199,7 +203,7 @@ public class FeedPager extends BasePager {
 
 				// TODO:暂时填充测试数据
 				FeedPagerListViewItem item = mItemShowedList.get(position);
-				item.getItemTitle().setText("测试对象是否正确");
+				item.getItemTitle().setText("测试对象"+position);
 				if (position == 5) {
 
 					item.getItemPic().setImageDrawable(

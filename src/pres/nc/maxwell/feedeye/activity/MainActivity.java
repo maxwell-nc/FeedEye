@@ -5,12 +5,12 @@ import java.util.List;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
+import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -19,7 +19,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class MainActivity extends Activity {
 
-	private ViewPager mContentPager;// 主界面页面内容
+	private NoScrollViewPager mContentPager;// 主界面页面内容
 	private NavigationButtonGroupView mNaviBtnGroup;
 
 	private List<BasePager> mPagerList;
@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 	 * 初始化View对象
 	 */
 	private void initView() {
-		mContentPager = (ViewPager) findViewById(R.id.vp_content);
+		mContentPager = (NoScrollViewPager) findViewById(R.id.vp_content);
 		mNaviBtnGroup = (NavigationButtonGroupView) findViewById(R.id.btn_navi_group);
 	}
 
@@ -69,9 +69,9 @@ public class MainActivity extends Activity {
  */
 class CheckedChange implements OnCheckedChangeListener {
 
-	private ViewPager mContentPager;
+	private NoScrollViewPager mContentPager;
 
-	public CheckedChange(ViewPager mContentPager) {
+	public CheckedChange(NoScrollViewPager mContentPager) {
 		super();
 		this.mContentPager = mContentPager;
 	}
