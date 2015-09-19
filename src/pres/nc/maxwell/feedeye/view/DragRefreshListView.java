@@ -140,11 +140,11 @@ public class DragRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:// 触摸按住移动
 
-			//刷新时或加载更多时不允许再刷新
-			if(dragState == STATE_REFRESHING || isLoadingMore ){
+			// 刷新时或加载更多时不允许再刷新
+			if (dragState == STATE_REFRESHING || isLoadingMore) {
 				break;
 			}
-			
+
 			// 除以2为了减慢下拉速度
 			int deltaY = (int) (ev.getY() - downY) / 2;
 
@@ -172,6 +172,8 @@ public class DragRefreshListView extends ListView {
 			break;
 
 		case MotionEvent.ACTION_UP:// 触摸松开
+
+			downY = -1;// 重置
 
 			if (dragState == STATE_DRAGING) {// 不刷新
 				mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
@@ -207,7 +209,7 @@ public class DragRefreshListView extends ListView {
 			break;
 
 		case STATE_REFRESHING:// 刷新中状态
-			mHeaderArrowPic.clearAnimation();
+			mHeaderArrowPic.clearAnimation();// 防止箭头不隐藏
 			mHeaderTipsText.setText("正在刷新...");
 			mHeaderArrowPic.setVisibility(View.INVISIBLE);
 			mHeaderRotatewPic.setVisibility(View.VISIBLE);
@@ -281,23 +283,25 @@ public class DragRefreshListView extends ListView {
 
 			// 当滑行空闲时并且不在加载中，最后一条项目在底部时
 			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
-					&& getLastVisiblePosition() == (getCount() - 1)
-					&& !isLoadingMore && dragState != STATE_REFRESHING) {
+					|| scrollState == OnScrollListener.SCROLL_STATE_FLING) {
 
-				isLoadingMore = true;
+				if (getLastVisiblePosition() == (getCount() - 1)
+						&& !isLoadingMore && dragState != STATE_REFRESHING) {
 
-				// 显示FooterView
-				mFooterView.setPadding(0, 0, 0, 0);
-				setSelection(getCount());
+					isLoadingMore = true;
 
-				/**
-				 * 调用外部写的方法
-				 */
-				if (refreshListener != null) {
-					refreshListener.onLoadingMore();
+					// 显示FooterView
+					mFooterView.setPadding(0, 0, 0, 0);
+					setSelection(getCount());
+
+					/**
+					 * 调用外部写的方法
+					 */
+					if (refreshListener != null) {
+						refreshListener.onLoadingMore();
+					}
 				}
 			}
-
 		}
 
 		/**

@@ -42,8 +42,6 @@ public class FeedPager extends BasePager {
 		super(mActivity);
 	}
 
-
-
 	@Override
 	protected void initView() {
 		super.initView();
@@ -57,16 +55,10 @@ public class FeedPager extends BasePager {
 
 		mItemList = new ArrayList<FeedPagerListViewItem>();
 		mItemShowedList = new ArrayList<FeedPagerListViewItem>();
-		
-		
+
 		useFunctionButton();
 	}
 
-	
-	
-	
-	
-	
 	@Override
 	protected void initData() {
 		super.initData();
@@ -84,7 +76,7 @@ public class FeedPager extends BasePager {
 		if (mItemShowedList.size() == 0) {// 无数据
 			// 不显示加载条
 			getLoadingBarView().setVisibility(View.INVISIBLE);
-			
+
 			// 提示没有数据，需要添加
 			mNothingImg.setVisibility(View.VISIBLE);
 		} else {// 有数据
@@ -93,37 +85,34 @@ public class FeedPager extends BasePager {
 
 		mListView.setOnRefreshListener(new ListViewRefreshListener());
 
-		//设置点击图片添加
+		// 设置点击图片添加
 		mNothingImg.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				//TODO:执行添加订阅操作
+				// TODO:执行添加订阅操作
 			}
-			
+
 		});
-		
+
 	}
-	
+
 	/**
 	 * 使用功能按钮，初始化按钮
 	 */
 	@Override
 	protected void useFunctionButton() {
-		
+
 		super.useFunctionButton();
-		
-		mFuncButtonLeft.setImageDrawable(mActivity.getResources()
-				.getDrawable(R.drawable.btn_title_add));
+
+		mFuncButtonLeft.setImageDrawable(mActivity.getResources().getDrawable(
+				R.drawable.btn_title_search));
 		mFuncButtonLeft.setVisibility(View.VISIBLE);
-		
-		
-		mFuncButtonRight.setImageDrawable(mActivity.getResources()
-				.getDrawable(R.drawable.btn_title_search));
+
+		mFuncButtonRight.setImageDrawable(mActivity.getResources().getDrawable(
+				R.drawable.btn_title_add));
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 	};
-	
-	
 
 	/**
 	 * 设置ListView适配器
