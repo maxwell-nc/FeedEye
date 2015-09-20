@@ -148,7 +148,7 @@ public class DragRefreshListView extends ListView {
 			mHeaderTipsText.setText("正在刷新...");
 			mHeaderArrowPic.setVisibility(View.INVISIBLE);
 			mHeaderRotatewPic.setVisibility(View.VISIBLE);
-
+			
 			/**
 			 * 调用外部写的方法
 			 */
@@ -180,6 +180,8 @@ public class DragRefreshListView extends ListView {
 			mHeaderTipsText.setText("下拉刷新");
 			mHeaderTimeText.setText("最后刷新时间："
 					+ SystemInfoUtils.getCurrentTime());
+			
+
 		}
 
 	}

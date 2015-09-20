@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.cache.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
@@ -86,22 +87,21 @@ public class FeedPager extends BasePager {
 			setListViewData(500);
 		}
 
-	
-		//设置每项Item的点击事件
+		// 设置每项Item的点击事件
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//TODO：待添加点击事件
-				
-				//检查NaturePositionOnItemClickListener是否生效
-				LogUtils.w("FeedPager", "item position:"+position);
+				// TODO：待添加点击事件
+
+				// 检查NaturePositionOnItemClickListener是否生效
+				LogUtils.w("FeedPager", "item position:" + position);
 			}
 		});
-		
+
 		mListView.setOnRefreshListener(new ListViewRefreshListener());
-		
+
 		// 设置点击图片添加
 		mNothingImg.setOnClickListener(new OnClickListener() {
 
@@ -222,8 +222,13 @@ public class FeedPager extends BasePager {
 				holder = (ViewHolder) view.getTag();
 
 				holder.mItemTitle.setText("复用对象" + position);
-				holder.mItemPic.setImageDrawable(mActivity.getResources()
-						.getDrawable(R.drawable.btn_navi_favor_selected));
+				//holder.mItemPic.setImageDrawable(mActivity.getResources()
+				//		.getDrawable(R.drawable.btn_navi_favor_selected));
+
+				//测试代码
+				new BitmapCacheUtils()
+						.displayBitmap(holder.mItemPic,
+								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=460");
 
 				// 检查是否复用ConvertView，平时不需要打印，费时
 				// LogUtils.v("FeedPager", "复用View");
