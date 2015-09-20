@@ -3,6 +3,7 @@ package pres.nc.maxwell.feedeye.view.pager.child;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
@@ -11,6 +12,8 @@ import android.app.Activity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -83,8 +86,22 @@ public class FeedPager extends BasePager {
 			setListViewData(500);
 		}
 
-		mListView.setOnRefreshListener(new ListViewRefreshListener());
+	
+		//设置每项Item的点击事件
+		mListView.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				//TODO：待添加点击事件
+				
+				//检查NaturePositionOnItemClickListener是否生效
+				LogUtils.w("FeedPager", "item position:"+position);
+			}
+		});
+		
+		mListView.setOnRefreshListener(new ListViewRefreshListener());
+		
 		// 设置点击图片添加
 		mNothingImg.setOnClickListener(new OnClickListener() {
 

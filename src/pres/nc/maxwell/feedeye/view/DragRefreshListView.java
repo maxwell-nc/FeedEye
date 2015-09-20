@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -40,6 +41,7 @@ public class DragRefreshListView extends ListView {
 	private boolean isLoadingMore = false; // 是否正在加载更多
 
 	private OnRefreshListener refreshListener;// 下拉刷新和加载更多监听器
+	private OnItemClickListener OriginOnItemClickListener;// 默认的ListView的OnItemClickListener
 
 	/**
 	 * 动画集
@@ -125,6 +127,64 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
+	 * 根据状态修改HeaderView
+	 */
+	private void changeHeaderView() {
+
+		switch (dragState) {
+
+		case STATE_DRAGING:// 下拉状态
+			mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
+			mHeaderTipsText.setText("下拉刷新");
+			break;
+
+		case STATE_AREADY_REFRESH:// 松开就刷新状态
+			mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
+			mHeaderTipsText.setText("松开刷新");
+			break;
+
+		case STATE_REFRESHING:// 刷新中状态
+			mHeaderArrowPic.clearAnimation();// 防止箭头不隐藏
+			mHeaderTipsText.setText("正在刷新...");
+			mHeaderArrowPic.setVisibility(View.INVISIBLE);
+			mHeaderRotatewPic.setVisibility(View.VISIBLE);
+
+			/**
+			 * 调用外部写的方法
+			 */
+			if (refreshListener != null) {
+				refreshListener.onDragRefresh();
+			}
+
+			break;
+		}
+
+	}
+
+	/**
+	 * 刷新逻辑完成，调用此方法重置HeaderView状态,注意必须在主线程运行此方法
+	 */
+	public void completeRefresh() {
+
+		if (isLoadingMore) {// 加载更多完成
+			mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
+			isLoadingMore = false;
+
+		} else {// 下拉刷新完成
+			mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
+			dragState = STATE_DRAGING;
+
+			mHeaderArrowPic.setVisibility(View.VISIBLE);
+			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
+
+			mHeaderTipsText.setText("下拉刷新");
+			mHeaderTimeText.setText("最后刷新时间："
+					+ SystemInfoUtils.getCurrentTime());
+		}
+
+	}
+
+	/**
 	 * 触摸事件拦截
 	 */
 	@Override
@@ -166,6 +226,9 @@ public class DragRefreshListView extends ListView {
 					dragState = STATE_DRAGING;
 					changeHeaderView();
 				}
+
+				// 调用父类方法，防止下拉时误点item
+				super.onTouchEvent(ev);
 				return true;
 			}
 
@@ -185,67 +248,10 @@ public class DragRefreshListView extends ListView {
 			}
 
 			break;
+
 		}
 
 		return super.onTouchEvent(ev);
-
-	}
-
-	/**
-	 * 根据状态修改HeaderView
-	 */
-	private void changeHeaderView() {
-
-		switch (dragState) {
-
-		case STATE_DRAGING:// 下拉状态
-			mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
-			mHeaderTipsText.setText("下拉刷新");
-			break;
-
-		case STATE_AREADY_REFRESH:// 松开就刷新状态
-			mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
-			mHeaderTipsText.setText("松开刷新");
-			break;
-
-		case STATE_REFRESHING:// 刷新中状态
-			mHeaderArrowPic.clearAnimation();// 防止箭头不隐藏
-			mHeaderTipsText.setText("正在刷新...");
-			mHeaderArrowPic.setVisibility(View.INVISIBLE);
-			mHeaderRotatewPic.setVisibility(View.VISIBLE);
-
-			/**
-			 * 调用外部写的方法
-			 */
-			if (refreshListener != null) {
-				refreshListener.onDragRefresh();
-			}
-
-			break;
-
-		}
-	}
-
-	/**
-	 * 刷新逻辑完成，调用此方法重置HeaderView状态,注意必须在主线程运行此方法
-	 */
-	public void completeRefresh() {
-
-		if (isLoadingMore) {// 加载更多完成
-			mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
-			isLoadingMore = false;
-
-		} else {// 下拉刷新完成
-			mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
-			dragState = STATE_DRAGING;
-
-			mHeaderArrowPic.setVisibility(View.VISIBLE);
-			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
-
-			mHeaderTipsText.setText("下拉刷新");
-			mHeaderTimeText.setText("最后刷新时间："
-					+ SystemInfoUtils.getCurrentTime());
-		}
 
 	}
 
@@ -312,6 +318,42 @@ public class DragRefreshListView extends ListView {
 				int visibleItemCount, int totalItemCount) {
 			// Not Use
 		}
+	}
+
+	/**
+	 * 重写OnItemClickListener，让listener的position为第一个非headerView的item开始计算
+	 */
+	@Override
+	public void setOnItemClickListener(
+			android.widget.AdapterView.OnItemClickListener listener) {
+		this.OriginOnItemClickListener = listener;
+		super.setOnItemClickListener(new NaturePositionOnItemClickListener());
+
+	}
+
+	/**
+	 * 重写onItemClick方法，修改传入的position为position-headerView数量
+	 */
+	class NaturePositionOnItemClickListener implements OnItemClickListener {
+
+		/**
+		 * 修改传入的position为position-headerView数量
+		 */
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+
+			// TODO：考虑是否拦截刷新时点击事件
+			// 防止加载更多时或者下拉时误点item
+			if (!isLoadingMore && dragState == STATE_DRAGING) {
+
+				OriginOnItemClickListener.onItemClick(parent, view, position
+						- getHeaderViewsCount(), id);
+
+			}
+
+		}
+
 	}
 
 }
