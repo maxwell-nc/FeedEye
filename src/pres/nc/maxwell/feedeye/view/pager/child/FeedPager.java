@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
-import pres.nc.maxwell.feedeye.utils.cache.BitmapCacheUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;

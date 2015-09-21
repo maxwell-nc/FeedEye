@@ -1,4 +1,4 @@
-package pres.nc.maxwell.feedeye.utils.cache;
+package pres.nc.maxwell.feedeye.utils.bitmap;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,5 +1,6 @@
-package pres.nc.maxwell.feedeye.utils.cache;
+package pres.nc.maxwell.feedeye.utils.bitmap;
 
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
@@ -14,12 +15,10 @@ public class BitmapCacheUtils {
 		// ÄÚ´æ»º´æ
 		// ±¾µØ»º´æ
 		// ÍøÂ·»º´æ
-		new BitmapNetworkCacheUtils().displayBitmapAsyncFromNetwork(imageView,
-				url);
+		new BitmapNetworkCache(imageView, url).displayBitmap();
 
 	}
 
-	
 	public void displayBitmapWithLoadingImage(ImageView imageView, String url,
 			Bitmap bitmap) {
 
@@ -27,7 +26,7 @@ public class BitmapCacheUtils {
 		displayBitmap(imageView, url);
 
 	}
-	
+
 	public void displayBitmapWithLoadingImage(ImageView imageView, String url,
 			Drawable drawable) {
 
@@ -35,7 +34,7 @@ public class BitmapCacheUtils {
 		displayBitmap(imageView, url);
 
 	}
-	
+
 	public void displayBitmapWithLoadingImage(ImageView imageView, String url,
 			int resId) {
 
