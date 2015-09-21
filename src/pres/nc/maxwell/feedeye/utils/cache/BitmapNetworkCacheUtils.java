@@ -1,5 +1,6 @@
 package pres.nc.maxwell.feedeye.utils.cache;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -18,8 +19,7 @@ import android.widget.ImageView;
 public class BitmapNetworkCacheUtils {
 
 	private ImageView mImageView;
-	
-	
+
 	/**
 	 * Òì²½´ÓÍøÂçÏÂÔØBitmap
 	 * 
@@ -94,20 +94,22 @@ public class BitmapNetworkCacheUtils {
 					// LogUtils.w("BitmapNetworkCacheUtils",
 					// "ResponseCode 200");
 
-					InputStream inputStream = connection.getInputStream();
+					InputStream inputStream = new BufferedInputStream(
+							connection.getInputStream());
 
 					// LogUtils.w("BitmapNetworkCacheUtils",
 					// inputStream == null ? "inputStream is null"
 					// : "inputStream is not null");
 
-					return new BitmapCompressUtils(inputStream)
-							.CompressBitmapInputStream(16,
-									Bitmap.Config.RGB_565);
-
-					// Ñ¹ËõÍ¼Æ¬
+					// ÊÖ¶¯Ñ¹ËõÍ¼Æ¬
 					// return new BitmapCompressUtils(inputStream)
-					// .CompressBitmapInputStream(requiredHeight,
-					// requiredWidth);
+					// .CompressBitmapInputStream(16,
+					// Bitmap.Config.RGB_565);
+
+					// ×Ô¶¯Ñ¹ËõÍ¼Æ¬
+					return new BitmapCompressUtils(inputStream)
+							.CompressBitmapInputStream(requiredHeight,
+									requiredWidth);
 
 				}
 

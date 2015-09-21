@@ -1,5 +1,6 @@
 package pres.nc.maxwell.feedeye.utils.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import pres.nc.maxwell.feedeye.utils.LogUtils;
@@ -60,6 +61,12 @@ public class BitmapCompressUtils {
 		mOptions.inSampleSize = AutoCalculateSampleSize(viewHeight, viewWidth);
 		mOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
+		
+		try {
+			mInputStream.reset();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
 
@@ -86,7 +93,10 @@ public class BitmapCompressUtils {
 	 */
 	public int AutoCalculateSampleSize(int viewHeight, int viewWidth) {
 		mOptions.inJustDecodeBounds = true;
+		
 		BitmapFactory.decodeStream(mInputStream, null, mOptions);
+		
+	
 		final int height = mOptions.outHeight;
 		final int width = mOptions.outWidth;
 
