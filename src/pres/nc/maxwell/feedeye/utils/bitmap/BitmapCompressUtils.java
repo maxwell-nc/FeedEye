@@ -12,9 +12,21 @@ import android.graphics.BitmapFactory;
  */
 public class BitmapCompressUtils {
 
-	private InputStream mInputStream;// Bitmap输入流
-	private BitmapFactory.Options mOptions;// Bitmap解析配置
+	/**
+	 * Bitmap输入流
+	 */
+	private InputStream mInputStream;
 
+	/**
+	 * Bitmap解析配置
+	 */
+	private BitmapFactory.Options mOptions;
+
+	
+	/**
+	 * 初始化压缩配置
+	 * @param inputStream 传入Bitmap网络流
+	 */
 	public BitmapCompressUtils(InputStream inputStream) {
 		this.mInputStream = inputStream;
 		mOptions = new BitmapFactory.Options();
@@ -30,20 +42,14 @@ public class BitmapCompressUtils {
 	 * @return Bitmap
 	 */
 	public Bitmap CompressBitmapInputStream(int sampleSize, Bitmap.Config config) {
+		
 		mOptions.inSampleSize = sampleSize;
 		mOptions.inPreferredConfig = config;
 		mOptions.inJustDecodeBounds = false;
+		
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
-
-		LogUtils.w("BitmapCompressUtils", mOptions.inJustDecodeBounds + "");
-
-		LogUtils.w("BitmapCompressUtils",
-				mInputStream == null ? "mInputStream is null"
-						: "mInputStream is not null");
-		LogUtils.w("BitmapCompressUtils", bitmap == null ? "bitmap is null"
-				: "bitmap is not null");
-
+		
 		return bitmap;
 	}
 
@@ -63,18 +69,13 @@ public class BitmapCompressUtils {
 
 		
 		try {
-			mInputStream.reset();
+			mInputStream.reset();//由于已经解析了一次，需要重置inputSteam
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
-
-		LogUtils.w("BitmapCompressUtils", mOptions.inJustDecodeBounds + "");
-
-		LogUtils.w("BitmapCompressUtils",
-				mInputStream == null ? "mInputStream is null"
-						: "mInputStream is not null");
 
 		LogUtils.w("BitmapCompressUtils", bitmap == null ? "bitmap is null"
 				: "bitmap is not null");
@@ -109,6 +110,7 @@ public class BitmapCompressUtils {
 			defaultSampleSize = heightRadio > widthRadio ? heightRadio
 					: widthRadio;
 		}
+		
 		mOptions.inJustDecodeBounds = false;
 		return defaultSampleSize;
 	}

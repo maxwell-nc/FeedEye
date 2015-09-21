@@ -9,7 +9,7 @@
         android:id="@+id/iv_item_feed_pic"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="-5dp"
+       
         android:scaleType="centerCrop"
         android:src="@color/grey" />
 

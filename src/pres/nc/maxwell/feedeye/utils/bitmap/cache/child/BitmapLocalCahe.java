@@ -29,7 +29,4 @@ public class BitmapLocalCahe extends BitmapCache{
 	}
 
 	
-	
-	
-	
 }
