@@ -36,20 +36,21 @@ public class BitmapCacheDefaultImpl implements BitmapCache {
 	}
 
 	/**
-	 * 设置要解析的参数
+	 * 设置要解析的参数,默认实现方法
 	 * 
 	 * @param imageView
 	 *            需要显示图片的ImageView
 	 * @param url
 	 *            要显示图片的网址
 	 */
+	@Override
 	public void setParams(ImageView imageView, String url) {
 		this.mImageView = imageView;
 		this.mURL = url;
 	}
 
 	/**
-	 * 默认实现方法
+	 * 显示Bitmap，给外部调用,默认实现方法
 	 * 
 	 * @param imageView
 	 *            需要显示图片的ImageView
@@ -64,7 +65,7 @@ public class BitmapCacheDefaultImpl implements BitmapCache {
 	}
 
 	/**
-	 * 默认实现方法
+	 * 获取缓存，并设置下一级缓存，内部调用,默认实现方法
 	 * 
 	 * @return 返回假
 	 */

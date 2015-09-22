@@ -222,13 +222,15 @@ public class FeedPager extends BasePager {
 				holder = (ViewHolder) view.getTag();
 
 				holder.mItemTitle.setText("复用对象" + position);
-				//holder.mItemPic.setImageDrawable(mActivity.getResources()
-				//		.getDrawable(R.drawable.btn_navi_favor_selected));
+				// holder.mItemPic.setImageDrawable(mActivity.getResources()
+				// .getDrawable(R.drawable.btn_navi_favor_selected));
 
-				//测试代码
+				// 测试代码，加载我的GitHub头像
 				new BitmapCacheUtils()
-						.displayBitmapWithLoadingImage(holder.mItemPic,
-								"https://avatars3.githubusercontent.com/u/14196813?v=3&s="+position,R.drawable.anim_refresh_rotate);
+						.displayBitmap(
+								holder.mItemPic,
+								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=1",
+								R.drawable.anim_refresh_rotate);
 
 				// 检查是否复用ConvertView，平时不需要打印，费时
 				// LogUtils.v("FeedPager", "复用View");

@@ -39,9 +39,9 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 	 */
 	private static final BitmapMemoryCache mThis = new BitmapMemoryCache();
 
-	
 	/**
 	 * 返回此类的实例对象
+	 * 
 	 * @return 此类的实例对象
 	 */
 	public static BitmapMemoryCache getInstance() {
@@ -98,6 +98,11 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 		return getCache();
 	}
 
+	/**
+	 * 获取内存缓存
+	 * 
+	 * @return 返回是否成功获取
+	 */
 	@Override
 	public boolean getCache() {
 		LogUtils.i("BitmapMemoryCache", "从内存中读取Cache");
@@ -106,10 +111,10 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 
 		if (bitmapCache != null) {
 			String tagURL = (String) mImageView.getTag();
-			
-			//LogUtils.i("BitmapMemoryCache", "tagURL" + tagURL);
-			//LogUtils.i("BitmapMemoryCache", "mURL" + mURL);
-			
+
+			// LogUtils.i("BitmapMemoryCache", "tagURL" + tagURL);
+			// LogUtils.i("BitmapMemoryCache", "mURL" + mURL);
+
 			if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
 				mImageView.setImageBitmap(bitmapCache);
 				return true;
@@ -119,6 +124,12 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 		return false;
 	}
 
+	/**
+	 * 设置内存缓存，由本地缓存实例对象调用
+	 * 
+	 * @param bitmapFile
+	 *            Bitmap文件对象
+	 */
 	@Override
 	public <T> void setCache(T bitmapFile) {
 
