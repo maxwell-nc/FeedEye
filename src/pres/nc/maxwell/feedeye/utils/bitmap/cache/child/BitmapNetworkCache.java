@@ -2,95 +2,81 @@ package pres.nc.maxwell.feedeye.utils.bitmap.cache.child;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
-import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCompressUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.widget.ImageView;
 
 /**
  * Bitmap网络缓存
  */
-public class BitmapNetworkCache extends BitmapCache {
+public class BitmapNetworkCache extends BitmapCache<Void> {
 
 	/**
-	 * 是否使用自动压缩参数，若要自定参数，请调用setCompressOptions方法
+	 * 用于设置本地缓存
 	 */
-	private boolean isAutoCompress = true;
+	private BitmapLocalCahe mBitmapLocalCahe;
 
 	/**
-	 * 采样大小
+	 * 加载错误时显示的图片
 	 */
-	private int mSampleSize;
+	protected int mErrorImageResId = R.drawable.img_load_error;
 
 	/**
-	 * 颜色配置
+	 * 设置加载错误时显示的图片
+	 * 
+	 * @param errorImageResId
+	 *            加载错误时显示的图片
 	 */
-	private Bitmap.Config mConfig;
-
+	public void setErrorImageResId(int errorImageResId) {
+		this.mErrorImageResId = errorImageResId;
+	}
 
 	/**
 	 * 初始化参数
 	 * 
-	 * @param imageView
-	 *            需要显示的ImageView
-	 * @param url
-	 *            要显示图片的URL
+	 * @param bitmapLocalCahe
+	 *            用于设置本地缓存
 	 */
-	public BitmapNetworkCache(ImageView imageView, String url) {
-		super(imageView, url);
+	public BitmapNetworkCache(BitmapLocalCahe bitmapLocalCahe) {
+
+		super(bitmapLocalCahe.getImageView(), bitmapLocalCahe.getURL());
+		this.mBitmapLocalCahe = bitmapLocalCahe;
+
 	}
 
 	/**
-	 * 设置压缩选项，使用此方法后则默认不使用自动压缩
+	 * 显示无法加载图片
+	 */
+	private void showErrorBitmap(){
+		mImageView.setImageResource(mErrorImageResId);
+	}	
+	
+	/**
+	 * 从网络中获取Bitmap，写到本地缓存，再读入内存返回
 	 * 
-	 * @param sampleSize
-	 *            采样大小
-	 * @param config
-	 *            颜色配置
-	 * @return 返回this，方便链式调用
-	 */
-	public BitmapNetworkCache setCompressOptions(int sampleSize,
-			Bitmap.Config config) {
-
-		// 取消自动压缩
-		isAutoCompress = false;
-
-		this.mSampleSize = sampleSize;
-		this.mConfig = config;
-
-		return this;
-	}
-
-	/**
-	 * 异步从网络下载Bitmap并显示
+	 * @return 返回true,无用值，无论成功与否都会显示图片
 	 */
 	@Override
-	public void displayBitmap() {
-
-		LogUtils.i("BitmapNetworkCache", "从网络中读取Bitmap");
-
-		// 开启AsyncTask执行下载图片
+	public boolean displayBitmap() {
+		
+		// 开启AsyncTask执行下载图片并显示
 		new GetBitmapTask().execute();
 
-	};
+		return true;
+	}
 
 	/**
 	 * 子线程获得网络图片
 	 */
-	class GetBitmapTask extends AsyncTask<Void, Void, Bitmap> {
+	class GetBitmapTask extends AsyncTask<Void, Void, Boolean> {
 
 		@Override
-		protected Bitmap doInBackground(Void... params) {// 子线程
-
-			mImageView.setTag(mURL);// ImageView与URL绑定，防止重用显示错误图片
-
+		protected Boolean doInBackground(Void... params) {// 子线程
 			return getCache();
 		}
 
@@ -100,20 +86,15 @@ public class BitmapNetworkCache extends BitmapCache {
 		};
 
 		@Override
-		protected void onPostExecute(Bitmap result) {// 主线程
+		protected void onPostExecute(Boolean result) {// 主线程
 
-			// 显示图片
-			if (result != null) {
-
-				String tagURL = (String) mImageView.getTag();
-				if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
-					mImageView.setImageBitmap(result);
+			if (!result.booleanValue()) {// 获取失败
+				showErrorBitmap();
+			} else {// 成功获取
+				// 调用本地缓存对象处理
+				if(!mBitmapLocalCahe.displayBitmap()){
+					showErrorBitmap();
 				}
-
-			} else {
-
-				// 显示无法加载图片
-				mImageView.setImageResource(mErrorImageResId);
 			}
 
 		};
@@ -121,11 +102,15 @@ public class BitmapNetworkCache extends BitmapCache {
 	}
 
 	/**
-	 * 从网络中下载图片
+	 * 从网络中下载图片，设置本地缓存
+	 * 
+	 * @return 返回是否成功
 	 */
 	@Override
-	protected Bitmap getCache() {
+	protected boolean getCache() {
 
+		LogUtils.i("BitmapNetworkCache", "从网络中读取Cache");
+		
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection) new URL(mURL).openConnection();
@@ -138,22 +123,12 @@ public class BitmapNetworkCache extends BitmapCache {
 
 			if (connection.getResponseCode() == 200) {
 
-				InputStream inputStream = new BufferedInputStream(
+				BufferedInputStream bufferedInputStream = new BufferedInputStream(
 						connection.getInputStream());
 
-				if (isAutoCompress) {// 自动压缩图片
+				mBitmapLocalCahe.setCache(bufferedInputStream);
 
-					return new BitmapCompressUtils(inputStream)
-							.CompressBitmapInputStream(
-									mImageView.getMeasuredHeight(),
-									mImageView.getMeasuredWidth());
-				} else {// 手动压缩图片
-
-					return new BitmapCompressUtils(inputStream)
-							.CompressBitmapInputStream(mSampleSize, mConfig);
-
-				}
-
+				return true;
 			}
 
 		} catch (MalformedURLException e) {
@@ -161,22 +136,23 @@ public class BitmapNetworkCache extends BitmapCache {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
+
 			if (connection != null) {
 				connection.disconnect();// 不要忘记断开
 			}
 
 		}
+		return false;
 
-		// 超时或者获取失败返回null
-		return null;
 	}
 
 	/**
-	 * 网络缓存不需要设置
+	 * 不能设置服务器缓存
 	 */
 	@Override
-	protected void setCache() {
-		// no implementation
+	public void setCache(Void v) {
+		throw new RuntimeException("Do not call this method:setCache() in "
+				+ this.getClass().getName());
 	}
 
 }
