@@ -8,13 +8,14 @@ import java.net.URL;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
-import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 
 /**
- * Bitmap网络缓存
+ * Bitmap网络缓存，单例
  */
-public class BitmapNetworkCache extends BitmapCache<Void> {
+public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 
 	/**
 	 * 用于设置本地缓存
@@ -24,7 +25,7 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 	/**
 	 * 加载错误时显示的图片
 	 */
-	protected int mErrorImageResId = R.drawable.img_load_error;
+	private int mErrorImageResId = R.drawable.img_load_error;
 
 	/**
 	 * 设置加载错误时显示的图片
@@ -37,24 +38,45 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 	}
 
 	/**
-	 * 初始化参数
-	 * 
-	 * @param bitmapLocalCahe
-	 *            用于设置本地缓存
-	 */
-	public BitmapNetworkCache(BitmapLocalCahe bitmapLocalCahe) {
-
-		super(bitmapLocalCahe.getImageView(), bitmapLocalCahe.getURL());
-		this.mBitmapLocalCahe = bitmapLocalCahe;
-
-	}
-
-	/**
 	 * 显示无法加载图片
 	 */
 	private void showErrorBitmap(){
 		mImageView.setImageResource(mErrorImageResId);
 	}	
+	
+	
+	/**
+	 * 此类的实例对象
+	 */
+	private static final BitmapNetworkCache mThis = new BitmapNetworkCache();
+
+	
+	/**
+	 * 返回此类的实例对象
+	 * @return 此类的实例对象
+	 */
+	public static BitmapNetworkCache getInstance() {
+
+		return mThis;
+
+	}
+	
+	/**
+	 * 单例对象，不要创建新的实例对象
+	 */
+	private BitmapNetworkCache() {}
+
+	
+	/**
+	 * 设置要解析的参数，初始化BitmapLocalCahe
+	 */
+	@Override
+	public void setParams(ImageView imageView, String url) {
+		super.setParams(imageView, url);
+		
+		//获取BitmapLocalCahe
+		mBitmapLocalCahe = BitmapLocalCahe.getInstance();
+	}
 	
 	/**
 	 * 从网络中获取Bitmap，写到本地缓存，再读入内存返回
@@ -62,7 +84,9 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 	 * @return 返回true,无用值，无论成功与否都会显示图片
 	 */
 	@Override
-	public boolean displayBitmap() {
+	public boolean displayBitmap(ImageView imageView, String url) {
+		
+		setParams(imageView, url);
 		
 		// 开启AsyncTask执行下载图片并显示
 		new GetBitmapTask().execute();
@@ -92,7 +116,7 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 				showErrorBitmap();
 			} else {// 成功获取
 				// 调用本地缓存对象处理
-				if(!mBitmapLocalCahe.displayBitmap()){
+				if(!mBitmapLocalCahe.displayBitmap(mImageView, mURL)){
 					showErrorBitmap();
 				}
 			}
@@ -107,7 +131,7 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 	 * @return 返回是否成功
 	 */
 	@Override
-	protected boolean getCache() {
+	public boolean getCache() {
 
 		LogUtils.i("BitmapNetworkCache", "从网络中读取Cache");
 		
@@ -150,7 +174,7 @@ public class BitmapNetworkCache extends BitmapCache<Void> {
 	 * 不能设置服务器缓存
 	 */
 	@Override
-	public void setCache(Void v) {
+	public <T> void setCache(T v) {
 		throw new RuntimeException("Do not call this method:setCache() in "
 				+ this.getClass().getName());
 	}

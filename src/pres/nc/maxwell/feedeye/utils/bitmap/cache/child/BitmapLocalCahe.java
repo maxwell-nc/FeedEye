@@ -9,13 +9,14 @@ import java.io.InputStream;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
-import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.os.Environment;
+import android.widget.ImageView;
 
 /**
  * Bitmap本地缓存
  */
-public class BitmapLocalCahe extends BitmapCache<InputStream> {
+public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 
 	/**
 	 * 用于设置内存缓存
@@ -27,25 +28,48 @@ public class BitmapLocalCahe extends BitmapCache<InputStream> {
 	 */
 	private String mFileName;
 
+
 	/**
-	 * 初始化参数
-	 * 
-	 * @param bitmapMemoryCache
-	 *            用于设置内存缓存
+	 * 此类的实例对象
 	 */
-	public BitmapLocalCahe(BitmapMemoryCache bitmapMemoryCache) {
+	private static final BitmapLocalCahe mThis = new BitmapLocalCahe();
 
-		super(bitmapMemoryCache.getImageView(), bitmapMemoryCache.getURL());
-		this.mBitmapMemoryCache = bitmapMemoryCache;
+	
+	/**
+	 * 返回此类的实例对象
+	 * @return 此类的实例对象
+	 */
+	public static BitmapLocalCahe getInstance() {
 
+		return mThis;
+
+	}
+
+	
+	/**
+	 * 单例对象，不要创建新的实例对象
+	 */
+	private BitmapLocalCahe() {
+
+	}
+
+	/**
+	 * 设置要解析的参数，初始化BitmapLocalCahe
+	 */
+	@Override
+	public void setParams(ImageView imageView, String url) {
+		super.setParams(imageView, url);
+
+		//获取BitmapMemoryCache
+		mBitmapMemoryCache = BitmapMemoryCache.getInstance();
 	}
 
 	/**
 	 * 从本地中获取Bitmap，写到内存缓存，再读入显示
 	 */
 	@Override
-	public boolean displayBitmap() {
-
+	public boolean displayBitmap(ImageView imageView, String url) {
+		setParams(imageView, url);
 		return getCache();
 	}
 
@@ -55,25 +79,25 @@ public class BitmapLocalCahe extends BitmapCache<InputStream> {
 	 * @return 返回是否成功
 	 */
 	@Override
-	protected boolean getCache() {
+	public boolean getCache() {
 
 		LogUtils.i("BitmapLocalCahe", "从本地中读取Cache");
 
 		File cacheFile = getCacheFile();
 		if (cacheFile.exists()) {// 本地缓存存在
 
-			//设置内存缓存
+			// 设置内存缓存
 			mBitmapMemoryCache.setCache(cacheFile);
-			
-			//从内存中显示
-			if (!mBitmapMemoryCache.displayBitmap()) {
-				
+
+			// 从内存中显示
+			if (!mBitmapMemoryCache.displayBitmap(mImageView, mURL)) {
+
 				return false;
-				
+
 			} else {
-				
+
 				return true;
-				
+
 			}
 
 		} else {// 本地缓存不存在
@@ -89,7 +113,11 @@ public class BitmapLocalCahe extends BitmapCache<InputStream> {
 	 *            网络流
 	 */
 	@Override
-	public void setCache(InputStream bitmapNetworkStream) {
+	public <T> void setCache(T bitmapNetworkStream) {
+
+		if (!(bitmapNetworkStream instanceof InputStream)) {
+			return;
+		}
 
 		LogUtils.i("BitmapLocalCahe", "设置本地缓存");
 
@@ -98,11 +126,12 @@ public class BitmapLocalCahe extends BitmapCache<InputStream> {
 		try {
 
 			// 写本地缓存
-			IOUtils.writeStream(bitmapNetworkStream, bufferedOutputStream);
+			IOUtils.writeStream((InputStream) bitmapNetworkStream,
+					bufferedOutputStream);
 
 		} finally {// 关闭流
 
-			IOUtils.closeQuietly(bitmapNetworkStream);
+			IOUtils.closeQuietly((InputStream) bitmapNetworkStream);
 			IOUtils.closeQuietly(bufferedOutputStream);
 
 		}

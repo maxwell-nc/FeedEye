@@ -228,7 +228,7 @@ public class FeedPager extends BasePager {
 				//测试代码
 				new BitmapCacheUtils()
 						.displayBitmapWithLoadingImage(holder.mItemPic,
-								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=460",R.drawable.anim_refresh_rotate);
+								"https://avatars3.githubusercontent.com/u/14196813?v=3&s="+position,R.drawable.anim_refresh_rotate);
 
 				// 检查是否复用ConvertView，平时不需要打印，费时
 				// LogUtils.v("FeedPager", "复用View");

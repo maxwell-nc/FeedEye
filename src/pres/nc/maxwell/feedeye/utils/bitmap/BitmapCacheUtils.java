@@ -13,32 +13,39 @@ import android.widget.ImageView;
  */
 public class BitmapCacheUtils {
 
-	
+	/**
+	 * 内存缓存对象
+	 */
+	private BitmapMemoryCache mBitmapMemoryCache;
+
+	/**
+	 * 本地缓存对象
+	 */
+	private BitmapLocalCahe mBitmapLocalCahe;
+
+	/**
+	 * 网络缓存对象
+	 */
+	private BitmapNetworkCache mBitmapNetworkCache;
+
+	public BitmapCacheUtils() {
+		mBitmapMemoryCache = BitmapMemoryCache.getInstance();
+		mBitmapLocalCahe = BitmapLocalCahe.getInstance();
+		mBitmapNetworkCache = BitmapNetworkCache.getInstance();
+	}
+
 	public void displayBitmap(ImageView imageView, String url) {
 
-		// 内存缓存
-		BitmapMemoryCache bitmapMemoryCache = new BitmapMemoryCache(imageView,
-				url);
-		
-		//手动设置压缩选项
-		//bitmapMemoryCache.setCompressOptions(16, Bitmap.Config.RGB_565);
-		
-		if (!bitmapMemoryCache.displayBitmap()) {//内存中没有缓存
+	
+		if (!mBitmapMemoryCache.displayBitmap(imageView, url)) {// 内存中没有缓存
 
 			LogUtils.i("BitmapCacheUtils", "内存中没有缓存");
-			
-			// 本地缓存
-			BitmapLocalCahe bitmapLocalCahe = new BitmapLocalCahe(
-					bitmapMemoryCache);
 
-			if (!bitmapLocalCahe.displayBitmap()) {//本地中没有缓存
+			if (!mBitmapLocalCahe.displayBitmap(imageView, url)) {// 本地中没有缓存
 
 				LogUtils.i("BitmapCacheUtils", "本地中没有缓存");
-				
-				// 网路缓存
-				BitmapNetworkCache bitmapNetworkCache = new BitmapNetworkCache(
-						bitmapLocalCahe);
-				bitmapNetworkCache.displayBitmap();//永真，网络无法获取则显示错误图片
+
+				mBitmapNetworkCache.displayBitmap(imageView, url);// 永真，网络无法获取则显示错误图片
 
 			}
 
@@ -46,9 +53,19 @@ public class BitmapCacheUtils {
 
 	}
 
+	public void displayBitmap(ImageView imageView, String url, int sampleSize,
+			Bitmap.Config config) {
+
+		// 手动设置压缩选项
+		mBitmapMemoryCache.setCompressOptions(sampleSize, config);
+
+		displayBitmap(imageView, url);
+
+	}
+
 	public void displayBitmapWithLoadingImage(ImageView imageView, String url,
 			Bitmap bitmap) {
-
+		
 		imageView.setImageBitmap(bitmap);
 		displayBitmap(imageView, url);
 
