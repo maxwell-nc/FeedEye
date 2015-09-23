@@ -1,5 +1,6 @@
 package pres.nc.maxwell.feedeye.utils.bitmap.cache;
 
+import pres.nc.maxwell.feedeye.R;
 import android.widget.ImageView;
 
 /**
@@ -7,6 +8,29 @@ import android.widget.ImageView;
  */
 public class BitmapCacheDefaultImpl implements BitmapCache {
 
+	/**
+	 * 加载错误时显示的图片
+	 */
+	private int mErrorImageResId = R.drawable.img_load_error;
+
+	/**
+	 * 设置加载错误时显示的图片
+	 * 
+	 * @param errorImageResId
+	 *            加载错误时显示的图片
+	 */
+	public void setErrorImageResId(int errorImageResId) {
+		this.mErrorImageResId = errorImageResId;
+	}
+
+	/**
+	 * 显示无法加载图片
+	 */
+	public void showErrorBitmap(){
+		mImageView.setImageResource(mErrorImageResId);
+	}	
+	
+	
 	/**
 	 * 需要显示的ImageView
 	 */

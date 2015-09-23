@@ -6,7 +6,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.os.AsyncTask;
@@ -22,29 +21,6 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 	 */
 	private BitmapLocalCahe mBitmapLocalCahe;
 
-	/**
-	 * 加载错误时显示的图片
-	 */
-	private int mErrorImageResId = R.drawable.img_load_error;
-
-	/**
-	 * 设置加载错误时显示的图片
-	 * 
-	 * @param errorImageResId
-	 *            加载错误时显示的图片
-	 */
-	public void setErrorImageResId(int errorImageResId) {
-		this.mErrorImageResId = errorImageResId;
-	}
-
-	/**
-	 * 显示无法加载图片
-	 */
-	private void showErrorBitmap(){
-		mImageView.setImageResource(mErrorImageResId);
-	}	
-	
-	
 	/**
 	 * 此类的实例对象
 	 */
