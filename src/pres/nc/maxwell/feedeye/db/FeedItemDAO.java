@@ -48,6 +48,7 @@ public class FeedItemDAO {
 		map.put("preview_content", feedItemBean.getPreviewContent());
 		map.put("last_time", TimeUtils.timestamp2String(
 				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss"));
+		map.put("delete_flag", feedItemBean.getDeleteFlag());
 
 		return map;
 	}
@@ -61,10 +62,15 @@ public class FeedItemDAO {
 	 */
 	public boolean addItem(FeedItemBean feedItemBean) {
 
-		// id不需要插入，数据库生成的
-		if (feedItemBean.getItemId() != -1) {
+		int itemId = feedItemBean.getItemId();
+		if (itemId != -1) {// 防止非法插入
 			throw new RuntimeException(
 					"Do not set item id if you want to add to database");
+		}
+
+		String isDeleted = feedItemBean.getDeleteFlag();
+		if (isDeleted == "-1") {// 已经标记为删除的对象
+			throw new RuntimeException("Do not update already deleted id item");
 		}
 
 		ContentValues map = putBeanInMap(feedItemBean);
@@ -80,7 +86,7 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * 删除一条订阅信息
+	 * 删除一条订阅信息（未实现同步，非真正删除）
 	 * 
 	 * @param feedItemBean
 	 *            要删除的订阅信息
@@ -88,11 +94,32 @@ public class FeedItemDAO {
 	 */
 	public boolean removeItem(FeedItemBean feedItemBean) {
 
+		int itemId = feedItemBean.getItemId();
+		if (itemId <= -1) {// 防止非法更新
+			throw new RuntimeException("Do not delete no-id item");
+		}
+
+		/*
+		 * 暂时不需要删除 String idString = String.valueOf(feedItemBean.getItemId());
+		 * 
+		 * SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+		 * 
+		 * int rowCount = db.delete(mTableName, "id=?", new String[] { idString
+		 * });
+		 * 
+		 * db.close();
+		 */
+
+		// 设置删除标记，用于同步删除
+		feedItemBean.setDeleteFlag("-1");
+
+		String idString = String.valueOf(itemId);
+		ContentValues map = putBeanInMap(feedItemBean);
+
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
-		String idString = String.valueOf(feedItemBean.getItemId());
-
-		int rowCount = db.delete(mTableName, "id=?", new String[] { idString });
+		int rowCount = db.update(mTableName, map, "id=?",
+				new String[] { idString });
 
 		db.close();
 
@@ -100,28 +127,32 @@ public class FeedItemDAO {
 	}
 
 	/**
+	 * 更新订阅信息
 	 * 
 	 * @param feedItemBean
-	 * @return
+	 *            订阅信息
+	 * @return 是否成功更新
 	 */
-	public boolean updateItem(FeedItemBean feedItemBean){
-		
-		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+	public boolean updateItem(FeedItemBean feedItemBean) {
 
-		int itemId =  feedItemBean.getItemId();
-		
-		if (itemId<=-1) {//防止非法更新
+		int itemId = feedItemBean.getItemId();
+		if (itemId <= -1) {// 防止非法更新
 			throw new RuntimeException("Do not update non-set id item");
 		}
-				
+
+		String isDeleted = feedItemBean.getDeleteFlag();
+		if (isDeleted == "-1") {// 已经标记为删除的对象
+			throw new RuntimeException("Do not update already deleted id item");
+		}
+
 		String idString = String.valueOf(itemId);
-
 		ContentValues map = putBeanInMap(feedItemBean);
-		int rowCount = db.update(mTableName, map, "id=?", new String[]{idString});
-		
 
+		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+		int rowCount = db.update(mTableName, map, "id=?",
+				new String[] { idString });
 		db.close();
-		
+
 		return rowCount == 1 ? true : false;
 	}
 }

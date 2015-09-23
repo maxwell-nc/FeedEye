@@ -32,7 +32,11 @@ public class FeedItemBean {
 	 */
 	private Timestamp lastTime;
 
-	
+	/**
+	 * 删除标记,不要手动设置
+	 * 用于同步：如果为"1"则表示本地已删除，但未同步，不要删除记录
+	 */
+	private String deleteFlag = "0";
 	
 	public int getItemId() {
 		return itemId;
@@ -72,6 +76,14 @@ public class FeedItemBean {
 
 	public void setLastTime(Timestamp lastTime) {
 		this.lastTime = lastTime;
+	}
+
+	public String getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(String deleteFlag) {
+		this.deleteFlag = deleteFlag;
 	}
 	
 	
