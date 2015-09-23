@@ -124,7 +124,14 @@ public class FeedPager extends BasePager {
 		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
 		
 		FeedItemDAO feedItemDAO =new FeedItemDAO(mActivity);
-		feedItemDAO.addItem(feedItemBean);
+		
+		boolean result = feedItemDAO.addItem(feedItemBean);
+		LogUtils.i("FeedPager", "添加结果："+result);
+		
+		feedItemBean.setItemId(1);
+		
+		result = feedItemDAO.removeItem(feedItemBean);
+		LogUtils.i("FeedPager", "删除结果："+result);
 		
 	}
 
