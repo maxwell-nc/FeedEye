@@ -32,7 +32,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 				+ "pic_url text not null,"// 图片URL
 				+ "title varchar(100) not null,"// 标题
 				+ "preview_content varchar(100),"// 预览内容
-				+ "last_time timeStamp not null DEFAULT (datetime('now','localtime'))"// 时间
+				+ "last_time timeStamp not null DEFAULT (datetime('now','localtime')),"// 时间
 				+ ");";
 
 		db.execSQL(sqlString);

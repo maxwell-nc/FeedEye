@@ -34,6 +34,25 @@ public class FeedItemDAO {
 	}
 
 	/**
+	 * 把Bean放进Map
+	 * 
+	 * @param feedItemBean
+	 *            订阅信息
+	 * @return 返回map
+	 */
+	private ContentValues putBeanInMap(FeedItemBean feedItemBean) {
+
+		ContentValues map = new ContentValues();
+		map.put("pic_url", feedItemBean.getPicURL());
+		map.put("title", feedItemBean.getTitle());
+		map.put("preview_content", feedItemBean.getPreviewContent());
+		map.put("last_time", TimeUtils.timestamp2String(
+				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss"));
+
+		return map;
+	}
+
+	/**
 	 * 添加一条订阅信息
 	 * 
 	 * @param feedItemBean
@@ -42,18 +61,13 @@ public class FeedItemDAO {
 	 */
 	public boolean addItem(FeedItemBean feedItemBean) {
 
-		ContentValues map = new ContentValues();
-		
 		// id不需要插入，数据库生成的
-		if ( feedItemBean.getItemId() != -1) {
-			throw new RuntimeException("Do not set item id if you want to add to database");
+		if (feedItemBean.getItemId() != -1) {
+			throw new RuntimeException(
+					"Do not set item id if you want to add to database");
 		}
-		
-		map.put("pic_url", feedItemBean.getPicURL());
-		map.put("title", feedItemBean.getTitle());
-		map.put("preview_content", feedItemBean.getPreviewContent());
-		map.put("last_time", TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss"));
+
+		ContentValues map = putBeanInMap(feedItemBean);
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
@@ -65,10 +79,11 @@ public class FeedItemDAO {
 		return rowId == -1 ? false : true;
 	}
 
-	
 	/**
 	 * 删除一条订阅信息
-	 * @param feedItemBean 要删除的订阅信息
+	 * 
+	 * @param feedItemBean
+	 *            要删除的订阅信息
 	 * @return 是否成功删除
 	 */
 	public boolean removeItem(FeedItemBean feedItemBean) {
@@ -76,15 +91,37 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		String idString = String.valueOf(feedItemBean.getItemId());
-		
-		int rowCount = db.delete(mTableName, "id=?",
-				new String[] { idString });
+
+		int rowCount = db.delete(mTableName, "id=?", new String[] { idString });
 
 		db.close();
 
 		return rowCount == 1 ? true : false;
 	}
-	
-	
-	
+
+	/**
+	 * 
+	 * @param feedItemBean
+	 * @return
+	 */
+	public boolean updateItem(FeedItemBean feedItemBean){
+		
+		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+
+		int itemId =  feedItemBean.getItemId();
+		
+		if (itemId<=-1) {//防止非法更新
+			throw new RuntimeException("Do not update non-set id item");
+		}
+				
+		String idString = String.valueOf(itemId);
+
+		ContentValues map = putBeanInMap(feedItemBean);
+		int rowCount = db.update(mTableName, map, "id=?", new String[]{idString});
+		
+
+		db.close();
+		
+		return rowCount == 1 ? true : false;
+	}
 }
