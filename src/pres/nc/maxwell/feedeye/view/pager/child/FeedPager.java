@@ -1,8 +1,11 @@
 package pres.nc.maxwell.feedeye.view.pager.child;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.db.FeedItemDAO;
+import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
@@ -112,6 +115,17 @@ public class FeedPager extends BasePager {
 
 		});
 
+		
+		//TODO:测试数据库
+		FeedItemBean feedItemBean = new FeedItemBean();
+		feedItemBean.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
+		feedItemBean.setTitle("我的GitHub");
+		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
+		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
+		
+		FeedItemDAO feedItemDAO =new FeedItemDAO(mActivity);
+		feedItemDAO.addItem(feedItemBean);
+		
 	}
 
 	/**
@@ -229,7 +243,7 @@ public class FeedPager extends BasePager {
 				new BitmapCacheUtils(false)
 						.displayBitmap(
 								holder.mItemPic,
-								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=111",
+								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=1",
 								R.drawable.anim_refresh_rotate);
 
 				// 检查是否复用ConvertView，平时不需要打印，费时
