@@ -31,19 +31,20 @@ public class BitmapCacheUtils {
 	/**
 	 * 是否开启网络缓存
 	 */
-	private boolean mIsEnableNetworkCache =  true;
+	private boolean mIsEnableNetworkCache = true;
 
-	
 	/**
 	 * 初始化三级缓存单例对象，默认使用网络缓存
 	 */
 	public BitmapCacheUtils() {
 		this(true);
 	}
-	
+
 	/**
 	 * 初始化三级缓存单例对象
-	 * @param isEnableNetworkCache 是否使用网络缓存
+	 * 
+	 * @param isEnableNetworkCache
+	 *            是否使用网络缓存
 	 */
 	public BitmapCacheUtils(boolean isEnableNetworkCache) {
 
@@ -57,7 +58,7 @@ public class BitmapCacheUtils {
 		if (mIsEnableNetworkCache) {
 			// 网络缓存对象
 			mBitmapNetworkCache = BitmapNetworkCache.getInstance();
-		}else{
+		} else {
 			LogUtils.i("BitmapCacheUtils", "不使用网络缓存");
 		}
 
@@ -90,7 +91,7 @@ public class BitmapCacheUtils {
 				if (mIsEnableNetworkCache) {
 					// 3.读取网络缓存
 					mBitmapNetworkCache.displayBitmap(imageView, url);// 永真，网络无法获取则显示错误图片
-				}else {//不使用网络缓存且本地缓存不存在
+				} else {// 不使用网络缓存且本地缓存不存在
 					mBitmapLocalCahe.showErrorBitmap();
 				}
 			}

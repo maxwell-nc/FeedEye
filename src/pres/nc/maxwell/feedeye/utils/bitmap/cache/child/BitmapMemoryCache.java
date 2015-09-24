@@ -7,7 +7,6 @@ import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCompressUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 
 /**
@@ -120,7 +119,7 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 
 		Bitmap bitmapCache = mMemoryCache.get(mURL);
 
-		if (bitmapCache != null) {
+		if (bitmapCache != null) {//有缓存
 			String tagURL = (String) mImageView.getTag();
 
 			// LogUtils.i("BitmapMemoryCache", "tagURL" + tagURL);
@@ -129,10 +128,15 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 			if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
 				mImageView.setImageBitmap(bitmapCache);
 				return true;
+			}else {//wrong tag
+				mImageView.setTag(null);
+				return false;
 			}
+			
+		}else {//没有缓存
+			
+			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -151,44 +155,32 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 		LogUtils.i("BitmapMemoryCache", "设置内存缓存");
 
 		
-		mImageView.getViewTreeObserver().addOnGlobalLayoutListener(
-				new OnGlobalLayoutListener() {
+		// 测量ImageView布局宽高
+		mImageView.measure(0, 0);//使用onLayoutListener会出现奇怪问题
+		mImageViewHeight = mImageView.getMeasuredHeight();
+		mImageViewWidth = mImageView.getMeasuredWidth();
 
-					@Override
-					@SuppressWarnings("deprecation")
-					public void onGlobalLayout() {
-						mImageView.getViewTreeObserver()
-								.removeGlobalOnLayoutListener(this);
+		Bitmap bitmapCache = null;
 
-						
-						// 测量ImageView布局宽高
-						mImageViewHeight = mImageView.getHeight();
-						mImageViewWidth = mImageView.getWidth();
+		if (isAutoCompress) {// 自动压缩图片
+			bitmapCache = new BitmapCompressUtils(
+					(File) bitmapFile).CompressBitmapFile(
+					mImageViewHeight, mImageViewWidth);
+		} else {// 手动压缩图片
+			bitmapCache = new BitmapCompressUtils(
+					(File) bitmapFile).CompressBitmapFile(
+					mSampleSize, mConfig);
+		}
 
-						Bitmap bitmapCache = null;
+		if (bitmapCache != null) {
+			String tagURL = (String) mImageView.getTag();
+			if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
 
-						if (isAutoCompress) {// 自动压缩图片
-							bitmapCache = new BitmapCompressUtils(
-									(File) bitmapFile).CompressBitmapFile(
-									mImageViewHeight, mImageViewWidth);
-						} else {// 手动压缩图片
-							bitmapCache = new BitmapCompressUtils(
-									(File) bitmapFile).CompressBitmapFile(
-									mSampleSize, mConfig);
-						}
-
-						if (bitmapCache != null) {
-							String tagURL = (String) mImageView.getTag();
-							if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
-
-								// 加入内存缓存
-								mMemoryCache.put(mURL, bitmapCache);
-							}
-						}
-
-					}
-				});
-
+				// 加入内存缓存
+				mMemoryCache.put(mURL, bitmapCache);
+			}
+		}
+		
 	}
 
 	/**

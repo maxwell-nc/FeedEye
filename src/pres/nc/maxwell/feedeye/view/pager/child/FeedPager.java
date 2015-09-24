@@ -183,7 +183,7 @@ public class FeedPager extends BasePager {
 			setListViewData(500);
 		}
 
-		//添加监听器
+		// 添加监听器
 		addListViewListener();
 	}
 
@@ -239,30 +239,31 @@ public class FeedPager extends BasePager {
 
 	/**
 	 * 如果有更多数据则插入更多数据
+	 * 
 	 * @return 添加了的条目数
 	 */
 	private int insertMoreItem() {
-		int addCount = 0;//要添加的数量
+		int addCount = 0;// 要添加的数量
 
-		if (mItemList.size() == 0) {//没数据可以加载了
+		if (mItemList.size() == 0) {// 没数据可以加载了
 			return 0;
 		}
-		
-		//有剩余数据
+
+		// 有剩余数据
 		if (mItemList.size() > SHOW_ITEM_COUNT) {
 			addCount = SHOW_ITEM_COUNT;
 		} else {
 			addCount = mItemList.size();
 		}
 
-		//添加到显示列表
+		// 添加到显示列表
 		for (int i = 0; i < addCount; i++) {
 			mItemShowedList.add(mItemList.get(i));
 		}
 		for (int i = addCount - 1; i >= 0; i--) {
 			mItemList.remove(i);
 		}
-		
+
 		return addCount;
 	};
 
@@ -285,10 +286,13 @@ public class FeedPager extends BasePager {
 		@Override
 		public int getCount() {
 
+			int itemCount = mItemShowedList.size();
+
 			// 打印要显示的数目
 			// LogUtils.w("FeedPager", "ListCount:" + mItemShowedList.size());
+			mTitle.setText("我的订阅(" + itemCount + ")");
 
-			return mItemShowedList.size();
+			return itemCount;
 		}
 
 		@Override
@@ -366,11 +370,11 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void run() {
-							
+
 							mListViewAdapter.notifyDataSetChanged();
-							
+
 							mListView.completeRefresh();
-							
+
 							Toast.makeText(mActivity, "刷新成功",
 									Toast.LENGTH_SHORT).show();
 						}
@@ -399,19 +403,20 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void run() {
-							
+
 							mListViewAdapter.notifyDataSetChanged();
-							
+
 							mListView.completeRefresh();
-							
-							if (addCount==0) {
+
+							if (addCount == 0) {
 								Toast.makeText(mActivity, "没有更多数据了",
 										Toast.LENGTH_SHORT).show();
-							}else {
-								Toast.makeText(mActivity, "成功加载了"+addCount+"条数据",
+							} else {
+								Toast.makeText(mActivity,
+										"成功加载了" + addCount + "条数据",
 										Toast.LENGTH_SHORT).show();
 							}
-							
+
 						}
 					});
 

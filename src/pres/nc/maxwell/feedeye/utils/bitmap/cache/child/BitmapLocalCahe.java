@@ -28,15 +28,14 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 	 */
 	private String mFileName;
 
-
 	/**
 	 * 此类的实例对象
 	 */
 	private static final BitmapLocalCahe mThis = new BitmapLocalCahe();
 
-	
 	/**
 	 * 返回此类的实例对象
+	 * 
 	 * @return 此类的实例对象
 	 */
 	public static BitmapLocalCahe getInstance() {
@@ -45,7 +44,6 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 
 	}
 
-	
 	/**
 	 * 单例对象，不要创建新的实例对象
 	 */
@@ -60,7 +58,7 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 	public void setParams(ImageView imageView, String url) {
 		super.setParams(imageView, url);
 
-		//获取BitmapMemoryCache
+		// 获取BitmapMemoryCache
 		mBitmapMemoryCache = BitmapMemoryCache.getInstance();
 	}
 
@@ -179,8 +177,6 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
-
-		LogUtils.w("BitmapLocalCahe", savePath);
 
 		// 以URL的MD5值为文件名
 		mFileName = MD5Utils.getMD5String(getURL());
