@@ -1,6 +1,7 @@
 package pres.nc.maxwell.feedeye.db;
 
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.content.ContentValues;
 import android.content.Context;
@@ -81,8 +82,11 @@ public class FeedItemDAO {
 		// 插入数据
 		long rowId = db.insert(mTableName, null, map);
 
+		LogUtils.i("FeedPager", "添加rowId："+rowId);
+		
 		db.close();
-
+		db = null;
+		
 		if (rowId == -1) {// 插入失败
 
 			return false;
@@ -120,6 +124,8 @@ public class FeedItemDAO {
 		 * });
 		 * 
 		 * db.close();
+		 * 
+		 * db = null;
 		 */
 
 		// 设置删除标记，用于同步删除
@@ -134,6 +140,7 @@ public class FeedItemDAO {
 				new String[] { idString });
 
 		db.close();
+		db = null;
 
 		return rowCount == 1 ? true : false;
 	}
@@ -164,7 +171,8 @@ public class FeedItemDAO {
 		int rowCount = db.update(mTableName, map, "id=?",
 				new String[] { idString });
 		db.close();
-
+		db = null;
+		
 		return rowCount == 1 ? true : false;
 	}
 
@@ -189,7 +197,8 @@ public class FeedItemDAO {
 		}
 
 		db.close();
-
+		db = null;
+		
 		if (idString != null) {// 查询到数据
 			return Integer.parseInt(idString);
 		} else {// 查询不到数据

@@ -22,6 +22,8 @@ public class IOUtils {
 				inputStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				inputStream = null;
 			}
 		}
 
@@ -40,6 +42,8 @@ public class IOUtils {
 				outputStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				outputStream = null;
 			}
 		}
 	}
