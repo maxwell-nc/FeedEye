@@ -60,7 +60,7 @@ public class BasePager {
 	 */
 	protected void initView() {
 		mBaseView = View.inflate(mActivity, R.layout.pager_base, null);
-
+		
 		// 检查View对象是否为null
 		// LogUtils.v("BasePager", mBaseView == null ? "BaseView null":
 		// "BaseView not null");

@@ -1,23 +1,21 @@
 package pres.nc.maxwell.feedeye.view.pager.child;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.FeedPagerListViewItem;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -29,35 +27,73 @@ import android.widget.Toast;
  */
 public class FeedPager extends BasePager {
 
-	private View mViewContent; // 填充到父布局中的FrameLayout中的View对象
+	/**
+	 * 填充到父布局中的FrameLayout中的View对象
+	 */
+	private View mViewContent;
 
-	private DragRefreshListView mListView;// 订阅列表
-	private ArrayList<FeedPagerListViewItem> mItemList;// ListView中的Item集合
-	private ArrayList<FeedPagerListViewItem> mItemShowedList;// ListView中已显示的Item集合
+	/**
+	 * 订阅列表
+	 */
+	private DragRefreshListView mListView;
 
-	private final int SHOW_ITEM_COUNT = 20;// 一次展示的Item数量
+	/**
+	 * 存储从数据库中读取出来的Item信息
+	 */
+	private ArrayList<FeedItemBean> mItemInfoList;
 
+	/**
+	 * ListView中的Item集合
+	 */
+	private ArrayList<FeedPagerListViewItem> mItemList;
+
+	/**
+	 * ListView中已显示的Item集合
+	 */
+	private ArrayList<FeedPagerListViewItem> mItemShowedList;
+
+	/**
+	 * 一次展示的Item数量
+	 */
+	private final int SHOW_ITEM_COUNT = 20;
+
+	/**
+	 * ListView为空显示的提示图片
+	 */
+	private ImageView mNothingImg;
+
+	/**
+	 * ListView数据适配器
+	 */
 	private FeedPagerListViewAdapter mListViewAdapter;
-
-	private ImageView mNothingImg;// ListView为空显示的提示图片
 
 	public DragRefreshListView getListView() {
 		return mListView;
 	}
 
+	/**
+	 * 构造方法
+	 * 
+	 * @param mActivity
+	 *            Activity
+	 */
 	public FeedPager(Activity mActivity) {
 		super(mActivity);
 	}
 
+	/**
+	 * 初始化界面显示
+	 */
 	@Override
 	protected void initView() {
 		super.initView();
 
-		mTitle.setText("订阅列表");
+		mTitle.setText("我的订阅");
 		mViewContent = setContainerContent(R.layout.pager_main_feed);
 		mListView = (DragRefreshListView) mViewContent
 				.findViewById(R.id.lv_feed_list);
 
+		// ListView为空时显示的图片
 		mNothingImg = (ImageView) mViewContent.findViewById(R.id.iv_nothing);
 
 		mItemList = new ArrayList<FeedPagerListViewItem>();
@@ -70,8 +106,52 @@ public class FeedPager extends BasePager {
 	protected void initData() {
 		super.initData();
 
-		// TODO:暂时填充测试数据
-		for (int i = 0; i < 2000; i++) {
+		// 首先异步查询数据库
+		new ReadItemInfoDBTask().execute();
+
+		// 在上面的AsyncTask执行后会执行doWhenFinishedReadDB()
+	}
+
+	/**
+	 * 读取FeedItem信息的异步任务
+	 */
+	class ReadItemInfoDBTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {// 子线程
+
+			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+			mItemInfoList = feedItemDAO.queryAllItems();
+
+			LogUtils.i("FeedPager", "查询结果：" + mItemInfoList.toString());
+			LogUtils.i("FeedPager", "查询结果：" + mItemInfoList.size());
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values) {// 主线程
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {// 主线程
+
+			// 数据库读取完成
+			doWhenFinishedReadDB();
+
+		}
+	}
+
+	/**
+	 * 完成数据库读取后执行的操作
+	 */
+	private void doWhenFinishedReadDB() {
+
+		int infoCount = mItemInfoList.size();
+
+		// 根据订阅信息条数初始化mItemList
+		for (int i = 0; i < infoCount; i++) {
 			FeedPagerListViewItem item = new FeedPagerListViewItem(mActivity);
 			mItemList.add(item);
 		}
@@ -90,59 +170,6 @@ public class FeedPager extends BasePager {
 			setListViewData(500);
 		}
 
-		// 设置每项Item的点击事件
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// TODO：待添加点击事件
-
-				// 检查NaturePositionOnItemClickListener是否生效
-				LogUtils.w("FeedPager", "item position:" + position);
-			}
-		});
-
-		mListView.setOnRefreshListener(new ListViewRefreshListener());
-
-		// 设置点击图片添加
-		mNothingImg.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO:执行添加订阅操作
-			}
-
-		});
-
-		
-		//TODO:测试数据库
-		FeedItemBean feedItemBean = new FeedItemBean();
-		feedItemBean.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
-		feedItemBean.setTitle("我的GitHub");
-		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
-		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
-		
-		FeedItemDAO feedItemDAO =new FeedItemDAO(mActivity);
-		
-		boolean result = feedItemDAO.addItem(feedItemBean);
-		LogUtils.i("FeedPager", "添加结果："+result);
-		
-		
-		ArrayList<FeedItemBean> retList = feedItemDAO.queryAllItems();
-		LogUtils.i("FeedPager", "查询结果："+retList.toString());
-		LogUtils.i("FeedPager", "查询结果："+retList.size());
-		
-		// feedItemBean.setItemId(1);
-		// feedItemBean.setPreviewContent("更新了DAO更新数据库中的Item功能，现在试试");
-		// result = feedItemDAO.updateItem(feedItemBean);
-		// LogUtils.i("FeedPager", "更新结果："+result);
-		//
-		// feedItemBean.setItemId(1);
-		// result = feedItemDAO.removeItem(feedItemBean);
-		// LogUtils.i("FeedPager", "删除结果："+result);
-		
-		
 	}
 
 	/**
@@ -163,7 +190,7 @@ public class FeedPager extends BasePager {
 	};
 
 	/**
-	 * 设置ListView适配器
+	 * 设置ListView适配器,加载数据
 	 * 
 	 * @param delayTime
 	 *            延迟时间
@@ -252,17 +279,8 @@ public class FeedPager extends BasePager {
 				view = (RelativeLayout) convertView;
 				holder = (ViewHolder) view.getTag();
 
-				holder.mItemTitle.setText("复用对象" + position);
-				// holder.mItemPic.setImageDrawable(mActivity.getResources()
-				// .getDrawable(R.drawable.btn_navi_favor_selected));
-
-				// 测试代码，加载我的GitHub头像
-				new BitmapCacheUtils(false)
-						.displayBitmap(
-								holder.mItemPic,
-								"https://avatars3.githubusercontent.com/u/14196813?v=3&s=1",
-								R.drawable.anim_refresh_rotate);
-
+				setHolderBeanInfo(holder,mItemInfoList.get(position));
+	
 				// 检查是否复用ConvertView，平时不需要打印，费时
 				// LogUtils.v("FeedPager", "复用View");
 
@@ -271,15 +289,9 @@ public class FeedPager extends BasePager {
 
 				// TODO:暂时填充测试数据
 				FeedPagerListViewItem item = mItemShowedList.get(position);
-				item.initListViewItem();
-				item.getItemTitle().setText("新创建对象" + position);
-				if (position == 5) {
+				
+				item.parseBean(mItemInfoList.get(position));
 
-					item.getItemPic().setImageDrawable(
-							mActivity.getResources().getDrawable(
-									R.drawable.ic_launcher));
-
-				}
 				view = (RelativeLayout) item.getItemView();
 
 				// 利用ViewHolder记录子孩子View对象
@@ -373,4 +385,27 @@ public class FeedPager extends BasePager {
 			}.start();
 		}
 	}
+
+	
+	/**
+	 * 设置holder的数据
+	 * @param holder ViewHolder对象
+	 * @param feedItemBean 订阅信息
+	 */
+	private void setHolderBeanInfo(ViewHolder holder,FeedItemBean feedItemBean) {
+	
+		if (feedItemBean == null) {
+			return;
+		} 
+		
+		// 使用三级缓存加载图片
+		new BitmapCacheUtils().displayBitmap(holder.mItemPic, feedItemBean.getPicURL(),
+				R.drawable.anim_refresh_rotate);
+		holder.mItemTitle.setText(feedItemBean.getTitle());
+		holder.mItemPreview.setText(feedItemBean.getPreviewContent());
+		holder.mItemTime.setText(TimeUtils.timestamp2String(feedItemBean.getLastTime(),
+				"HH:mm"));
+
+	}
+	
 }
