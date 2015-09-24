@@ -24,4 +24,14 @@ public class TimeUtils {
 		return retStr;
 	}
 	
+	/**
+	 * String转Timestamp
+	 * @param timeString 时间文本
+	 * @return Timestamp类型
+	 */
+	public static Timestamp string2Timestamp(String timeString){
+		
+		return Timestamp.valueOf(timeString);
+		
+	}
 }

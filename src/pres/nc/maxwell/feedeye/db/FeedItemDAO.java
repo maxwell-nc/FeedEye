@@ -1,5 +1,7 @@
 package pres.nc.maxwell.feedeye.db;
 
+import java.util.ArrayList;
+
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
@@ -82,11 +84,11 @@ public class FeedItemDAO {
 		// 插入数据
 		long rowId = db.insert(mTableName, null, map);
 
-		LogUtils.i("FeedPager", "添加rowId："+rowId);
-		
+		LogUtils.i("FeedPager", "添加rowId：" + rowId);
+
 		db.close();
 		db = null;
-		
+
 		if (rowId == -1) {// 插入失败
 
 			return false;
@@ -172,8 +174,57 @@ public class FeedItemDAO {
 				new String[] { idString });
 		db.close();
 		db = null;
-		
+
 		return rowCount == 1 ? true : false;
+	}
+
+	/**
+	 * 无条件查询所有的item
+	 * 
+	 * @return item的bean集合
+	 */
+	public ArrayList<FeedItemBean> queryAllItems() {
+
+		return queryItems(null, null);
+
+	}
+
+	/**
+	 * 按条件查询item
+	 * 
+	 * @param selection
+	 * @param selectionArgs
+	 * @return
+	 */
+	public ArrayList<FeedItemBean> queryItems(String selection,
+			String[] selectionArgs) {
+
+		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+
+		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
+				null, null, null, null);
+
+		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
+
+		while (cursor.moveToNext()) {// 查询所有结果
+
+			FeedItemBean feedItemBean = new FeedItemBean();
+
+			feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
+			feedItemBean.setPicURL(cursor.getString(1));
+			feedItemBean.setTitle(cursor.getString(2));
+			feedItemBean.setPreviewContent(cursor.getString(3));
+			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
+					.getString(4)));
+
+			retList.add(feedItemBean);
+		}
+
+		db.close();
+		db = null;
+
+		return retList;
+
 	}
 
 	/**
@@ -198,7 +249,7 @@ public class FeedItemDAO {
 
 		db.close();
 		db = null;
-		
+
 		if (idString != null) {// 查询到数据
 			return Integer.parseInt(idString);
 		} else {// 查询不到数据
@@ -206,4 +257,5 @@ public class FeedItemDAO {
 		}
 
 	}
+
 }

@@ -128,6 +128,11 @@ public class FeedPager extends BasePager {
 		boolean result = feedItemDAO.addItem(feedItemBean);
 		LogUtils.i("FeedPager", "添加结果："+result);
 		
+		
+		ArrayList<FeedItemBean> retList = feedItemDAO.queryAllItems();
+		LogUtils.i("FeedPager", "查询结果："+retList.toString());
+		LogUtils.i("FeedPager", "查询结果："+retList.size());
+		
 		// feedItemBean.setItemId(1);
 		// feedItemBean.setPreviewContent("更新了DAO更新数据库中的Item功能，现在试试");
 		// result = feedItemDAO.updateItem(feedItemBean);
