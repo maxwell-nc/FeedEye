@@ -4,6 +4,7 @@ import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -54,7 +55,7 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * 添加一条订阅信息
+	 * 添加一条订阅信息，自动修改bean的id信息
 	 * 
 	 * @param feedItemBean
 	 *            订阅消息
@@ -82,7 +83,18 @@ public class FeedItemDAO {
 
 		db.close();
 
-		return rowId == -1 ? false : true;
+		if (rowId == -1) {// 插入失败
+
+			return false;
+
+		} else {// 插入成功
+
+			// 更新item的id，不要把rowid当id使用
+			feedItemBean.setItemId(queryIdByRowId(rowId));
+
+			return true;
+		}
+
 	}
 
 	/**
@@ -154,5 +166,35 @@ public class FeedItemDAO {
 		db.close();
 
 		return rowCount == 1 ? true : false;
+	}
+
+	/**
+	 * 根据rowid查询id，不要把rowid当id使用
+	 * 
+	 * @param rowId
+	 *            行号
+	 * @return id主键值
+	 */
+	public int queryIdByRowId(long rowId) {
+
+		String rowIdString = String.valueOf(rowId);
+		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+
+		Cursor cursor = db.query(mTableName, null, "rowid=?",
+				new String[] { rowIdString }, null, null, null, null);
+
+		String idString = null;
+		if (cursor.moveToNext()) {// 只有一条记录
+			idString = cursor.getString(0);// 数据库生成的id（主键，非rowId）
+		}
+
+		db.close();
+
+		if (idString != null) {// 查询到数据
+			return Integer.parseInt(idString);
+		} else {// 查询不到数据
+			return -1;
+		}
+
 	}
 }
