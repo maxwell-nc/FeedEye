@@ -13,6 +13,11 @@ public class FeedItemBean {
 	private int itemId = -1;
 	
 	/**
+	 * ¶©ÔÄURL
+	 */
+	private String feedURL;
+	
+	/**
 	 * Í¼Æ¬URL
 	 */
 	private String picURL;
@@ -42,6 +47,10 @@ public class FeedItemBean {
 		return itemId;
 	}
 
+	public String getFeedURL() {
+		return feedURL;
+	}
+	
 	public String getPicURL() {
 		return picURL;
 	}
@@ -62,6 +71,10 @@ public class FeedItemBean {
 		this.itemId = itemId;
 	}
 
+	public void setFeedURL(String feedURL) {
+		this.feedURL = feedURL;
+	}
+	
 	public void setPicURL(String picURL) {
 		this.picURL = picURL;
 	}

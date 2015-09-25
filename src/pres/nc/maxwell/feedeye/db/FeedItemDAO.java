@@ -47,7 +47,9 @@ public class FeedItemDAO {
 	private ContentValues putBeanInMap(FeedItemBean feedItemBean) {
 
 		ContentValues map = new ContentValues();
+		
 		map.put("pic_url", feedItemBean.getPicURL());
+		map.put("feed_url", feedItemBean.getFeedURL());
 		map.put("title", feedItemBean.getTitle());
 		map.put("preview_content", feedItemBean.getPreviewContent());
 		map.put("last_time", TimeUtils.timestamp2String(
@@ -211,11 +213,12 @@ public class FeedItemDAO {
 			FeedItemBean feedItemBean = new FeedItemBean();
 
 			feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
-			feedItemBean.setPicURL(cursor.getString(1));
-			feedItemBean.setTitle(cursor.getString(2));
-			feedItemBean.setPreviewContent(cursor.getString(3));
+			feedItemBean.setFeedURL(cursor.getString(1));
+			feedItemBean.setPicURL(cursor.getString(2));
+			feedItemBean.setTitle(cursor.getString(3));
+			feedItemBean.setPreviewContent(cursor.getString(4));
 			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
-					.getString(4)));
+					.getString(5)));
 
 			retList.add(feedItemBean);
 		}

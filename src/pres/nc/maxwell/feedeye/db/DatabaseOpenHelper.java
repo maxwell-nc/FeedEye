@@ -29,6 +29,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 		String sqlString = "CREATE TABLE feed_item ("
 				+ "id integer primary key autoincrement,"// id自增长
+				+ "feed_url text not null,"//订阅的地址
 				+ "pic_url text not null,"// 图片URL
 				+ "title varchar(100) not null,"// 标题
 				+ "preview_content varchar(100),"// 预览内容

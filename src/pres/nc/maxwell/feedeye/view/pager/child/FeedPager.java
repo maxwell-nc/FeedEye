@@ -1,5 +1,6 @@
 package pres.nc.maxwell.feedeye.view.pager.child;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
@@ -120,10 +121,34 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 				// TODO:执行添加订阅操作
+
 			}
 
 		});
+		
 	}
+
+	
+	/**
+	 * 添加测试数据
+	 */
+	private void addTestData() {
+		
+		FeedItemBean feedItemBean = new FeedItemBean();
+		feedItemBean.setFeedURL("http://blog.csdn.net/maxwell_nc/rss/list");
+		feedItemBean.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
+		feedItemBean.setTitle("我的GitHub");
+		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
+		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
+
+		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+		feedItemDAO.addItem(feedItemBean);
+		
+		mItemInfoList.add(feedItemBean);
+		FeedPagerListViewItem item = new FeedPagerListViewItem(mActivity);
+		mItemList.add(item);
+	}
+
 
 	/**
 	 * 读取FeedItem信息的异步任务
@@ -196,12 +221,26 @@ public class FeedPager extends BasePager {
 		super.useFunctionButton();
 
 		mFuncButtonLeft.setImageDrawable(mActivity.getResources().getDrawable(
-				R.drawable.btn_title_search));
+				R.drawable.btn_title_search));//搜索按钮
 		mFuncButtonLeft.setVisibility(View.VISIBLE);
 
 		mFuncButtonRight.setImageDrawable(mActivity.getResources().getDrawable(
-				R.drawable.btn_title_add));
+				R.drawable.btn_title_add));//添加按钮
 		mFuncButtonRight.setVisibility(View.VISIBLE);
+		
+		mFuncButtonRight.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				//TODO:插入测试数据
+				addTestData();
+				insertMoreItem();
+				mListViewAdapter.notifyDataSetChanged();
+				mListView.setSelection(mListView.getCount());
+				
+			}
+		});
 	};
 
 	/**
