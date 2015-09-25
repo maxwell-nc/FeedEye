@@ -8,14 +8,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import pres.nc.maxwell.feedeye.utils.IOUtils;
-
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.app.Application;
-import android.os.Environment;
 
 /**
  * 自定义的Application
@@ -45,29 +42,20 @@ public class FeedEyeApplication extends Application {
 		@Override
 		public void uncaughtException(Thread thread, Throwable ex) {
 
-			// sdcard位置
-			String savePath = Environment.getExternalStorageDirectory()
-					.getAbsolutePath() + "/FeedEyeErrLog";
-
-			// 如果文件夹不存在, 创建文件夹
-			File errLogFile = new File(savePath);
-
-			if (!errLogFile.exists()) {
-				errLogFile.mkdirs();
-			}
-
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-					"yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
-			String timeStr = simpleDateFormat.format(new Date());
-
-			File file = new File(savePath, "errorLog" + timeStr);
+			String timeStr = TimeUtils.date2String(new Date(), "yyyy-MM-dd-HH-mm-ss");
+	
+			File file = IOUtils.getFileInSdcard("/FeedEyeErrLog", "errorLog" + timeStr + ".log");
+			
 			BufferedWriter bufferedWriter = null;
 			StringWriter stringWriter = null;
 			PrintWriter printWriter = null;
+			
 			try {
+				
 				FileWriter fileWriter = new FileWriter(file);
 				bufferedWriter = new BufferedWriter(fileWriter);
-
+				
+				//记录错误日志
 				stringWriter = new StringWriter();
 				printWriter = new PrintWriter(stringWriter);
 				ex.printStackTrace(printWriter);
@@ -80,11 +68,13 @@ public class FeedEyeApplication extends Application {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
+				
 				IOUtils.closeQuietly(stringWriter);
 				IOUtils.closeQuietly(printWriter);
 				IOUtils.closeQuietly(bufferedWriter);
 				// 自杀
 				android.os.Process.killProcess(android.os.Process.myPid());
+				
 			}
 		}
 

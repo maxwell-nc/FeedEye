@@ -152,8 +152,9 @@ public class FeedPager extends BasePager {
 
 			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 			mItemInfoUnshowList = feedItemDAO.queryAllItems();
-
+			
 			return null;
+			
 		}
 
 		@Override

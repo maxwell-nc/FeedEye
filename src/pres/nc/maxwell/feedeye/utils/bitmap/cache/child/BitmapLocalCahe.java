@@ -10,7 +10,6 @@ import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
-import android.os.Environment;
 import android.widget.ImageView;
 
 /**
@@ -164,24 +163,15 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 	 * @return 要操作的File对象
 	 */
 	private File getCacheFile() {
-		File sdFile = Environment.getExternalStorageDirectory();
 
 		// 判断SD卡容量,未实现
+		// File sdFile = Environment.getExternalStorageDirectory();
 		// long freeSpace = sdFile.getFreeSpace();
-
-		String savePath = sdFile.getAbsolutePath() + "/FeedEyeCache";
-
-		// 如果文件夹不存在, 创建文件夹
-		File saveDir = new File(savePath);
-
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
 
 		// 以URL的MD5值为文件名
 		mFileName = MD5Utils.getMD5String(getURL());
 
-		File file = new File(savePath, mFileName);
+		File file = IOUtils.getFileInSdcard("/FeedEyeCache", mFileName);
 
 		return file;
 	}

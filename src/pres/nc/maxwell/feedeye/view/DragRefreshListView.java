@@ -290,8 +290,7 @@ public class DragRefreshListView extends ListView {
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 			// 当滑行空闲时并且不在加载中，最后一条项目在底部时
-			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
-					|| scrollState == OnScrollListener.SCROLL_STATE_FLING) {
+			if (scrollState == OnScrollListener.SCROLL_STATE_FLING) {
 
 				if (getLastVisiblePosition() == (getCount() - 1)
 						&& !isLoadingMore && dragState != STATE_REFRESHING) {

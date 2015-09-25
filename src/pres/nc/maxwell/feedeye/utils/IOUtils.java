@@ -1,10 +1,13 @@
 package pres.nc.maxwell.feedeye.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+
+import android.os.Environment;
 
 /**
  * 处理IO工具类
@@ -87,11 +90,32 @@ public class IOUtils {
 			}
 		}
 	}
-	
+
+	public static File getFileInSdcard(String dir, String filename) {
+
+		// sdcard位置
+		String savePath = Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + dir;
+
+		// 如果文件夹不存在, 创建文件夹
+		File errLogFile = new File(savePath);
+
+		if (!errLogFile.exists()) {
+			errLogFile.mkdirs();
+		}
+
+		File file = new File(savePath, filename);
+		
+		return file;
+	}
+
 	/**
 	 * 输入流写入到输出流
-	 * @param inputStream 输入流
-	 * @param outputStream 输出流
+	 * 
+	 * @param inputStream
+	 *            输入流
+	 * @param outputStream
+	 *            输出流
 	 */
 	public static void writeStream(InputStream inputStream,
 			OutputStream outputStream) {
