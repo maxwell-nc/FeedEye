@@ -472,7 +472,7 @@ public class FeedPager extends BasePager {
 	 *            view集合
 	 * @return 是否成功解析
 	 */
-	public boolean parseBean(FeedItemBean feedItemBean, ViewHolder viewHolder) {
+	private boolean parseBean(FeedItemBean feedItemBean, ViewHolder viewHolder) {
 
 		if (feedItemBean == null) {
 			return false;

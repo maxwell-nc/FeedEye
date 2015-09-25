@@ -146,7 +146,7 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 	 *            Bitmap文件对象
 	 */
 	@Override
-	public <T> void setCache(final T bitmapFile) {
+	public <T> void setCache(T bitmapFile) {
 
 		if (!(bitmapFile instanceof File)) {
 			return;

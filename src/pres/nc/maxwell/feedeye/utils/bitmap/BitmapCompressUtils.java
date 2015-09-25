@@ -48,8 +48,8 @@ public class BitmapCompressUtils {
 			BitmapFactory.decodeFile(mFile.getPath(), mOptions);
 		}
 
-		final int height = mOptions.outHeight;
-		final int width = mOptions.outWidth;
+		int height = mOptions.outHeight;
+		int width = mOptions.outWidth;
 
 		int defaultSampleSize = 1;
 
