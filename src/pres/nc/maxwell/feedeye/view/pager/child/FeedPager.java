@@ -153,9 +153,6 @@ public class FeedPager extends BasePager {
 			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 			mItemInfoUnshowList = feedItemDAO.queryAllItems();
 
-			LogUtils.i("FeedPager", "查询结果：" + mItemInfoUnshowList.toString());
-			LogUtils.i("FeedPager", "查询结果：" + mItemInfoUnshowList.size());
-
 			return null;
 		}
 

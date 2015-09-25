@@ -3,6 +3,8 @@ package pres.nc.maxwell.feedeye.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * 处理IO工具类
@@ -48,6 +50,43 @@ public class IOUtils {
 		}
 	}
 
+	/**
+	 * 关闭字符流并捕获IO异常
+	 * 
+	 * @param reader
+	 *            字符流
+	 */
+	public static void closeQuietly(Reader reader) {
+
+		if (reader != null) {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				reader = null;
+			}
+		}
+	}
+
+	/**
+	 * 关闭字符流并捕获IO异常
+	 * 
+	 * @param writer
+	 *            字符流
+	 */
+	public static void closeQuietly(Writer writer) {
+
+		if (writer != null) {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				writer = null;
+			}
+		}
+	}
 	
 	/**
 	 * 输入流写入到输出流
