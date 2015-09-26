@@ -122,6 +122,10 @@ public class FeedPager extends BasePager {
 			}
 
 		});
+		
+		//同步完成执行
+		//TODO：同步未实现
+		//new FeedItemDAO(mActivity).completeSynchronized();
 
 	}
 

@@ -187,7 +187,7 @@ public class FeedItemDAO {
 	 */
 	public ArrayList<FeedItemBean> queryAllItems() {
 
-		return queryItems(null, null);
+		return queryItems(null, null, false);
 
 	}
 
@@ -195,11 +195,15 @@ public class FeedItemDAO {
 	 * 按条件查询item
 	 * 
 	 * @param selection
+	 *            选择条件
 	 * @param selectionArgs
-	 * @return
+	 *            选择条件对应的参数数组
+	 * @param isReturnDeletedData
+	 *            是否显示已经删除但未同步删除的数据
+	 * @return 查询的结果
 	 */
 	public ArrayList<FeedItemBean> queryItems(String selection,
-			String[] selectionArgs) {
+			String[] selectionArgs, boolean isReturnDeletedData) {
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
@@ -209,26 +213,26 @@ public class FeedItemDAO {
 		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
 
 		while (cursor.moveToNext()) {// 查询所有结果
-			LogUtils.w("FeedItemDAO", cursor.getString(6));
-			if ("-1".equals(cursor.getString(6))) {// 数据已经被删除，待同步
-				
-				continue;
-				
-			} else {//数据未删除
-				
-				FeedItemBean feedItemBean = new FeedItemBean();
 
-				feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
-				feedItemBean.setFeedURL(cursor.getString(1));
-				feedItemBean.setPicURL(cursor.getString(2));
-				feedItemBean.setTitle(cursor.getString(3));
-				feedItemBean.setPreviewContent(cursor.getString(4));
-				feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
-						.getString(5)));
-
-				retList.add(feedItemBean);
-				
+			if (!isReturnDeletedData) {// 不显示已经删除的数据
+				if ("-1".equals(cursor.getString(6))) {// 数据已经被删除，待同步
+					continue;
+				}
 			}
+
+			// 数据未删除
+
+			FeedItemBean feedItemBean = new FeedItemBean();
+
+			feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
+			feedItemBean.setFeedURL(cursor.getString(1));
+			feedItemBean.setPicURL(cursor.getString(2));
+			feedItemBean.setTitle(cursor.getString(3));
+			feedItemBean.setPreviewContent(cursor.getString(4));
+			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
+					.getString(5)));
+
+			retList.add(feedItemBean);
 
 		}
 
@@ -267,6 +271,20 @@ public class FeedItemDAO {
 		} else {// 查询不到数据
 			return -1;
 		}
+
+	}
+
+	/**
+	 * 完成同步，删除标记为删除的数据
+	 */
+	public void completeSynchronized() {
+
+		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
+
+		db.delete(mTableName, "delete_flag=-1", null);
+
+		db.close();
+		db = null;
 
 	}
 
