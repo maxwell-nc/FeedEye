@@ -27,3 +27,4 @@ proguard/
 *.log
 /.classpath
 /~$ProjectStructureMap.mmap.~$lock
+/~$ProjectGantt.mmap.~$lock
