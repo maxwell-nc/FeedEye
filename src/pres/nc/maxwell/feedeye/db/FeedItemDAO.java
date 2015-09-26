@@ -192,7 +192,7 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * 按条件查询item
+	 * 按条件查询item，新的数据放在第一
 	 * 
 	 * @param selection
 	 *            选择条件
@@ -208,7 +208,7 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
-				null, null, null, null);
+				null, null, "id DESC");//新的数据放在第一
 
 		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
 
