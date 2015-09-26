@@ -47,7 +47,7 @@ public class FeedItemDAO {
 	private ContentValues putBeanInMap(FeedItemBean feedItemBean) {
 
 		ContentValues map = new ContentValues();
-		
+
 		map.put("pic_url", feedItemBean.getPicURL());
 		map.put("feed_url", feedItemBean.getFeedURL());
 		map.put("title", feedItemBean.getTitle());
@@ -181,7 +181,7 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * 无条件查询所有的item
+	 * 无条件查询所有的item，不包含已经删除的
 	 * 
 	 * @return item的bean集合
 	 */
@@ -209,18 +209,27 @@ public class FeedItemDAO {
 		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
 
 		while (cursor.moveToNext()) {// 查询所有结果
+			LogUtils.w("FeedItemDAO", cursor.getString(6));
+			if ("-1".equals(cursor.getString(6))) {// 数据已经被删除，待同步
+				
+				continue;
+				
+			} else {//数据未删除
+				
+				FeedItemBean feedItemBean = new FeedItemBean();
 
-			FeedItemBean feedItemBean = new FeedItemBean();
+				feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
+				feedItemBean.setFeedURL(cursor.getString(1));
+				feedItemBean.setPicURL(cursor.getString(2));
+				feedItemBean.setTitle(cursor.getString(3));
+				feedItemBean.setPreviewContent(cursor.getString(4));
+				feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
+						.getString(5)));
 
-			feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
-			feedItemBean.setFeedURL(cursor.getString(1));
-			feedItemBean.setPicURL(cursor.getString(2));
-			feedItemBean.setTitle(cursor.getString(3));
-			feedItemBean.setPreviewContent(cursor.getString(4));
-			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
-					.getString(5)));
+				retList.add(feedItemBean);
+				
+			}
 
-			retList.add(feedItemBean);
 		}
 
 		db.close();

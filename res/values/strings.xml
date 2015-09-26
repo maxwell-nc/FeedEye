@@ -9,5 +9,6 @@
     <string name="navi_favor">收藏</string>
     <string name="navi_setting">设置</string>
     <string name="load_more">加载更多内容</string>
+    <string name="delete_feed">删除这条订阅</string>
 
 </resources>

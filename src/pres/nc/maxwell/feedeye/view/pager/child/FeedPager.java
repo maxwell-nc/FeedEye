@@ -14,12 +14,14 @@ import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -45,7 +47,7 @@ public class FeedPager extends BasePager {
 	 * 保存未显示的Item信息
 	 */
 	private ArrayList<FeedItemBean> mItemInfoUnshowList;
-	
+
 	/**
 	 * 保存已经显示的信息
 	 */
@@ -132,14 +134,15 @@ public class FeedPager extends BasePager {
 		feedItemBean.setFeedURL("http://blog.csdn.net/maxwell_nc/rss/list");
 		feedItemBean
 				.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
-		feedItemBean.setTitle("我的GitHub"+new Random().nextInt(Integer.MAX_VALUE));
+		feedItemBean.setTitle("我的GitHub"
+				+ new Random().nextInt(Integer.MAX_VALUE));
 		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
 		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
 
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.addItem(feedItemBean);
 
-		mItemInfoShowedList.add(0,feedItemBean);//插到第一个
+		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
 	}
 
 	/**
@@ -152,9 +155,9 @@ public class FeedPager extends BasePager {
 
 			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 			mItemInfoUnshowList = feedItemDAO.queryAllItems();
-			
+
 			return null;
-			
+
 		}
 
 		@Override
@@ -183,7 +186,7 @@ public class FeedPager extends BasePager {
 		if (mItemInfoShowedList.size() == 0) {// 无数据
 			// 不显示加载条
 			getLoadingBarView().setVisibility(View.INVISIBLE);
-			mListView.setVisibility(View.INVISIBLE);//防止下拉BUG
+			mListView.setVisibility(View.INVISIBLE);// 防止下拉BUG
 
 			// 提示没有数据，需要添加
 			mNothingImg.setVisibility(View.VISIBLE);
@@ -216,19 +219,19 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				if (mItemInfoShowedList.size()==0) {//无数据时，初始化adapter防止空指针异常
+				if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
 					mListViewAdapter = new FeedPagerListViewAdapter();
 					// 设置ListView适配器
 					mListView.setAdapter(mListViewAdapter);
 					mListView.setVisibility(View.VISIBLE);
 					mNothingImg.setVisibility(View.INVISIBLE);
 				}
-				
+
 				// TODO:插入测试数据
 				addTestData();
-				
-				mListViewAdapter.notifyDataSetChanged();//刷新适配器
-				mListView.setSelection(mListView.getHeaderViewsCount());//显示第一个非HeaderView
+
+				mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+				mListView.setSelection(mListView.getHeaderViewsCount());// 显示第一个非HeaderView
 
 			}
 		});
@@ -352,15 +355,15 @@ public class FeedPager extends BasePager {
 				holder = new ViewHolder();
 
 				holder.mItemPic = (ImageView) view
-						.findViewById(R.id.iv_item_feed_pic);//图片
+						.findViewById(R.id.iv_item_feed_pic);// 图片
 				holder.mItemTitle = (TextView) view
-						.findViewById(R.id.tv_item_feed_title);//标题
+						.findViewById(R.id.tv_item_feed_title);// 标题
 				holder.mItemPreview = (TextView) view
-						.findViewById(R.id.tv_item_feed_preview);//预览
+						.findViewById(R.id.tv_item_feed_preview);// 预览
 				holder.mItemTime = (TextView) view
-						.findViewById(R.id.tv_item_feed_time);//时间
+						.findViewById(R.id.tv_item_feed_time);// 时间
 				holder.mItemCount = (ImageView) view
-						.findViewById(R.id.iv_item_feed_count);//数量
+						.findViewById(R.id.iv_item_feed_count);// 数量
 
 				view.setTag(holder);
 
@@ -505,8 +508,64 @@ public class FeedPager extends BasePager {
 			}
 		});
 
+		/**
+		 * 长按点击事件
+		 */
+		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					final int position, long id) {
+
+				View alertView = View.inflate(mActivity,
+						R.layout.view_long_click_lv_feed, null);
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+				builder.setView(alertView);
+				final AlertDialog alertDialog = builder.show();
+
+				TextView deleteButton = (TextView) alertView
+						.findViewById(R.id.tv_delete);
+
+				// 点击删除条目
+				deleteButton.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// 点击时删除条目
+						deleteFeedItem(position);
+
+						alertDialog.dismiss();// 对话框关闭
+					}
+
+				});
+
+				return false;
+			}
+
+		});
+
 		// 添加刷新监听
 		mListView.setOnRefreshListener(new ListViewRefreshListener());
 
+	}
+
+	/**
+	 * 删除列表中的Item，并且刷新数据库
+	 * 
+	 * @param position
+	 *            要删除的Item的位置
+	 */
+	private void deleteFeedItem(int position) {
+
+		position = position - mListView.getHeaderViewsCount();// 转成正确的下标
+
+		// 从数据库中删除
+		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+		feedItemDAO.removeItem(mItemInfoShowedList.get(position));
+
+		// 从适配器数据中删除并通知数据更新
+		mItemInfoShowedList.remove(position);
+		mListViewAdapter.notifyDataSetChanged();
 	}
 }
