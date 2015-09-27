@@ -279,11 +279,11 @@ public class SearchItemActivity extends Activity {
 			int startIndex = title.toLowerCase().indexOf(keyword);
 
 			if (startIndex == -1) {
-
+				
 				holder.title.setText(title);
-
+				
 			} else {// 突出结果中的关键字
-
+				
 				SpannableStringBuilder builder = new SpannableStringBuilder(
 						title);
 
@@ -296,7 +296,6 @@ public class SearchItemActivity extends Activity {
 						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 				holder.title.setText(builder);
-
 			}
 
 			return itemView;
