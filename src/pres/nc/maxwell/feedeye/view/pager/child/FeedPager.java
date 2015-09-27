@@ -433,6 +433,9 @@ public class FeedPager extends BasePager {
 
 							Toast.makeText(mActivity, "刷新成功",
 									Toast.LENGTH_SHORT).show();
+							
+							//允许再加载更多
+							mListView.setAllowLoadingMore(true);
 						}
 					});
 
@@ -467,6 +470,8 @@ public class FeedPager extends BasePager {
 							if (addCount == 0) {
 								Toast.makeText(mActivity, "没有更多数据了",
 										Toast.LENGTH_SHORT).show();
+								//禁止上拉加载更多了
+								mListView.setAllowLoadingMore(false);
 							} else {
 								Toast.makeText(mActivity,
 										"成功加载了" + addCount + "条数据",

@@ -75,6 +75,19 @@ public class DragRefreshListView extends ListView {
 	private boolean isLoadingMore = false;
 
 	/**
+	 * 是否允许上拉加载更多
+	 */
+	private boolean isAllowLoadingMore = true;
+	
+	public boolean isAllowLoadingMore() {
+		return isAllowLoadingMore;
+	}
+
+	public void setAllowLoadingMore(boolean isAllowLoadingMore) {
+		this.isAllowLoadingMore = isAllowLoadingMore;
+	}
+
+	/**
 	 * 下拉刷新和加载更多监听器
 	 */
 	private OnRefreshListener refreshListener;
@@ -247,22 +260,22 @@ public class DragRefreshListView extends ListView {
 				break;
 			}
 
-			//除以3为了减慢下拉速度
-			int deltaY = (int) (ev.getY() - downY)/3;
+			// 除以3为了减慢下拉速度
+			int deltaY = (int) (ev.getY() - downY) / 3;
 
 			// 第一个项目下拉才显示下拉刷新
 			if (deltaY < 0 || getFirstVisiblePosition() > 1) {
-				
+
 				dragState = STATE_DRAGING;
 				changeHeaderView();
 				istoUp = true;
-				
+
 			}
 
 			// 上拉后不再能下拉刷新
 			if (!istoUp) {
 				int paddingTop = -mHeaderViewHeight + deltaY;
-				//LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
+				// LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
 
 				if (paddingTop > -mHeaderViewHeight) {
 
@@ -347,22 +360,25 @@ public class DragRefreshListView extends ListView {
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 			// 当滑行空闲时并且不在加载中，最后一条项目在底部时
-			if (scrollState == OnScrollListener.SCROLL_STATE_FLING) {
+			if (scrollState == OnScrollListener.SCROLL_STATE_FLING
+					|| scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
 
-				if (getLastVisiblePosition() == (getCount() - 1)
-						&& !isLoadingMore && dragState != STATE_REFRESHING) {
+				if (getLastVisiblePosition() == (getCount()-1) && !isLoadingMore
+						&& dragState != STATE_REFRESHING) {
 
-					isLoadingMore = true;
+					if (isAllowLoadingMore) {
+						isLoadingMore = true;
 
-					// 显示FooterView
-					mFooterView.setPadding(0, 0, 0, 0);
-					setSelection(getCount());
+						// 显示FooterView
+						mFooterView.setPadding(0, 0, 0, 0);
+						setSelection(getCount());
 
-					/**
-					 * 调用外部写的方法
-					 */
-					if (refreshListener != null) {
-						refreshListener.onLoadingMore();
+						/**
+						 * 调用外部写的方法
+						 */
+						if (refreshListener != null) {
+							refreshListener.onLoadingMore();
+						}
 					}
 				}
 			}
