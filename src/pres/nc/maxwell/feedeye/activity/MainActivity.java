@@ -17,6 +17,9 @@ import android.view.Window;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+/**
+ * 主页面的Activity
+ */
 public class MainActivity extends Activity {
 
 	private NoScrollViewPager mContentPager;// 主界面页面内容

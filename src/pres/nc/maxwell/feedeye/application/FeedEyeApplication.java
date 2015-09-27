@@ -59,7 +59,8 @@ public class FeedEyeApplication extends Application {
 				stringWriter = new StringWriter();
 				printWriter = new PrintWriter(stringWriter);
 				ex.printStackTrace(printWriter);
-
+				ex.printStackTrace();//打印一份到控制台
+				
 				bufferedWriter.write(stringWriter.toString());
 				bufferedWriter.flush();
 

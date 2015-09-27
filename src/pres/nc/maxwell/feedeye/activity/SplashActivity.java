@@ -11,6 +11,9 @@ import android.os.SystemClock;
 import android.view.Window;
 import android.widget.TextView;
 
+/**
+ * ÉÁÆÁÒ³ÃæµÄActivity
+ */
 public class SplashActivity extends Activity {
 
 	private TextView tv_splash_ver;

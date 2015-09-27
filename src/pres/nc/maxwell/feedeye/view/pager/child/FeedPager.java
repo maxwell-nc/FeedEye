@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
@@ -15,6 +16,7 @@ import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -214,10 +216,25 @@ public class FeedPager extends BasePager {
 				R.drawable.btn_title_search));// 搜索按钮
 		mFuncButtonLeft.setVisibility(View.VISIBLE);
 
+		//搜索按钮事件
+		mFuncButtonLeft.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mActivity,SearchItemActivity.class);
+				//传递数据
+				intent.putExtra("ShowedList", mItemInfoShowedList);
+				intent.putExtra("UnShowList", mItemInfoUnshowList);
+				mActivity.startActivity(intent);
+			}
+			
+		});
+		
 		mFuncButtonRight.setImageDrawable(mActivity.getResources().getDrawable(
 				R.drawable.btn_title_add));// 添加按钮
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 
+		//添加按钮事件
 		mFuncButtonRight.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -344,8 +361,6 @@ public class FeedPager extends BasePager {
 				view = (RelativeLayout) convertView;
 				holder = (ViewHolder) view.getTag();
 
-				parseBean(mItemInfoShowedList.get(position), holder);
-
 				// 检查是否复用ConvertView，平时不需要打印，费时
 				// LogUtils.v("FeedPager", "复用View");
 
@@ -371,10 +386,9 @@ public class FeedPager extends BasePager {
 
 				view.setTag(holder);
 
-				parseBean(mItemInfoShowedList.get(position), holder);
-
 			}
-
+			
+			parseBean(mItemInfoShowedList.get(position), holder);
 			return view;
 		}
 
