@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/anim_refresh_rotate"
+            android:indeterminateDrawable="@anim/refresh_rotate"
             android:indeterminateDuration="500"
             android:visibility="invisible"
              />

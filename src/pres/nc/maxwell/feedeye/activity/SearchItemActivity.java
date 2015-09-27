@@ -292,7 +292,7 @@ public class SearchItemActivity extends Activity {
 			// 使用三级缓存加载图片
 			new BitmapCacheUtils().displayBitmap(holder.pic,
 					mResultList.get(position).getPicURL(),
-					R.drawable.anim_refresh_rotate);
+					R.anim.refresh_rotate);
 
 			String title = mResultList.get(position).getTitle();
 
