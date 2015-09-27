@@ -6,12 +6,16 @@ import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 /**
  * 搜索订阅列表页面的Activity
  */
+@SuppressLint("DefaultLocale")
 public class SearchItemActivity extends Activity {
 
 	/**
@@ -207,6 +212,8 @@ public class SearchItemActivity extends Activity {
 	 */
 	private void searchLists(String keyword) {
 
+		keyword = keyword.toLowerCase();
+
 		if (mResultList != null) {
 			mResultList.clear();// 清空上次的搜索结果
 		}
@@ -214,14 +221,14 @@ public class SearchItemActivity extends Activity {
 		for (int i = 0; i < mShowedList.size(); i++) {
 
 			// 搜索已显示的列表
-			if (mShowedList.get(i).getTitle().contains(keyword)) {
+			if (mShowedList.get(i).getTitle().toLowerCase().contains(keyword)) {
 				mResultList.add(mShowedList.get(i));
 			}
 		}
 		for (int i = 0; i < mUnShowList.size(); i++) {
 
-			// 搜索未显示的列表
-			if (mUnShowList.get(i).getTitle().contains(keyword)) {
+			// 搜索未显示的列表,大小写不明感
+			if (mUnShowList.get(i).getTitle().toLowerCase().contains(keyword)) {
 				mResultList.add(mUnShowList.get(i));
 			}
 		}
@@ -264,7 +271,33 @@ public class SearchItemActivity extends Activity {
 			new BitmapCacheUtils().displayBitmap(holder.pic,
 					mResultList.get(position).getPicURL(),
 					R.drawable.anim_refresh_rotate);
-			holder.title.setText(mResultList.get(position).getTitle());
+
+			String title = mResultList.get(position).getTitle();
+
+			String keyword = mSearchText.getText().toString().toLowerCase();
+
+			int startIndex = title.toLowerCase().indexOf(keyword);
+
+			if (startIndex == -1) {
+
+				holder.title.setText(title);
+
+			} else {// 突出结果中的关键字
+
+				SpannableStringBuilder builder = new SpannableStringBuilder(
+						title);
+
+				// ForegroundColorSpan 为文字前景色
+				ForegroundColorSpan redSpan = new ForegroundColorSpan(
+						getResources().getColor(R.color.red));
+
+				builder.setSpan(redSpan, startIndex,
+						startIndex + keyword.length(),
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+				holder.title.setText(builder);
+
+			}
 
 			return itemView;
 		}
