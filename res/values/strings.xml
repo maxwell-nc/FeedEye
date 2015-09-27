@@ -10,5 +10,7 @@
     <string name="navi_setting">设置</string>
     <string name="load_more">加载更多内容</string>
     <string name="delete_feed">删除这条订阅</string>
+    <string name="nothing_found">没有找到任何信息</string>
+    <string name="please_enter_text">请输入文本</string>
 
 </resources>

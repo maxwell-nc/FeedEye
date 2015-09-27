@@ -55,6 +55,11 @@ public class SearchItemActivity extends Activity {
 	private ListView mResultListView;
 
 	/**
+	 * 什么都没找到的文本
+	 */
+	private TextView mNothingFound;
+
+	/**
 	 * 已经显示的列表
 	 */
 	private ArrayList<FeedItemBean> mShowedList;
@@ -96,6 +101,7 @@ public class SearchItemActivity extends Activity {
 		mSearchText = (EditText) findViewById(R.id.et_search);
 		mLoading = (ProgressBar) findViewById(R.id.pb_loading);
 		mResultListView = (ListView) findViewById(R.id.lv_search_result);
+		mNothingFound = (TextView) findViewById(R.id.tv_nothing_found);
 	}
 
 	/**
@@ -154,14 +160,18 @@ public class SearchItemActivity extends Activity {
 					// 开始搜索，显示加载中动画
 					mLoading.setVisibility(View.VISIBLE);
 					mResultListView.setVisibility(View.INVISIBLE);
+					mNothingFound.setVisibility(View.INVISIBLE);
 
 					// 搜索
 					new SearchTask().execute();
 				} else {// 关键字为空，清空搜索结果
 					if (mResultList != null) {
 						mResultList.clear();// 清空搜索结果
-						mListViewAdapter.notifyDataSetChanged();
+						// mListViewAdapter.notifyDataSetChanged();
 					}
+					mLoading.setVisibility(View.INVISIBLE);
+					mResultListView.setVisibility(View.INVISIBLE);
+					mNothingFound.setVisibility(View.VISIBLE);
 				}
 
 			}
@@ -194,11 +204,23 @@ public class SearchItemActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void result) {// 主线程
-			mListViewAdapter.notifyDataSetChanged();
 
 			// 搜索完成，显示加载结果
-			mLoading.setVisibility(View.INVISIBLE);
-			mResultListView.setVisibility(View.VISIBLE);
+
+			if (mResultList.size() == 0) {// 找不到
+
+				mLoading.setVisibility(View.INVISIBLE);
+				mResultListView.setVisibility(View.INVISIBLE);
+				mNothingFound.setVisibility(View.VISIBLE);
+
+			} else {
+
+				mLoading.setVisibility(View.INVISIBLE);
+				mResultListView.setVisibility(View.VISIBLE);
+				mNothingFound.setVisibility(View.INVISIBLE);
+
+				mListViewAdapter.notifyDataSetChanged();
+			}
 
 			super.onPostExecute(result);
 		}
@@ -279,11 +301,11 @@ public class SearchItemActivity extends Activity {
 			int startIndex = title.toLowerCase().indexOf(keyword);
 
 			if (startIndex == -1) {
-				
+
 				holder.title.setText(title);
-				
+
 			} else {// 突出结果中的关键字
-				
+
 				SpannableStringBuilder builder = new SpannableStringBuilder(
 						title);
 

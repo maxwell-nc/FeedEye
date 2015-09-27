@@ -47,7 +47,7 @@
                 android:layout_toRightOf="@id/iv_search"
                 android:background="@android:color/transparent"
                 android:cursorVisible="true"
-                android:hint="请输入文本"
+                android:hint="@string/please_enter_text"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textColorHint="#aaffffff"
@@ -83,6 +83,17 @@
             android:visibility="invisible"
              />
 
+         <TextView
+            android:id="@+id/tv_nothing_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/nothing_found"
+            android:textColor="@color/grey"
+            android:textSize="18sp"
+            android:layout_gravity="center_horizontal"
+             />
+        
         <ListView
             android:id="@+id/lv_search_result"
             android:layout_width="match_parent"
