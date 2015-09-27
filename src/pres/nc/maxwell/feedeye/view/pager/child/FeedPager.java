@@ -17,7 +17,10 @@ import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -26,6 +29,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,10 +128,10 @@ public class FeedPager extends BasePager {
 			}
 
 		});
-		
-		//同步完成执行
-		//TODO：同步未实现
-		//new FeedItemDAO(mActivity).completeSynchronized();
+
+		// 同步完成执行
+		// TODO：同步未实现
+		// new FeedItemDAO(mActivity).completeSynchronized();
 
 	}
 
@@ -216,44 +220,63 @@ public class FeedPager extends BasePager {
 				R.drawable.btn_title_search));// 搜索按钮
 		mFuncButtonLeft.setVisibility(View.VISIBLE);
 
-		//搜索按钮事件
+		// 搜索按钮事件
 		mFuncButtonLeft.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(mActivity,SearchItemActivity.class);
-				//传递数据
+				Intent intent = new Intent(mActivity, SearchItemActivity.class);
+				// 传递数据
 				intent.putExtra("ShowedList", mItemInfoShowedList);
 				intent.putExtra("UnShowList", mItemInfoUnshowList);
 				mActivity.startActivity(intent);
 			}
-			
+
 		});
-		
+
 		mFuncButtonRight.setImageDrawable(mActivity.getResources().getDrawable(
 				R.drawable.btn_title_add));// 添加按钮
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 
-		//添加按钮事件
+		// 添加按钮事件
 		mFuncButtonRight.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
-				if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
-					mListViewAdapter = new FeedPagerListViewAdapter();
-					// 设置ListView适配器
-					mListView.setAdapter(mListViewAdapter);
-					mListView.setVisibility(View.VISIBLE);
-					mNothingImg.setVisibility(View.INVISIBLE);
-				}
+				View popupView = View.inflate(mActivity,
+						R.layout.popup_window_add_feed, null);
+				popupView.measure(0, 0);
+				int popupViewWidth = popupView.getMeasuredWidth();
+				int popupViewHeight = popupView.getMeasuredHeight();
 
-				// TODO:插入测试数据
-				addTestData();
+				PopupWindow popupWindow = new PopupWindow(popupView,
+						popupViewWidth, popupViewHeight);
 
-				mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-				mListView.setSelection(mListView.getHeaderViewsCount());// 显示第一个非HeaderView
+				popupWindow.setBackgroundDrawable(new ColorDrawable(
+						Color.TRANSPARENT));
 
+				popupWindow.showAtLocation(
+						mActivity.findViewById(android.R.id.content)
+								.getRootView(), Gravity.TOP + Gravity.LEFT,
+						(int) mFuncButtonRight.getRight() - popupViewWidth,
+						(int) (mFuncButtonRight.getBottom() + mFuncButtonRight
+								.getHeight() * 1.4));
+
+				/*
+				 * if (mItemInfoShowedList.size() == 0) {//
+				 * 无数据时，初始化adapter防止空指针异常 mListViewAdapter = new
+				 * FeedPagerListViewAdapter(); // 设置ListView适配器
+				 * mListView.setAdapter(mListViewAdapter);
+				 * mListView.setVisibility(View.VISIBLE);
+				 * mNothingImg.setVisibility(View.INVISIBLE); }
+				 * 
+				 * // TODO:插入测试数据 addTestData();
+				 * 
+				 * mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+				 * mListView.setSelection(mListView.getHeaderViewsCount());//
+				 * 显示第一个非HeaderView
+				 */
 			}
 		});
 	};
@@ -387,7 +410,7 @@ public class FeedPager extends BasePager {
 				view.setTag(holder);
 
 			}
-			
+
 			parseBean(mItemInfoShowedList.get(position), holder);
 			return view;
 		}
@@ -433,8 +456,8 @@ public class FeedPager extends BasePager {
 
 							Toast.makeText(mActivity, "刷新成功",
 									Toast.LENGTH_SHORT).show();
-							
-							//允许再加载更多
+
+							// 允许再加载更多
 							mListView.setAllowLoadingMore(true);
 						}
 					});
@@ -470,7 +493,7 @@ public class FeedPager extends BasePager {
 							if (addCount == 0) {
 								Toast.makeText(mActivity, "没有更多数据了",
 										Toast.LENGTH_SHORT).show();
-								//禁止上拉加载更多了
+								// 禁止上拉加载更多了
 								mListView.setAllowLoadingMore(false);
 							} else {
 								Toast.makeText(mActivity,
