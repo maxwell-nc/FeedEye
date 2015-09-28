@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.MainActivity;
+import pres.nc.maxwell.feedeye.activity.MainActivity.OnBackPressedListener;
 import pres.nc.maxwell.feedeye.activity.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
@@ -77,6 +79,11 @@ public class FeedPager extends BasePager {
 	public DragRefreshListView getListView() {
 		return mListView;
 	}
+
+	/**
+	 * 弹出窗口
+	 */
+	private PopupWindow mPopupWindow;
 
 	/**
 	 * 构造方法
@@ -250,15 +257,16 @@ public class FeedPager extends BasePager {
 				int popupViewWidth = popupView.getMeasuredWidth();
 				int popupViewHeight = popupView.getMeasuredHeight();
 
-				final PopupWindow popupWindow = new PopupWindow(popupView,
-						popupViewWidth, popupViewHeight);
+				mPopupWindow = new PopupWindow(popupView, popupViewWidth,
+						popupViewHeight);
 
-				popupWindow.setBackgroundDrawable(new ColorDrawable(
+				mPopupWindow.setBackgroundDrawable(new ColorDrawable(
 						Color.TRANSPARENT));
 
-				popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+				mPopupWindow
+						.setAnimationStyle(android.R.style.Animation_Dialog);
 
-				popupWindow.showAtLocation(
+				mPopupWindow.showAtLocation(
 						mActivity.findViewById(android.R.id.content)
 								.getRootView(), Gravity.TOP + Gravity.LEFT,
 						(int) mFuncButtonRight.getRight() - popupViewWidth,
@@ -270,9 +278,9 @@ public class FeedPager extends BasePager {
 
 							@Override
 							public void onClick(View v) {
-								if (popupWindow != null
-										&& popupWindow.isShowing()) {
-									popupWindow.dismiss();
+								if (mPopupWindow != null
+										&& mPopupWindow.isShowing()) {
+									mPopupWindow.dismiss();
 
 								}
 							}
@@ -283,7 +291,7 @@ public class FeedPager extends BasePager {
 
 							@Override
 							public void onClick(View v) {
-								
+
 								if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
 									mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
 									mListView.setAdapter(mListViewAdapter);
@@ -298,11 +306,29 @@ public class FeedPager extends BasePager {
 								mListView.setSelection(mListView
 										.getHeaderViewsCount());// 显示第一个非HeaderView
 							}
-							
+
 						});
 
 			}
 		});
+
+		((MainActivity) mActivity)
+				.setOnBackPressedListener(new OnBackPressedListener() {
+
+					@Override
+					public boolean onBackPressed() {
+
+						if (mPopupWindow != null && mPopupWindow.isShowing()) {
+							mPopupWindow.dismiss();
+							return true;
+
+						} else {//不拦截
+							return false;
+						}
+
+					}
+				});
+
 	};
 
 	/**
