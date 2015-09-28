@@ -1,15 +1,14 @@
-package pres.nc.maxwell.feedeye.activity;
+package pres.nc.maxwell.feedeye.activity.defalut.child;
 
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -17,9 +16,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,12 +29,7 @@ import android.widget.TextView;
  * 搜索订阅列表页面的Activity
  */
 @SuppressLint("DefaultLocale")
-public class SearchItemActivity extends Activity {
-
-	/**
-	 * 后退按钮
-	 */
-	private ImageView mBack;
+public class SearchItemActivity extends DefaultNewActivity {
 
 	/**
 	 * 搜索关键字输入框
@@ -80,35 +72,36 @@ public class SearchItemActivity extends Activity {
 	private ResultListAdapter mListViewAdapter;
 
 	/**
-	 * 创建Activity时执行
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_search_item);
-
-		initView();
-		initData();
-	}
-
-	/**
 	 * 初始化View对象
 	 */
-	private void initView() {
+	@Override
+	protected void initView() {
 
-		mBack = (ImageView) findViewById(R.id.iv_back);
-		mSearchText = (EditText) findViewById(R.id.et_search);
-		mLoading = (ProgressBar) findViewById(R.id.pb_loading);
-		mResultListView = (ListView) findViewById(R.id.lv_search_result);
-		mNothingFound = (TextView) findViewById(R.id.tv_nothing_found);
+		super.initView();
+
+		View barView = View.inflate(this, R.layout.activity_search_item_bar,
+				null);
+		mBar.addView(barView);
+		View containerView = View.inflate(this,
+				R.layout.activity_search_item_container, null);
+		mContainer.addView(containerView);
+
+		mSearchText = (EditText) barView.findViewById(R.id.et_search);
+		mLoading = (ProgressBar) containerView.findViewById(R.id.pb_loading);
+		mResultListView = (ListView) containerView
+				.findViewById(R.id.lv_search_result);
+		mNothingFound = (TextView) containerView
+				.findViewById(R.id.tv_nothing_found);
 	}
 
 	/**
 	 * 初始化数据
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	private void initData() {
+	protected void initData() {
+
+		super.initData();
 
 		// 获得数据
 		mShowedList = (ArrayList<FeedItemBean>) getIntent()
@@ -116,21 +109,6 @@ public class SearchItemActivity extends Activity {
 		mUnShowList = (ArrayList<FeedItemBean>) getIntent()
 				.getSerializableExtra("UnShowList");
 		mResultList = new ArrayList<FeedItemBean>();
-
-		/**
-		 * 后退点击事件
-		 */
-		mBack.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				// 关闭当前界面
-				finish();
-
-			}
-
-		});
 
 		// 设置适配器
 		mListViewAdapter = new ResultListAdapter();

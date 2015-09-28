@@ -29,9 +29,11 @@
         </activity>
         <activity android:name="pres.nc.maxwell.feedeye.activity.MainActivity" >
         </activity>
-        <activity android:name="pres.nc.maxwell.feedeye.activity.SearchItemActivity" >
+        <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity" >
         </activity>
-        <activity android:name="pres.nc.maxwell.feedeye.activity.AddFeedActivity" >
+        <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity" >
+        </activity>
+        <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity" >
         </activity>
     </application>
 

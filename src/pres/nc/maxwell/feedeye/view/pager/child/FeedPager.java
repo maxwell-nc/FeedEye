@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.activity.SearchItemActivity;
+import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
+import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
@@ -653,13 +654,19 @@ public class FeedPager extends BasePager {
 							}
 
 							// TODO:插入测试数据
-							addTestData();
+							//addTestData();
 
 							mListViewAdapter.notifyDataSetChanged();// 刷新适配器
 							mListView.setSelection(mListView
 									.getHeaderViewsCount());// 显示第一个非HeaderView
 
 							closePopupWindow();
+							
+							Intent intent = new Intent(mActivity,AddFeedActivity.class);
+							
+							//打开并获得添加结果
+							mActivity.startActivityForResult(intent, 0);
+							
 						}
 					});
 
