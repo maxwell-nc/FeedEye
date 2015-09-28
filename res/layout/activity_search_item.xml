@@ -15,6 +15,7 @@
             android:layout_width="40dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
+            android:background="@drawable/selector_press_background"
             android:scaleType="center"
             android:src="@drawable/btn_back" />
 
@@ -80,20 +81,18 @@
             android:indeterminate="true"
             android:indeterminateDrawable="@anim/refresh_rotate"
             android:indeterminateDuration="500"
-            android:visibility="invisible"
-             />
+            android:visibility="invisible" />
 
-         <TextView
+        <TextView
             android:id="@+id/tv_nothing_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
             android:text="@string/nothing_found"
             android:textColor="@color/grey"
-            android:textSize="18sp"
-            android:layout_gravity="center_horizontal"
-             />
-        
+            android:textSize="18sp" />
+
         <ListView
             android:id="@+id/lv_search_result"
             android:layout_width="match_parent"

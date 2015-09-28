@@ -11,7 +11,7 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="220dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
@@ -22,20 +22,24 @@
 
         <ImageView
             android:id="@+id/iv_func_btn_left"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="45dp"
+            android:layout_marginRight="55dp"
+            android:background="@drawable/selector_press_background"
+            android:scaleType="center"
             android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/iv_func_btn_right"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
+
+            android:background="@drawable/selector_press_background"
+            android:scaleType="center"
             android:visibility="invisible" />
     </RelativeLayout>
 

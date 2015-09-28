@@ -1,62 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:maxwell-nc="http://schemas.android.com/apk/res/pres.nc.maxwell.feedeye"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/popup_background_black"
+    android:background="@drawable/popup_background_blue"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="1dp" >
 
-    <RelativeLayout
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        maxwell-nc:src="@drawable/btn_title_add"
+        maxwell-nc:text="添加新订阅" />
 
-        <ImageView
-            android:id="@+id/iv_item_pic"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center"
-            android:src="@drawable/btn_title_add" />
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@id/iv_item_pic"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="关闭弹出菜单"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
-    <RelativeLayout
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical" >
+        maxwell-nc:src="@drawable/btn_title_share"
+        maxwell-nc:text="分享给好友" />
 
-        <ImageView
-            android:id="@+id/iv_item_pic2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center"
-            android:src="@drawable/btn_title_search" />
-
-        <TextView
-            android:id="@+id/tv_title2"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@id/iv_item_pic2"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="插入测试数据"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </RelativeLayout>
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        maxwell-nc:src="@drawable/btn_title_feedback"
+        maxwell-nc:text="帮助及反馈" />
 
 </LinearLayout>

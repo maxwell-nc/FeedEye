@@ -11,6 +11,7 @@ import pres.nc.maxwell.feedeye.activity.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
@@ -232,6 +233,9 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
+				
+				closePopupWindow();
+				
 				Intent intent = new Intent(mActivity, SearchItemActivity.class);
 				// 传递数据
 				intent.putExtra("ShowedList", mItemInfoShowedList);
@@ -246,85 +250,16 @@ public class FeedPager extends BasePager {
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 
 		// 添加按钮事件
-		mFuncButtonRight.setOnClickListener(new OnClickListener() {
+		mFuncButtonRight.setOnClickListener(new AddFeedOnClickListener());
 
-			@Override
-			public void onClick(View v) {
-
-				View popupView = View.inflate(mActivity,
-						R.layout.popup_window_add_feed, null);
-				popupView.measure(0, 0);
-				int popupViewWidth = popupView.getMeasuredWidth();
-				int popupViewHeight = popupView.getMeasuredHeight();
-
-				mPopupWindow = new PopupWindow(popupView, popupViewWidth,
-						popupViewHeight);
-
-				mPopupWindow.setBackgroundDrawable(new ColorDrawable(
-						Color.TRANSPARENT));
-
-				mPopupWindow
-						.setAnimationStyle(android.R.style.Animation_Dialog);
-
-				mPopupWindow.showAtLocation(
-						mActivity.findViewById(android.R.id.content)
-								.getRootView(), Gravity.TOP + Gravity.LEFT,
-						(int) mFuncButtonRight.getRight() - popupViewWidth,
-						(int) (mFuncButtonRight.getBottom() + mFuncButtonRight
-								.getHeight() * 1.4));
-
-				popupView.findViewById(R.id.tv_title).setOnClickListener(
-						new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								if (mPopupWindow != null
-										&& mPopupWindow.isShowing()) {
-									mPopupWindow.dismiss();
-
-								}
-							}
-						});
-
-				popupView.findViewById(R.id.tv_title2).setOnClickListener(
-						new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
-									mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
-									mListView.setAdapter(mListViewAdapter);
-									mListView.setVisibility(View.VISIBLE);
-									mNothingImg.setVisibility(View.INVISIBLE);
-								}
-
-								// TODO:插入测试数据
-								addTestData();
-
-								mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-								mListView.setSelection(mListView
-										.getHeaderViewsCount());// 显示第一个非HeaderView
-							}
-
-						});
-
-			}
-		});
-
+		// 后退关闭PopupWindow
 		((MainActivity) mActivity)
 				.setOnBackPressedListener(new OnBackPressedListener() {
 
 					@Override
 					public boolean onBackPressed() {
 
-						if (mPopupWindow != null && mPopupWindow.isShowing()) {
-							mPopupWindow.dismiss();
-							return true;
-
-						} else {//不拦截
-							return false;
-						}
+						return closePopupWindow();
 
 					}
 				});
@@ -664,4 +599,111 @@ public class FeedPager extends BasePager {
 		mItemInfoShowedList.remove(position);
 		mListViewAdapter.notifyDataSetChanged();
 	}
+
+	/**
+	 * 添加订阅按钮的点击监听器
+	 */
+	class AddFeedOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+
+			if (closePopupWindow()) {
+				mPopupWindow.dismiss();
+				return;
+			}
+
+			View popupView = View.inflate(mActivity,
+					R.layout.popup_window_add_feed, null);
+
+			// 测量宽高
+			popupView.measure(0, 0);
+			int popupViewWidth = popupView.getMeasuredWidth();
+			int popupViewHeight = popupView.getMeasuredHeight();
+
+			mPopupWindow = new PopupWindow(popupView, popupViewWidth,
+					popupViewHeight);
+
+			// 透明背景
+			mPopupWindow.setBackgroundDrawable(new ColorDrawable(
+					Color.TRANSPARENT));
+
+			// 设置动画
+			mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+
+			// 显示
+			mPopupWindow.showAtLocation(mContainer, Gravity.TOP + Gravity.LEFT,
+					(int) mFuncButtonRight.getRight() - popupViewWidth,
+					(int) (mFuncButtonRight.getBottom() + SystemInfoUtils
+							.getStatusBarHeight(mActivity)));
+
+			// 添加订阅
+			popupView.findViewById(R.id.pwiv_add).setOnClickListener(
+					new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+
+						}
+					});
+
+			// 分享应用
+			popupView.findViewById(R.id.pwiv_share).setOnClickListener(
+					new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+
+						}
+					});
+
+			// 帮助和反馈
+			popupView.findViewById(R.id.pwiv_help).setOnClickListener(
+					new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+
+						}
+					});
+			// popupView.findViewById(R.id.tv_title2).setOnClickListener(
+			// new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			//
+			// if (mItemInfoShowedList.size() == 0) {//
+			// 无数据时，初始化adapter防止空指针异常
+			// mListViewAdapter = new FeedPagerListViewAdapter(); //
+			// 设置ListView适配器
+			// mListView.setAdapter(mListViewAdapter);
+			// mListView.setVisibility(View.VISIBLE);
+			// mNothingImg.setVisibility(View.INVISIBLE);
+			// }
+			//
+			// // TODO:插入测试数据
+			// addTestData();
+			//
+			// mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+			// mListView.setSelection(mListView
+			// .getHeaderViewsCount());// 显示第一个非HeaderView
+			// }
+			//
+			// });
+
+		}
+	}
+	
+	/**
+	 * 关闭popupWindow
+	 * @return 是否成功关闭
+	 */
+	private boolean closePopupWindow() {
+		if (mPopupWindow != null && mPopupWindow.isShowing()) {
+			mPopupWindow.dismiss();
+			return true;
+		}
+		return false;
+	}
+
 }
