@@ -233,9 +233,9 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				closePopupWindow();
-				
+
 				Intent intent = new Intent(mActivity, SearchItemActivity.class);
 				// 传递数据
 				intent.putExtra("ShowedList", mItemInfoShowedList);
@@ -350,9 +350,11 @@ public class FeedPager extends BasePager {
 
 			int itemCount = mItemInfoShowedList.size();
 
-			// 打印要显示的数目
-			// LogUtils.w("FeedPager", "ListCount:" + mItemShowedList.size());
-			mTitle.setText("我的订阅(" + itemCount + ")");
+			if (mItemInfoUnshowList.size() == 0) {// 没有更多了
+				mTitle.setText("我的订阅(" + itemCount + ")");
+			} else {
+				mTitle.setText("我的订阅(" + itemCount + "+)");
+			}
 
 			return itemCount;
 		}
@@ -420,7 +422,6 @@ public class FeedPager extends BasePager {
 		@Override
 		public void onDragRefresh() {
 
-			// TODO：暂时模拟刷新操作
 			new Thread() {
 				public void run() {
 					try {
@@ -428,6 +429,15 @@ public class FeedPager extends BasePager {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+
+					mItemInfoShowedList.clear();
+					mItemInfoUnshowList.clear();
+
+					FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+					mItemInfoUnshowList = feedItemDAO.queryAllItems();
+
+					// 插入要加载的Item
+					insertMoreItem();
 
 					// 修改UI必须在主线程执行
 					mActivity.runOnUiThread(new Runnable() {
@@ -437,13 +447,15 @@ public class FeedPager extends BasePager {
 
 							mListViewAdapter.notifyDataSetChanged();
 
-							mListView.completeRefresh();
+							if (mItemInfoUnshowList.size() > 0) {
+								// 允许再加载更多
+								mListView.setAllowLoadingMore(true);
+							}
 
 							Toast.makeText(mActivity, "刷新成功",
 									Toast.LENGTH_SHORT).show();
 
-							// 允许再加载更多
-							mListView.setAllowLoadingMore(true);
+							mListView.completeRefresh();
 						}
 					});
 
@@ -453,7 +465,7 @@ public class FeedPager extends BasePager {
 
 		@Override
 		public void onLoadingMore() {
-			// TODO：暂时模拟刷新操作
+
 			new Thread() {
 				public void run() {
 					try {
@@ -473,18 +485,19 @@ public class FeedPager extends BasePager {
 
 							mListViewAdapter.notifyDataSetChanged();
 
-							mListView.completeRefresh();
-
 							if (addCount == 0) {
 								Toast.makeText(mActivity, "没有更多数据了",
 										Toast.LENGTH_SHORT).show();
-								// 禁止上拉加载更多了
-								mListView.setAllowLoadingMore(false);
 							} else {
 								Toast.makeText(mActivity,
 										"成功加载了" + addCount + "条数据",
 										Toast.LENGTH_SHORT).show();
 							}
+							if (mItemInfoUnshowList.size() <= 0) {
+								// 禁止再加载更多
+								mListView.setAllowLoadingMore(false);
+							}
+							mListView.completeRefresh();
 
 						}
 					});
@@ -643,7 +656,21 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
+							if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
+								mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
+								mListView.setAdapter(mListViewAdapter);
+								mListView.setVisibility(View.VISIBLE);
+								mNothingImg.setVisibility(View.INVISIBLE);
+							}
 
+							// TODO:插入测试数据
+							addTestData();
+
+							mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+							mListView.setSelection(mListView
+									.getHeaderViewsCount());// 显示第一个非HeaderView
+
+							closePopupWindow();
 						}
 					});
 
@@ -653,7 +680,7 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
-
+							closePopupWindow();
 						}
 					});
 
@@ -663,39 +690,16 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
-
+							closePopupWindow();
 						}
 					});
-			// popupView.findViewById(R.id.tv_title2).setOnClickListener(
-			// new OnClickListener() {
-			//
-			// @Override
-			// public void onClick(View v) {
-			//
-			// if (mItemInfoShowedList.size() == 0) {//
-			// 无数据时，初始化adapter防止空指针异常
-			// mListViewAdapter = new FeedPagerListViewAdapter(); //
-			// 设置ListView适配器
-			// mListView.setAdapter(mListViewAdapter);
-			// mListView.setVisibility(View.VISIBLE);
-			// mNothingImg.setVisibility(View.INVISIBLE);
-			// }
-			//
-			// // TODO:插入测试数据
-			// addTestData();
-			//
-			// mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-			// mListView.setSelection(mListView
-			// .getHeaderViewsCount());// 显示第一个非HeaderView
-			// }
-			//
-			// });
 
 		}
 	}
-	
+
 	/**
 	 * 关闭popupWindow
+	 * 
 	 * @return 是否成功关闭
 	 */
 	private boolean closePopupWindow() {
