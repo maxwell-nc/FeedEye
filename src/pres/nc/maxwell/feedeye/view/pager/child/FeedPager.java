@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
@@ -545,10 +546,15 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// TODO：待添加点击事件
 
-				// 检查NaturePositionOnItemClickListener是否生效
-				LogUtils.w("FeedPager", "item position:" + position);
+				if (!closePopupWindow()) {// 非关闭PopupWindow才响应
+
+					// TODO：待添加点击事件
+
+					// 检查NaturePositionOnItemClickListener是否生效
+					LogUtils.w("FeedPager", "item position:" + position);
+				}
+
 			}
 		});
 
@@ -680,6 +686,15 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
+							// 分享
+							Intent intent = new Intent();
+							intent.setAction("android.intent.action.SEND");
+							intent.addCategory(Intent.CATEGORY_DEFAULT);
+							intent.setType("text/plain");
+							intent.putExtra(Intent.EXTRA_TEXT,
+									"我发现了一个好玩的应用，他的名字叫做FeedEye，赶紧来下载吧！地址是：https://github.com/maxwell-nc/FeedEye");
+							mActivity.startActivity(intent);
+
 							closePopupWindow();
 						}
 					});
@@ -690,6 +705,10 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
+							Intent intent = new Intent(
+									Intent.ACTION_VIEW,
+									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
+							mActivity.startActivity(intent);
 							closePopupWindow();
 						}
 					});
