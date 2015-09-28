@@ -31,6 +31,8 @@
         </activity>
         <activity android:name="pres.nc.maxwell.feedeye.activity.SearchItemActivity" >
         </activity>
+        <activity android:name="pres.nc.maxwell.feedeye.activity.AddFeedActivity" >
+        </activity>
     </application>
 
 </manifest>

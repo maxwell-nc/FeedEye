@@ -30,31 +30,6 @@ public class MainActivity extends Activity {
 
 	private List<BasePager> mPagerList;
 
-	/**
-	 * 后退点击监听
-	 */
-	private OnBackPressedListener onBackPressedListener;
-
-	/**
-	 * 后退点击监听器
-	 * 
-	 * @return 返回是否拦截系统事件
-	 */
-	public interface OnBackPressedListener {
-		public boolean onBackPressed();
-	}
-
-	/**
-	 * 设置后退点击监听器
-	 * 
-	 * @param onBackPressedListener
-	 *            监听器
-	 */
-	public void setOnBackPressedListener(
-			OnBackPressedListener onBackPressedListener) {
-		this.onBackPressedListener = onBackPressedListener;
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,26 +65,6 @@ public class MainActivity extends Activity {
 		}
 
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
-
-	}
-
-	/**
-	 * 后退按钮事件
-	 */
-	@Override
-	public void onBackPressed() {
-
-		if (onBackPressedListener != null) {
-
-			if (!onBackPressedListener.onBackPressed()) {//不拦截
-				super.onBackPressed();
-			}
-
-		} else {//没有设置
-			
-			super.onBackPressed();
-			
-		}
 
 	}
 

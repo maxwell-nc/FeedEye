@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.activity.MainActivity;
-import pres.nc.maxwell.feedeye.activity.MainActivity.OnBackPressedListener;
 import pres.nc.maxwell.feedeye.activity.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
@@ -234,9 +232,6 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
-
-				closePopupWindow();
-
 				Intent intent = new Intent(mActivity, SearchItemActivity.class);
 				// 传递数据
 				intent.putExtra("ShowedList", mItemInfoShowedList);
@@ -252,18 +247,6 @@ public class FeedPager extends BasePager {
 
 		// 添加按钮事件
 		mFuncButtonRight.setOnClickListener(new AddFeedOnClickListener());
-
-		// 后退关闭PopupWindow
-		((MainActivity) mActivity)
-				.setOnBackPressedListener(new OnBackPressedListener() {
-
-					@Override
-					public boolean onBackPressed() {
-
-						return closePopupWindow();
-
-					}
-				});
 
 	};
 
@@ -547,13 +530,10 @@ public class FeedPager extends BasePager {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				if (!closePopupWindow()) {// 非关闭PopupWindow才响应
+				// TODO：待添加点击事件
 
-					// TODO：待添加点击事件
-
-					// 检查NaturePositionOnItemClickListener是否生效
-					LogUtils.w("FeedPager", "item position:" + position);
-				}
+				// 检查NaturePositionOnItemClickListener是否生效
+				LogUtils.w("FeedPager", "item position:" + position);
 
 			}
 		});
@@ -650,6 +630,9 @@ public class FeedPager extends BasePager {
 			// 设置动画
 			mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
 
+			// 设置焦点
+			mPopupWindow.setFocusable(true);
+
 			// 显示
 			mPopupWindow.showAtLocation(mContainer, Gravity.TOP + Gravity.LEFT,
 					(int) mFuncButtonRight.getRight() - popupViewWidth,
@@ -705,6 +688,7 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
+							//打开项目页面
 							Intent intent = new Intent(
 									Intent.ACTION_VIEW,
 									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
