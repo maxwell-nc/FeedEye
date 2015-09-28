@@ -12,7 +12,7 @@
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="40dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/selector_press_background"
@@ -22,17 +22,16 @@
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/img_divider" />
 
-        <RelativeLayout
-            android:id="@+id/rl_bar"
+        <FrameLayout
+            android:id="@+id/fl_bar"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:gravity="center_vertical" >
-        </RelativeLayout>
+            android:gravity="center_vertical" />
     </LinearLayout>
 
     <FrameLayout

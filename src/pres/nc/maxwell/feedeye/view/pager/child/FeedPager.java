@@ -131,7 +131,8 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
-				// TODO:执行添加订阅操作
+				
+				addNewFeedItem();
 
 			}
 
@@ -646,28 +647,11 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
-							if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
-								mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
-								mListView.setAdapter(mListViewAdapter);
-								mListView.setVisibility(View.VISIBLE);
-								mNothingImg.setVisibility(View.INVISIBLE);
-							}
-
-							// TODO:插入测试数据
-							//addTestData();
-
-							mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-							mListView.setSelection(mListView
-									.getHeaderViewsCount());// 显示第一个非HeaderView
-
-							closePopupWindow();
 							
-							Intent intent = new Intent(mActivity,AddFeedActivity.class);
-							
-							//打开并获得添加结果
-							mActivity.startActivityForResult(intent, 0);
+							addNewFeedItem();
 							
 						}
+
 					});
 
 			// 分享应用
@@ -718,6 +702,33 @@ public class FeedPager extends BasePager {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 添加一个新的订阅信息
+	 */
+	private void addNewFeedItem() {
+		
+		if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
+			mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
+			mListView.setAdapter(mListViewAdapter);
+			mListView.setVisibility(View.VISIBLE);
+			mNothingImg.setVisibility(View.INVISIBLE);
+		}
+
+		// TODO:插入测试数据
+		//addTestData();
+
+		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+		mListView.setSelection(mListView
+				.getHeaderViewsCount());// 显示第一个非HeaderView
+
+		closePopupWindow();
+		
+		Intent intent = new Intent(mActivity,AddFeedActivity.class);
+		
+		//打开并获得添加结果
+		mActivity.startActivityForResult(intent, 0);
 	}
 
 }

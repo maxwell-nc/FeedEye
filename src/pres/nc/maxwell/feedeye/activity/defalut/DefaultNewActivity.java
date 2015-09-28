@@ -8,7 +8,6 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * 带后退按钮默认的Activity
@@ -19,16 +18,26 @@ public class DefaultNewActivity extends Activity {
 	 * 后退按钮
 	 */
 	protected ImageView mBack;
-	
+
 	/**
-	 * 顶部条
+	 * 顶部容器
 	 */
-	protected RelativeLayout mBar;
-	
+	protected FrameLayout mBar;
+
 	/**
-	 * 内容部分
+	 * 内容容器
 	 */
 	protected FrameLayout mContainer;
+
+	/**
+	 * 顶部View
+	 */
+	protected View mBarView;
+
+	/**
+	 * 内容View
+	 */
+	protected View mContainerView;
 
 	/**
 	 * 创建时执行
@@ -38,9 +47,28 @@ public class DefaultNewActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_new_default);
 		super.onCreate(savedInstanceState);
-		
+
 		initView();
 		initData();
+	
+	}
+
+	/**
+	 * 添加子View
+	 */
+	protected void addView(int barViewId, int containerViewId) {
+		mBarView = View.inflate(this, barViewId, null);
+		mBar.addView(mBarView);
+		
+		mContainerView = View.inflate(this, containerViewId, null);
+		mContainer.addView(mContainerView);
+	}
+
+	/**
+	 * 把后退图片换成关闭
+	 */
+	protected void setAsCloseImage() {
+		mBack.setImageResource(R.drawable.btn_close);
 	}
 	
 	/**
@@ -49,13 +77,16 @@ public class DefaultNewActivity extends Activity {
 	protected void initView() {
 
 		mBack = (ImageView) findViewById(R.id.iv_back);
-		mBar = (RelativeLayout) findViewById(R.id.rl_bar);
+		mBar = (FrameLayout) findViewById(R.id.fl_bar);
 		mContainer = (FrameLayout) findViewById(R.id.fl_container);
-		
+
 	}
-	
+
+	/**
+	 * 初始化数据
+	 */
 	protected void initData() {
-		
+
 		/**
 		 * 后退点击事件
 		 */
@@ -70,7 +101,7 @@ public class DefaultNewActivity extends Activity {
 			}
 
 		});
-		
+
 	}
-	
+
 }

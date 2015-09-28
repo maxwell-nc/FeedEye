@@ -91,6 +91,12 @@ public class IOUtils {
 		}
 	}
 
+	/**
+	 * 获得SD卡中的存储File对象
+	 * @param dir SD卡下的目录，如"/xxx"
+	 * @param filename 文件名
+	 * @return File对象
+	 */
 	public static File getFileInSdcard(String dir, String filename) {
 
 		// sdcard位置
