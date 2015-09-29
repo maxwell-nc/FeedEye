@@ -7,14 +7,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
 /**
- * Bitmap网络缓存，单例
+ * Bitmap网络缓存
  */
-public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
+public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 
 	/**
 	 * 用于设置本地缓存
@@ -22,52 +23,55 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 	private BitmapLocalCahe mBitmapLocalCahe;
 
 	/**
-	 * 此类的实例对象
-	 */
-	private static final BitmapNetworkCache mThis = new BitmapNetworkCache();
-
-	
-	/**
-	 * 返回此类的实例对象
-	 * @return 此类的实例对象
-	 */
-	public static BitmapNetworkCache getInstance() {
-
-		return mThis;
-
-	}
-	
-	/**
-	 * 单例对象，不要创建新的实例对象
-	 */
-	private BitmapNetworkCache() {}
-
-	
-	/**
-	 * 设置要解析的参数，初始化BitmapLocalCahe
+	 * 设置要解析的参数
 	 */
 	@Override
 	public void setParams(ImageView imageView, String url) {
 		super.setParams(imageView, url);
-		
-		//获取BitmapLocalCahe
-		mBitmapLocalCahe = BitmapLocalCahe.getInstance();
 	}
-	
+
 	/**
 	 * 从网络中获取Bitmap，写到本地缓存，再读入内存返回
 	 * 
+	 * @param cache
+	 *            接收BitmapLocalCahe对象
 	 * @return 返回true,无用值，无论成功与否都会显示图片
 	 */
 	@Override
-	public boolean displayBitmap(ImageView imageView, String url) {
-		
+	public boolean displayBitmap(ImageView imageView, String url,
+			BitmapCache cahe) {
+
+		// 获取BitmapLocalCahe
+		mBitmapLocalCahe = (BitmapLocalCahe) cahe;
+
 		setParams(imageView, url);
-		
+
 		// 开启AsyncTask执行下载图片并显示
 		new GetBitmapTask().execute();
 
 		return true;
+	}
+
+	/**
+	 * 完成网络缓存获取的监听器实例对象
+	 */
+	private OnFinishedGetNetworkCacheListener onFinishedListener;
+
+	/**
+	 * 完成网络缓存获取的监听器
+	 */
+	public interface OnFinishedGetNetworkCacheListener {
+		public void onFinishedGetNetworkCache(ImageView imageView, String url,
+				boolean result);
+	}
+
+	/**
+	 * 提供外部调用的设置完成网络缓存获取的监听器方法
+	 * @param listener 监听器
+	 */
+	public void setOnFinishedGetNetworkCache(
+			OnFinishedGetNetworkCacheListener listener) {
+		this.onFinishedListener = listener;
 	}
 
 	/**
@@ -88,13 +92,10 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 		@Override
 		protected void onPostExecute(Boolean result) {// 主线程
 
-			if (!result.booleanValue()) {// 获取失败
-				showErrorBitmap();
-			} else {// 成功获取
-				// 调用本地缓存对象处理
-				if(!mBitmapLocalCahe.displayBitmap(mImageView, mURL)){
-					showErrorBitmap();
-				}
+			//调用外部方法来完成处理结果
+			if (onFinishedListener != null) {
+				onFinishedListener.onFinishedGetNetworkCache(mImageView, mURL,
+						result);
 			}
 
 		};
@@ -110,7 +111,7 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 	public boolean getCache() {
 
 		LogUtils.i("BitmapNetworkCache", "从网络中读取Cache");
-		
+
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection) new URL(mURL).openConnection();
@@ -133,8 +134,10 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+
 		} catch (IOException e) {
 			e.printStackTrace();
+
 		} finally {
 
 			if (connection != null) {
@@ -142,6 +145,7 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl  {
 			}
 
 		}
+
 		return false;
 
 	}

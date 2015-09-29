@@ -4,6 +4,7 @@ import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapLocalCahe;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapMemoryCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache.OnFinishedGetNetworkCacheListener;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
@@ -34,14 +35,14 @@ public class BitmapCacheUtils {
 	private boolean mIsEnableNetworkCache = true;
 
 	/**
-	 * 初始化三级缓存单例对象，默认使用网络缓存
+	 * 初始化三级缓存对象，默认使用网络缓存
 	 */
 	public BitmapCacheUtils() {
 		this(true);
 	}
 
 	/**
-	 * 初始化三级缓存单例对象
+	 * 初始化三级缓存对象
 	 * 
 	 * @param isEnableNetworkCache
 	 *            是否使用网络缓存
@@ -51,13 +52,13 @@ public class BitmapCacheUtils {
 		this.mIsEnableNetworkCache = isEnableNetworkCache;
 
 		// 内存缓存对象
-		mBitmapMemoryCache = BitmapMemoryCache.getInstance();
+		mBitmapMemoryCache = new BitmapMemoryCache();
 		// 本地缓存对象
-		mBitmapLocalCahe = BitmapLocalCahe.getInstance();
+		mBitmapLocalCahe = new BitmapLocalCahe();
 
 		if (mIsEnableNetworkCache) {
 			// 网络缓存对象
-			mBitmapNetworkCache = BitmapNetworkCache.getInstance();
+			mBitmapNetworkCache = new BitmapNetworkCache();
 		} else {
 			LogUtils.i("BitmapCacheUtils", "不使用网络缓存");
 		}
@@ -78,19 +79,40 @@ public class BitmapCacheUtils {
 			return;
 		}
 
+		//设置完成读取网路缓存的处理
+		mBitmapNetworkCache
+				.setOnFinishedGetNetworkCache(new OnFinishedGetNetworkCacheListener() {
+
+					@Override
+					public void onFinishedGetNetworkCache(ImageView imageView,
+							String url, boolean result) {
+						if (!result) {// 获取失败
+
+							mBitmapNetworkCache.showErrorBitmap();
+						} else {// 成功获取
+							// 调用本地缓存对象处理
+							if (!mBitmapLocalCahe.displayBitmap(imageView,
+									url,mBitmapMemoryCache)) {
+								mBitmapNetworkCache.showErrorBitmap();
+							}
+						}
+					}
+				});
+
+		
 		// 1.读取内存缓存
-		if (!mBitmapMemoryCache.displayBitmap(imageView, url)) {// 内存中没有缓存
+		if (!mBitmapMemoryCache.displayBitmap(imageView, url, null)) {// 内存中没有缓存
 
 			LogUtils.i("BitmapCacheUtils", "内存中没有缓存");
 
 			// 2.读取本地缓存
-			if (!mBitmapLocalCahe.displayBitmap(imageView, url)) {// 本地中没有缓存
+			if (!mBitmapLocalCahe.displayBitmap(imageView, url,mBitmapMemoryCache)) {// 本地中没有缓存
 
 				LogUtils.i("BitmapCacheUtils", "本地中没有缓存");
 
 				if (mIsEnableNetworkCache) {
 					// 3.读取网络缓存
-					mBitmapNetworkCache.displayBitmap(imageView, url);// 永真，网络无法获取则显示错误图片
+					mBitmapNetworkCache.displayBitmap(imageView, url,mBitmapLocalCahe);// 永真，网络无法获取则显示错误图片
 				} else {// 不使用网络缓存且本地缓存不存在
 					mBitmapLocalCahe.showErrorBitmap();
 				}

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.widget.ImageView;
 
@@ -28,44 +29,24 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 	private String mFileName;
 
 	/**
-	 * 此类的实例对象
-	 */
-	private static final BitmapLocalCahe mThis = new BitmapLocalCahe();
-
-	/**
-	 * 返回此类的实例对象
-	 * 
-	 * @return 此类的实例对象
-	 */
-	public static BitmapLocalCahe getInstance() {
-
-		return mThis;
-
-	}
-
-	/**
-	 * 单例对象，不要创建新的实例对象
-	 */
-	private BitmapLocalCahe() {
-
-	}
-
-	/**
-	 * 设置要解析的参数，初始化BitmapLocalCahe
+	 * 设置要解析的参数
 	 */
 	@Override
 	public void setParams(ImageView imageView, String url) {
 		super.setParams(imageView, url);
-
-		// 获取BitmapMemoryCache
-		mBitmapMemoryCache = BitmapMemoryCache.getInstance();
 	}
 
 	/**
 	 * 从本地中获取Bitmap，写到内存缓存，再读入显示
+	 * @param cache 接收BitmapMemoryCache对象
+	 * @return 返回是否成功获取本地缓存
 	 */
 	@Override
-	public boolean displayBitmap(ImageView imageView, String url) {
+	public boolean displayBitmap(ImageView imageView, String url,BitmapCache cache) {
+
+		// 获取BitmapMemoryCache
+		mBitmapMemoryCache = (BitmapMemoryCache) cache;
+		
 		setParams(imageView, url);
 		return getCache();
 	}
@@ -87,7 +68,7 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 			mBitmapMemoryCache.setCache(cacheFile);
 
 			// 从内存中显示
-			if (!mBitmapMemoryCache.displayBitmap(mImageView, mURL)) {
+			if (!mBitmapMemoryCache.displayBitmap(mImageView, mURL,null)) {
 
 				return false;
 

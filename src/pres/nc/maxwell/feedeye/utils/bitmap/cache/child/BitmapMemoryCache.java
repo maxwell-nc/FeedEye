@@ -4,6 +4,7 @@ import java.io.File;
 
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCompressUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
@@ -44,26 +45,11 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 	 */
 	private LruCache<String, Bitmap> mMemoryCache;
 
-	/**
-	 * 此类的实例对象
-	 */
-	private static final BitmapMemoryCache mThis = new BitmapMemoryCache();
 
 	/**
-	 * 返回此类的实例对象
-	 * 
-	 * @return 此类的实例对象
+	 * 创建新的实例对象
 	 */
-	public static BitmapMemoryCache getInstance() {
-
-		return mThis;
-
-	}
-
-	/**
-	 * 单例对象，不要创建新的实例对象
-	 */
-	private BitmapMemoryCache() {
+	public BitmapMemoryCache() {
 
 		long maxCacheMemory = Runtime.getRuntime().maxMemory() / 8;// 设置最大Cache占用应用总内存1/8
 		mMemoryCache = new LruCache<String, Bitmap>((int) maxCacheMemory) {
@@ -96,11 +82,11 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 
 	/**
 	 * 从LruCache中获取Bitmap显示
-	 * 
+	 * @param cache 无用值，请置为null
 	 * @return 是否成功获取Bitmap
 	 */
 	@Override
-	public boolean displayBitmap(ImageView imageView, String url) {
+	public boolean displayBitmap(ImageView imageView, String url,BitmapCache cache) {
 
 		setParams(imageView, url);
 		mImageView.setTag(mURL);// ImageView与URL绑定，防止重用显示错误图片

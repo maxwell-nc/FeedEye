@@ -24,9 +24,12 @@ public interface BitmapCache {
 	 *            需要显示图片的ImageView
 	 * @param url
 	 *            要显示图片的URL
+	 * @param cache
+	 *            需要的上级缓存
 	 * @return 返回是否成功
 	 */
-	public abstract boolean displayBitmap(ImageView imageView, String url);
+	public abstract boolean displayBitmap(ImageView imageView, String url,
+			BitmapCache cache);
 
 	/**
 	 * 获取缓存，并设置下一级缓存，内部调用

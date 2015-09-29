@@ -26,11 +26,10 @@ public class BitmapCacheDefaultImpl implements BitmapCache {
 	/**
 	 * 显示无法加载图片
 	 */
-	public void showErrorBitmap(){
+	public void showErrorBitmap() {
 		mImageView.setImageResource(mErrorImageResId);
-	}	
-	
-	
+	}
+
 	/**
 	 * 需要显示的ImageView
 	 */
@@ -80,10 +79,13 @@ public class BitmapCacheDefaultImpl implements BitmapCache {
 	 *            需要显示图片的ImageView
 	 * @param url
 	 *            要显示图片的网址
+	 * @param cache
+	 *            需要的上级缓存
 	 * @return 返回假
 	 */
 	@Override
-	public boolean displayBitmap(ImageView imageView, String url) {
+	public boolean displayBitmap(ImageView imageView, String url,
+			BitmapCache cache) {
 		setParams(imageView, url);
 		return false;
 	}
