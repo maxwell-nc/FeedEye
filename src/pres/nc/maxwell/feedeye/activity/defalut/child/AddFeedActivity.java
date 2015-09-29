@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 
 /**
  * 添加订阅页面的Activity
@@ -38,6 +40,16 @@ public class AddFeedActivity extends DefaultNewActivity {
 	private EditText mTitleText;
 
 	/**
+	 * 编码单选组
+	 */
+	private RadioGroup mEncodingGroup;
+
+	/**
+	 * 编码格式，默认UTF-8
+	 */
+	private String mEncodingString = "utf-8";
+	
+	/**
 	 * 初始化View对象
 	 */
 	@Override
@@ -55,8 +67,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mUrlText = (EditText) mContainerView.findViewById(R.id.et_url);
 		mTitleText = (EditText) mContainerView.findViewById(R.id.et_title);
 
+		mEncodingGroup = (RadioGroup) mContainerView.findViewById(R.id.rg_encoding);
+		
 	}
 
+	
 	/**
 	 * 初始化数据
 	 */
@@ -72,20 +87,52 @@ public class AddFeedActivity extends DefaultNewActivity {
 			@Override
 			public void onClick(View v) {
 
-				boolean finishAdd = finishAdd();
+				boolean finishAdd = addItem();
 				LogUtils.e("AddFeedActivity", finishAdd + "");
 
 			}
 
 		});
+		
+		/**
+		 * 判断编码类型
+		 */
+		mEncodingGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				
+				switch (group.getCheckedRadioButtonId()) {
+				case R.id.rb_utf8:
+					mEncodingString = "utf-8";
+					break;
+				case R.id.rb_gb2312:
+					mEncodingString = "gbk";
+					break;
+				case R.id.rb_iso8859_1:
+					mEncodingString = "iso8859-1";
+					break;
+				}
+				
+			}
+		});
+		
 	}
 
+	
+	@Override
+	protected boolean beforeClose() {
+
+		setResult(-1, null);//-1表示没有返回数据
+		return super.beforeClose();
+	}
+	
 	/**
 	 * 完成添加
 	 * 
 	 * @return 返回是否成功添加
 	 */
-	private boolean finishAdd() {
+	private boolean addItem() {
 
 		String urlString = mUrlText.getText().toString();
 		if (TextUtils.isEmpty(urlString)) {
@@ -166,7 +213,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				});
 
 		//解析数据
-		feedXMLParser.parseUrl(urlString);
+		feedXMLParser.parseUrl(urlString,mEncodingString);
 
 		
 

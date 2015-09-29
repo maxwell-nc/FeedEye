@@ -83,6 +83,14 @@ public class DefaultNewActivity extends Activity {
 	}
 
 	/**
+	 * 在关闭界面前处理事情
+	 * @return 是否允许关闭
+	 */
+	protected boolean beforeClose() {
+		return true;
+	}
+	
+	/**
 	 * 初始化数据
 	 */
 	protected void initData() {
@@ -94,11 +102,16 @@ public class DefaultNewActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
-				// 关闭当前界面
-				finish();
-
+				
+				//在关闭界面前处理事情
+				if(beforeClose()){
+					// 关闭当前界面
+					finish();
+				}
+				
 			}
+
+			
 
 		});
 

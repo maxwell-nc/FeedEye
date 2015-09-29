@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 	 * 所有Pager的列表
 	 */
 	private List<BasePager> mPagerList;
-	
+
 	/**
 	 * 订阅页面
 	 */
@@ -72,11 +72,9 @@ public class MainActivity extends Activity {
 
 		mPagerList = new ArrayList<BasePager>();
 
-		
-		
 		// 添加布局进ViewPager
 		mFeedPager = new FeedPager(this);
-		
+
 		mPagerList.add(mFeedPager);
 		for (int i = 1; i < 4; i++) {
 			mPagerList.add(new BasePager(this));
@@ -92,26 +90,25 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		switch (requestCode) {
-		case 1://添加界面@see #AddFeedActivity 返回 @see #FeedPager 的数据
-			
-			FeedItemBean feedItemBean = new FeedItemBean();
-			
-			//LogUtils.e("MainActivity", data.getExtras().toString());
-			
-			feedItemBean = (FeedItemBean) data.getExtras().getSerializable("feedItemBean");
-		
-			mFeedPager.finishedAddItem(feedItemBean);
-			
-			break;
 
+		switch (requestCode) {
+		case 1:// 添加界面@see #AddFeedActivity 返回 @see #FeedPager 的数据
+
+			if (resultCode != -1) {
+
+				FeedItemBean feedItemBean = (FeedItemBean) data
+						.getSerializableExtra("feedItemBean");
+
+				if (feedItemBean != null) {
+					mFeedPager.finishedAddItem(feedItemBean);
+				}
+
+			}
+			break;
 		}
-		
-		
-		
+
 	}
-	
+
 }
 
 /**

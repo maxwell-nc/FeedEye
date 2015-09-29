@@ -77,9 +77,16 @@ public class TimeUtils {
 		try {
 			newDate = format.parse(timeString);
 		} catch (ParseException e) {
+			
 			e.printStackTrace();
+			//·ÇGMT
+			return string2Timestamp(timeString);
 		}
 		
 		return string2Timestamp(date2String(newDate, "yyyy-MM-dd HH:mm:ss"));
 	}
+	
+	
+	
+	
 }

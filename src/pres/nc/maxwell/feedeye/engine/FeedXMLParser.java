@@ -47,14 +47,21 @@ public class FeedXMLParser {
 	public String mFeedSummary;
 
 	/**
+	 * 编码方式
+	 */
+	private String encodingString;
+	
+	/**
 	 * 解析的订阅地址
 	 * 
 	 * @param feedUrl
 	 *            订阅地址
+	 * @param encodingString
+	 *            编码方式
 	 */
-	public void parseUrl(String feedUrl) {
+	public void parseUrl(String feedUrl, String encodingString) {
 		this.mFeedUrl = feedUrl;
-
+		this.encodingString = encodingString;
 		new ParseTask().execute();
 	}
 
@@ -63,7 +70,7 @@ public class FeedXMLParser {
 	}
 
 	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
-	
+
 	public void setOnFinishedParseXMLListener(
 			OnFinishedParseXMLListener onFinishedParseXMLListener) {
 		this.mOnFinishedParseXMLListener = onFinishedParseXMLListener;
@@ -104,8 +111,6 @@ public class FeedXMLParser {
 
 			if (connection.getResponseCode() == 200) {
 
-				
-
 				parseXML(connection.getInputStream());
 
 			}
@@ -116,9 +121,9 @@ public class FeedXMLParser {
 			e.printStackTrace();
 		} finally {
 
-			/*if (connection != null) {
-				connection.disconnect();// 不要忘记断开
-			}*/
+			/*
+			 * if (connection != null) { connection.disconnect();// 不要忘记断开 }
+			 */
 
 		}
 	}
@@ -130,31 +135,32 @@ public class FeedXMLParser {
 	 *            XML输入流
 	 */
 	private void parseXML(InputStream inputStream) {
-
+	
 		XmlPullParser parser = Xml.newPullParser();
 		try {
-			parser.setInput(inputStream, "utf-8");
+			parser.setInput(inputStream, encodingString);
 			int eventType = parser.getEventType();
 
 			// 不断解析
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 
-				if (eventType != XmlPullParser.START_TAG || parser.getName()==null) {
+				if (eventType != XmlPullParser.START_TAG
+						|| parser.getName() == null) {
 					eventType = parser.next();
 					continue;
 				}
-				
-				//LogUtils.w("FeedXMLParser", parser.getName() );
-				
+
+				// LogUtils.w("FeedXMLParser", parser.getName() );
+
 				// 检查XML类型
 				if (TextUtils.isEmpty(mFeedType)) {
-					
+
 					if ("rss".equals(parser.getName())) {// rss类型
 						mFeedType = "RSS";
 					} else if (parser.getName() == "feed") {// atom类型
 						mFeedType = "ATOM";
 					}
-					
+
 				}
 
 				// 检查XML标题
@@ -163,7 +169,7 @@ public class FeedXMLParser {
 					if ("title".equals(parser.getName())) {// 标题
 						mFeedTitle = parser.nextText();
 					}
-					
+
 				}
 
 				// 检查XML时间
@@ -175,7 +181,7 @@ public class FeedXMLParser {
 					if ("pubDate".equals(parser.getName())) {// RSS
 						mFeedTime = parser.nextText();
 					}
-					
+
 				}
 
 				// 检查XML概要
@@ -187,7 +193,7 @@ public class FeedXMLParser {
 					if ("description".equals(parser.getName())) {// RSS
 						mFeedSummary = parser.nextText();
 					}
-					
+
 				}
 
 				// TODO：图标、数量
@@ -201,10 +207,10 @@ public class FeedXMLParser {
 			e.printStackTrace();
 		}
 
-		if (mOnFinishedParseXMLListener!=null) {
+		if (mOnFinishedParseXMLListener != null) {
 			mOnFinishedParseXMLListener.onFinishedParseXML();
 		}
-		
+
 	}
 
 }
