@@ -15,11 +15,11 @@
 
     <EditText
         android:id="@+id/et_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_title"
         android:layout_marginLeft="10dp"
-        android:ems="14"
+        android:layout_marginRight="10dp"
         android:hint="请输入要订阅的标题(可选)" >
 
         <requestFocus />
@@ -38,13 +38,13 @@
 
     <EditText
         android:id="@+id/et_url"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_url"
         android:layout_marginLeft="10dp"
-        android:ems="14"
+        android:layout_marginRight="10dp"
         android:hint="请输入要订阅的网址，如：http://blog.csdn.net/maxwell_nc/rss/list"
-        android:text="http://blog.csdn.net/maxwell_nc/rss/list" >
+        android:text="http://blog.xiachufang.com/?feed=rss2" >
     </EditText>
 
     <TextView

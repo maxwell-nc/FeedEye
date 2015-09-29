@@ -9,6 +9,7 @@ import java.net.URL;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Xml;
@@ -50,7 +51,7 @@ public class FeedXMLParser {
 	 * 编码方式
 	 */
 	private String encodingString;
-	
+
 	/**
 	 * 解析的订阅地址
 	 * 
@@ -66,7 +67,7 @@ public class FeedXMLParser {
 	}
 
 	public interface OnFinishedParseXMLListener {
-		public void onFinishedParseXML();
+		public void onFinishedParseXML(boolean result);
 	}
 
 	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
@@ -76,12 +77,12 @@ public class FeedXMLParser {
 		this.mOnFinishedParseXMLListener = onFinishedParseXMLListener;
 	}
 
-	class ParseTask extends AsyncTask<Void, Void, Void> {
+	class ParseTask extends AsyncTask<Void, Void, Boolean> {
 
 		@Override
-		protected Void doInBackground(Void... params) {// 子线程
-			getXML();
-			return null;
+		protected Boolean doInBackground(Void... params) {// 子线程
+			
+			return getXML();
 		}
 
 		@Override
@@ -90,29 +91,33 @@ public class FeedXMLParser {
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {// 主线程
+		protected void onPostExecute(Boolean result) {// 主线程
 
+			if (mOnFinishedParseXMLListener != null) {
+				mOnFinishedParseXMLListener.onFinishedParseXML(result);
+			}
+			
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private void getXML() {
+	private boolean getXML() {
 
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection) new URL(mFeedUrl).openConnection();
 
-			connection.setConnectTimeout(5000);
-			connection.setReadTimeout(5000);
+			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(10000);
 
 			connection.setRequestMethod("GET");
 			connection.connect();
-
+			LogUtils.w("FeedXMLParser", connection.getResponseCode()+"succesful");
 			if (connection.getResponseCode() == 200) {
-
+				
 				parseXML(connection.getInputStream());
-
+				return true;
 			}
 
 		} catch (MalformedURLException e) {
@@ -121,11 +126,12 @@ public class FeedXMLParser {
 			e.printStackTrace();
 		} finally {
 
-			/*
-			 * if (connection != null) { connection.disconnect();// 不要忘记断开 }
-			 */
+			if (connection != null) {
+				connection.disconnect();// 不要忘记断开
+			}
 
 		}
+		return false;
 	}
 
 	/**
@@ -135,7 +141,7 @@ public class FeedXMLParser {
 	 *            XML输入流
 	 */
 	private void parseXML(InputStream inputStream) {
-	
+
 		XmlPullParser parser = Xml.newPullParser();
 		try {
 			parser.setInput(inputStream, encodingString);
@@ -207,9 +213,6 @@ public class FeedXMLParser {
 			e.printStackTrace();
 		}
 
-		if (mOnFinishedParseXMLListener != null) {
-			mOnFinishedParseXMLListener.onFinishedParseXML();
-		}
 
 	}
 

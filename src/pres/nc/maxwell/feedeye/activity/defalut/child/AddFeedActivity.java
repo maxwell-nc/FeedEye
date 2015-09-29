@@ -19,12 +19,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.Toast;
 
 /**
  * 添加订阅页面的Activity
  */
 public class AddFeedActivity extends DefaultNewActivity {
 
+	/**
+	 * Activity对象
+	 */
+	private final AddFeedActivity  mThisActivity = this;
+	
 	/**
 	 * 完成添加按钮
 	 */
@@ -172,56 +178,66 @@ public class AddFeedActivity extends DefaultNewActivity {
 				.setOnFinishedParseXMLListener(new OnFinishedParseXMLListener() {
 
 					@Override
-					public void onFinishedParseXML() {
+					public void onFinishedParseXML(boolean result) {
 
-						// 设置标题
-						if (TextUtils.isEmpty(titleString)) {// 设置为空
+						if (result) {//成功读取
+							// 设置标题
+							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
-							if (TextUtils.isEmpty(feedXMLParser.mFeedTitle)) {// 网络结果为空
-								feedItemBean.setTitle("无标题");
-							} else {// 用户不写，有网络数据
-								feedItemBean.setTitle(feedXMLParser.mFeedTitle);
+								if (TextUtils.isEmpty(feedXMLParser.mFeedTitle)) {// 网络结果为空
+									feedItemBean.setTitle("无标题");
+								} else {// 用户不写，有网络数据
+									feedItemBean.setTitle(feedXMLParser.mFeedTitle);
+								}
+
+							} else {// 用户自定义
+								feedItemBean.setTitle(titleString);
 							}
 
-						} else {// 用户自定义
-							feedItemBean.setTitle(titleString);
-						}
-
-						// 设置预览内容
-						if (!TextUtils.isEmpty(feedXMLParser.mFeedSummary)) {
-							feedItemBean
-									.setPreviewContent(feedXMLParser.mFeedSummary);
-						} else {
-							feedItemBean.setPreviewContent("没有接收到数据");
-						}
-
-						// 设置时间
-						if (!TextUtils.isEmpty(feedXMLParser.mFeedTime)) {
-							
-							
-							if ("RSS".equals(feedXMLParser.mFeedType)) {
-								feedItemBean.setLastTime(TimeUtils
-										.varString2Timestamp(feedXMLParser.mFeedTime));
+							// 设置预览内容
+							if (!TextUtils.isEmpty(feedXMLParser.mFeedSummary)) {
+								feedItemBean
+										.setPreviewContent(feedXMLParser.mFeedSummary);
+							} else {
+								feedItemBean.setPreviewContent("没有接收到数据");
 							}
+
+							// 设置时间
+							if (!TextUtils.isEmpty(feedXMLParser.mFeedTime)) {
+								
+								
+								if ("RSS".equals(feedXMLParser.mFeedType)) {
+									feedItemBean.setLastTime(TimeUtils
+											.varString2Timestamp(feedXMLParser.mFeedTime));
+								}
+								
+								
+							} else {
+								feedItemBean.setLastTime(new Timestamp(System
+										.currentTimeMillis()));
+							}
+
+							// TODO：图片待获取
+							feedItemBean.setPicURL("null");
+
+							feedItemDAO.addItem(feedItemBean);
+
+							//返回数据给MainActivity
+							Intent returnData = new Intent();
+							returnData.putExtra("feedItemBean", feedItemBean);
+							setResult(0, returnData);
 							
+							//关闭Activity
+							finish();
 							
-						} else {
-							feedItemBean.setLastTime(new Timestamp(System
-									.currentTimeMillis()));
+						}else {//读取失败
+
+							//恢复
+							mLoadingFrame.setVisibility(View.GONE);
+							mFinishButtonView.setVisibility(View.VISIBLE);
+							
+							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络", Toast.LENGTH_LONG).show();
 						}
-
-						// TODO：图片待获取
-						feedItemBean.setPicURL("null");
-
-						feedItemDAO.addItem(feedItemBean);
-
-						//返回数据给MainActivity
-						Intent returnData = new Intent();
-						returnData.putExtra("feedItemBean", feedItemBean);
-						setResult(0, returnData);
-						
-						//关闭Activity
-						finish();
 					}
 
 				});
