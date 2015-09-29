@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
 			if (resultCode != -1) {
 
 				FeedItemBean feedItemBean = (FeedItemBean) data
-						.getSerializableExtra("feedItemBean");
+						.getExtras().getSerializable("feedItemBean");
 
 				if (feedItemBean != null) {
 					mFeedPager.finishedAddItem(feedItemBean);

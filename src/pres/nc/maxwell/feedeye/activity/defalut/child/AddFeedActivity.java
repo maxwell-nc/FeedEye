@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -50,6 +51,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 	private String mEncodingString = "utf-8";
 	
 	/**
+	 * 加载中帧布局
+	 */
+	private FrameLayout mLoadingFrame;
+	
+	/**
 	 * 初始化View对象
 	 */
 	@Override
@@ -68,6 +74,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mTitleText = (EditText) mContainerView.findViewById(R.id.et_title);
 
 		mEncodingGroup = (RadioGroup) mContainerView.findViewById(R.id.rg_encoding);
+		mLoadingFrame = (FrameLayout) mContainerView.findViewById(R.id.fl_loading);
 		
 	}
 
@@ -134,6 +141,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 	 */
 	private boolean addItem() {
 
+		//显示处理中
+		mLoadingFrame.setVisibility(View.VISIBLE);
+		//禁止在提交
+		mFinishButtonView.setVisibility(View.INVISIBLE);
+		
 		String urlString = mUrlText.getText().toString();
 		if (TextUtils.isEmpty(urlString)) {
 			return false;
@@ -183,11 +195,13 @@ public class AddFeedActivity extends DefaultNewActivity {
 							feedItemBean.setPreviewContent("没有接收到数据");
 						}
 
-						// 设置预览内容
+						// 设置时间
 						if (!TextUtils.isEmpty(feedXMLParser.mFeedTime)) {
+							
+							
 							if ("RSS".equals(feedXMLParser.mFeedType)) {
 								feedItemBean.setLastTime(TimeUtils
-										.gmt2Timestamp(feedXMLParser.mFeedTime));
+										.varString2Timestamp(feedXMLParser.mFeedTime));
 							}
 							
 							

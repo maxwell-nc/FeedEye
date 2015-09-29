@@ -44,7 +44,7 @@
         android:layout_marginLeft="10dp"
         android:ems="14"
         android:hint="请输入要订阅的网址，如：http://blog.csdn.net/maxwell_nc/rss/list"
-        android:text="http://blog.xiachufang.com/?feed=rss2" >
+        android:text="http://blog.csdn.net/maxwell_nc/rss/list" >
     </EditText>
 
     <TextView
@@ -84,7 +84,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ISO8859-1" />
-        
     </RadioGroup>
+
+    <FrameLayout
+        android:id="@+id/fl_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="-20dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@anim/refresh_rotate"
+            android:indeterminateDuration="500" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="获取中..."
+            android:textColor="@color/theme_color"
+            android:textSize="20sp" />
+    </FrameLayout>
 
 </RelativeLayout>
