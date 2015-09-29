@@ -1,11 +1,10 @@
 package pres.nc.maxwell.feedeye.utils.bitmap.cache.child;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStream;
 
+import pres.nc.maxwell.feedeye.utils.HTTPUtils;
+import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.BitmapCacheDefaultImpl;
@@ -112,42 +111,24 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 
 		LogUtils.i("BitmapNetworkCache", "从网络中读取Cache");
 
-		HttpURLConnection connection = null;
-		try {
-			connection = (HttpURLConnection) new URL(mURL).openConnection();
 
-			connection.setConnectTimeout(5000);
-			connection.setReadTimeout(5000);
+		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
-			connection.setRequestMethod("GET");
-			connection.connect();
-
-			if (connection.getResponseCode() == 200) {
-
+			@Override
+			public void onSuccess(InputStream inputStream) {
 				BufferedInputStream bufferedInputStream = new BufferedInputStream(
-						connection.getInputStream());
+						inputStream);
 
 				mBitmapLocalCahe.setCache(bufferedInputStream);
-
-				return true;
 			}
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			@Override
+			public void onFailure() {
 
-		} catch (IOException e) {
-			e.printStackTrace();
-
-		} finally {
-
-			if (connection != null) {
-				connection.disconnect();// 不要忘记断开
 			}
-
-		}
-
-		return false;
-
+		});
+	
+		return	httpUtils.Connect(mURL, 5000, 5000);
 	}
 
 	/**

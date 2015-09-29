@@ -2,18 +2,12 @@ package pres.nc.maxwell.feedeye.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.HTTPUtils;
+import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Xml;
@@ -106,59 +100,26 @@ public class FeedXMLParser {
 
 	}
 
+	/**
+	 * 从网络读取XML
+	 * @return 是否成功读取XML
+	 */
 	private boolean getXML() {
-
-
-		HttpURLConnection connection = null;
-		try {
+		
+		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 			
-			if (mFeedUrl.startsWith("https://")) {
-				HttpsURLConnection
-						.setDefaultHostnameVerifier(new HostnameVerifier() {
-							public boolean verify(String string, SSLSession ssls) {
-								return true;
-							}
-						});
-				connection = null;
-				connection = (HttpsURLConnection) new URL(mFeedUrl)
-						.openConnection();
-			} else if (mFeedUrl.startsWith("http://")) {
-				connection = null;
-				connection = (HttpURLConnection) new URL(mFeedUrl)
-						.openConnection();
+			@Override
+			public void onSuccess(InputStream inputStream) {
+				parseXML(inputStream);
 			}
 			
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
-
-			connection.setRequestMethod("GET");
-			connection.connect();
-
-			LogUtils.w("FeedXMLParser", connection.getResponseCode()
-					+ "succesful");
-			if (connection.getResponseCode() == 200) {
-
-				parseXML(connection.getInputStream());
-				return true;
+			@Override
+			public void onFailure() {
+				
 			}
-			if (connection.getResponseCode() == 200) {
-
-				parseXML(connection.getInputStream());
-				return true;
-			}
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-
-			if (connection != null) {
-				connection.disconnect();// 不要忘记断开
-			}
-
-		}
-		return false;
+		});
+		
+		return httpUtils.Connect(mFeedUrl, 10000, 10000);
 	}
 
 	/**
