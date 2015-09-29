@@ -6,6 +6,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -81,7 +85,7 @@ public class FeedXMLParser {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {// ×ÓÏß³Ì
-			
+
 			return getXML();
 		}
 
@@ -96,7 +100,7 @@ public class FeedXMLParser {
 			if (mOnFinishedParseXMLListener != null) {
 				mOnFinishedParseXMLListener.onFinishedParseXML(result);
 			}
-			
+
 			super.onPostExecute(result);
 		}
 
@@ -104,18 +108,41 @@ public class FeedXMLParser {
 
 	private boolean getXML() {
 
+
 		HttpURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection) new URL(mFeedUrl).openConnection();
-
+			
+			if (mFeedUrl.startsWith("https://")) {
+				HttpsURLConnection
+						.setDefaultHostnameVerifier(new HostnameVerifier() {
+							public boolean verify(String string, SSLSession ssls) {
+								return true;
+							}
+						});
+				connection = null;
+				connection = (HttpsURLConnection) new URL(mFeedUrl)
+						.openConnection();
+			} else if (mFeedUrl.startsWith("http://")) {
+				connection = null;
+				connection = (HttpURLConnection) new URL(mFeedUrl)
+						.openConnection();
+			}
+			
 			connection.setConnectTimeout(10000);
 			connection.setReadTimeout(10000);
 
 			connection.setRequestMethod("GET");
 			connection.connect();
-			LogUtils.w("FeedXMLParser", connection.getResponseCode()+"succesful");
+
+			LogUtils.w("FeedXMLParser", connection.getResponseCode()
+					+ "succesful");
 			if (connection.getResponseCode() == 200) {
-				
+
+				parseXML(connection.getInputStream());
+				return true;
+			}
+			if (connection.getResponseCode() == 200) {
+
 				parseXML(connection.getInputStream());
 				return true;
 			}
@@ -212,7 +239,6 @@ public class FeedXMLParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 

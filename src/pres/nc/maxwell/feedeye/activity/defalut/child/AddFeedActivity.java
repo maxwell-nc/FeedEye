@@ -227,6 +227,8 @@ public class AddFeedActivity extends DefaultNewActivity {
 							returnData.putExtra("feedItemBean", feedItemBean);
 							setResult(0, returnData);
 							
+							Toast.makeText(mThisActivity, "添加成功", Toast.LENGTH_LONG).show();
+							
 							//关闭Activity
 							finish();
 							
