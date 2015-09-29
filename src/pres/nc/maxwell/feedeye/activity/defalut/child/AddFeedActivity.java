@@ -10,6 +10,7 @@ import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishedParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,6 +74,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 				boolean finishAdd = finishAdd();
 				LogUtils.e("AddFeedActivity", finishAdd + "");
+
 			}
 
 		});
@@ -152,15 +154,21 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 						feedItemDAO.addItem(feedItemBean);
 
+						//返回数据给MainActivity
+						Intent returnData = new Intent();
+						returnData.putExtra("feedItemBean", feedItemBean);
+						setResult(0, returnData);
+						
+						//关闭Activity
+						finish();
 					}
 
 				});
 
+		//解析数据
 		feedXMLParser.parseUrl(urlString);
-		// mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
 
-		// TODO:待添加逻辑
-		finish();
+		
 
 		return true;
 	}

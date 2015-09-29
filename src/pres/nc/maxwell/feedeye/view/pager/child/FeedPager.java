@@ -728,7 +728,21 @@ public class FeedPager extends BasePager {
 		Intent intent = new Intent(mActivity,AddFeedActivity.class);
 		
 		//打开并获得添加结果
-		mActivity.startActivityForResult(intent, 0);
+		mActivity.startActivityForResult(intent, 1);
+		
+	}
+
+	/**
+	 * 完成添加订阅信息
+	 * @param feedItemBean 添加了的数据bean
+	 */
+	public void finishedAddItem(FeedItemBean feedItemBean) {
+		
+		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
+		
+		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
+		mListView.setSelection(mListView
+				.getHeaderViewsCount());// 显示第一个非HeaderView
 	}
 
 }

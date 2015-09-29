@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
@@ -26,9 +28,21 @@ public class MainActivity extends Activity {
 	 * 主界面页面内容
 	 */
 	private NoScrollViewPager mContentPager;
+
+	/**
+	 * 导航按钮组View
+	 */
 	private NavigationButtonGroupView mNaviBtnGroup;
 
+	/**
+	 * 所有Pager的列表
+	 */
 	private List<BasePager> mPagerList;
+	
+	/**
+	 * 订阅页面
+	 */
+	private FeedPager mFeedPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +72,12 @@ public class MainActivity extends Activity {
 
 		mPagerList = new ArrayList<BasePager>();
 
+		
+		
 		// 添加布局进ViewPager
-		mPagerList.add(new FeedPager(this));
+		mFeedPager = new FeedPager(this);
+		
+		mPagerList.add(mFeedPager);
 		for (int i = 1; i < 4; i++) {
 			mPagerList.add(new BasePager(this));
 		}
@@ -68,6 +86,32 @@ public class MainActivity extends Activity {
 
 	}
 
+	/**
+	 * 返回Activity时处理返回数据
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		switch (requestCode) {
+		case 1://添加界面@see #AddFeedActivity 返回 @see #FeedPager 的数据
+			
+			FeedItemBean feedItemBean = new FeedItemBean();
+			
+			//LogUtils.e("MainActivity", data.getExtras().toString());
+			
+			feedItemBean = (FeedItemBean) data.getExtras().getSerializable("feedItemBean");
+		
+			mFeedPager.finishedAddItem(feedItemBean);
+			
+			break;
+
+		}
+		
+		
+		
+	}
+	
 }
 
 /**
