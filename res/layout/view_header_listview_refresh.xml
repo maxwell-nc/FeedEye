@@ -46,7 +46,7 @@
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_tips"
-                android:text="最后刷新时间：无上次刷新时间"
+                android:text="上次刷新：无上次刷新时间"
                 android:textColor="@color/grey"
                 android:textSize="15sp" />
         </LinearLayout>

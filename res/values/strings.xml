@@ -13,5 +13,7 @@
     <string name="nothing_found">没有找到任何信息</string>
     <string name="please_enter_text">请输入文本</string>
     <string name="add_feed">添加订阅</string>
+    <string name="modify_title">修改标题</string>
+    <string name="cancel">取消</string>
 
 </resources>

@@ -86,25 +86,33 @@ public class MainActivity extends Activity {
 
 	/**
 	 * 返回Activity时处理返回数据
+	 * 
+	 * 请求码为1时：
+	 * 
+	 * @See 请求返回数据{@link FeedPager#addNewFeedItem()}
+	 * @See 返回数据：
+	 *      {@link pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity#addItem()}
+	 * @See 接收返回数据{@link FeedPager#finishedAddItem()}
+	 * 
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
-		case 1:// 添加界面@see #AddFeedActivity 返回 @see #FeedPager 的数据
+			case 1 :// 添加界面
 
-			if (resultCode != -1) {
+				if (resultCode != -1) {
 
-				FeedItemBean feedItemBean = (FeedItemBean) data
-						.getExtras().getSerializable("feedItemBean");
+					FeedItemBean feedItemBean = (FeedItemBean) data.getExtras()
+							.getSerializable("feedItemBean");
 
-				if (feedItemBean != null) {
-					mFeedPager.finishedAddItem(feedItemBean);
+					if (feedItemBean != null) {
+						mFeedPager.finishedAddItem(feedItemBean);
+					}
+
 				}
-
-			}
-			break;
+				break;
 		}
 
 	}
@@ -129,18 +137,18 @@ class CheckedChange implements OnCheckedChangeListener {
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch (checkedId) {
-		case R.id.rb_feed:// 订阅
-			mContentPager.setCurrentItem(0, false);
-			break;
-		case R.id.rb_discover:// 发现
-			mContentPager.setCurrentItem(1, false);
-			break;
-		case R.id.rb_favor:// 收藏
-			mContentPager.setCurrentItem(2, false);
-			break;
-		case R.id.rb_setting:// 设置
-			mContentPager.setCurrentItem(3, false);
-			break;
+			case R.id.rb_feed :// 订阅
+				mContentPager.setCurrentItem(0, false);
+				break;
+			case R.id.rb_discover :// 发现
+				mContentPager.setCurrentItem(1, false);
+				break;
+			case R.id.rb_favor :// 收藏
+				mContentPager.setCurrentItem(2, false);
+				break;
+			case R.id.rb_setting :// 设置
+				mContentPager.setCurrentItem(3, false);
+				break;
 		}
 	}
 }

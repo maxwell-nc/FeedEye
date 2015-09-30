@@ -6,12 +6,12 @@
     <color name="black">#ff000000</color>
     <color name="red">#ffff0000</color>
     <color name="grey">#ff999999</color>
+    <color name="transparent">#ffffffff</color>
+    
     
     <color name="theme_color">#ff196dca</color>
     <color name="theme_color_light">#ff298dea</color>
-     
     <color name="light_grey">#11999999</color>
     <color name="hr_line">#66999999</color>
-
 
 </resources>

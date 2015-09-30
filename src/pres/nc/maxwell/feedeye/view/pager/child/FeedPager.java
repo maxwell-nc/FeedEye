@@ -18,19 +18,23 @@ import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -131,7 +135,7 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				addNewFeedItem();
 
 			}
@@ -142,26 +146,6 @@ public class FeedPager extends BasePager {
 		// TODO：同步未实现
 		// new FeedItemDAO(mActivity).completeSynchronized();
 
-	}
-
-	/**
-	 * 添加测试数据
-	 */
-	private void addTestData() {
-
-		FeedItemBean feedItemBean = new FeedItemBean();
-		feedItemBean.setFeedURL("http://blog.csdn.net/maxwell_nc/rss/list");
-		feedItemBean
-				.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
-		feedItemBean.setTitle("我的GitHub"
-				+ new Random().nextInt(Integer.MAX_VALUE));
-		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
-		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
-
-		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
-		feedItemDAO.addItem(feedItemBean);
-
-		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
 	}
 
 	/**
@@ -300,8 +284,9 @@ public class FeedPager extends BasePager {
 		// 有剩余数据
 		if (mItemInfoUnshowList.size() > SHOW_ITEM_COUNT) {
 			addCount = SHOW_ITEM_COUNT;
-		} else {
+		} else {// 剩下数据全部加载
 			addCount = mItemInfoUnshowList.size();
+			mListView.setAllowLoadingMore(false);// 没有更多数据，禁止上拉加载更多
 		}
 
 		// 添加到显示列表
@@ -543,42 +528,261 @@ public class FeedPager extends BasePager {
 		/**
 		 * 长按点击事件
 		 */
-		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					final int position, long id) {
-
-				View alertView = View.inflate(mActivity,
-						R.layout.view_long_click_lv_feed, null);
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-				builder.setView(alertView);
-				final AlertDialog alertDialog = builder.show();
-
-				TextView deleteButton = (TextView) alertView
-						.findViewById(R.id.tv_delete);
-
-				// 点击删除条目
-				deleteButton.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// 点击时删除条目
-						deleteFeedItem(position);
-
-						alertDialog.dismiss();// 对话框关闭
-					}
-
-				});
-
-				return false;
-			}
-
-		});
+		mListView.setOnItemLongClickListener(new ItemLongClickListener());
 
 		// 添加刷新监听
 		mListView.setOnRefreshListener(new ListViewRefreshListener());
+
+	}
+
+	class ItemLongClickListener implements OnItemLongClickListener {
+
+		/**
+		 * 初始化各个按钮对象
+		 * 
+		 * @param alertView
+		 *            View父对象
+		 * @param resIds
+		 *            资源id（任意个）
+		 * @return 返回顺序的TextView对象数据
+		 */
+		public TextView[] initTextButtonView(View alertView, int... resIds) {
+			TextView[] textViews = new TextView[resIds.length];
+			for (int i = 0; i < resIds.length; i++) {
+				textViews[i] = (TextView) alertView.findViewById(resIds[i]);
+			}
+			return textViews;
+		}
+
+		/**
+		 * 点击事件
+		 */
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view,
+				final int position, long id) {
+
+			View alertView = View.inflate(mActivity,
+					R.layout.view_long_click_lv_feed, null);
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+
+			builder.setView(alertView);
+
+			final AlertDialog alertDialog = builder.show();
+
+			TextView[] textViews = initTextButtonView(alertView,
+					R.id.tv_modify, R.id.tv_delete, R.id.tv_cancel);
+
+			// 点击修改标题
+			textViews[0].setOnClickListener(new ModifyClickListener(position,
+					alertDialog));
+
+			// 点击删除条目
+			textViews[1].setOnClickListener(new DeleteClickListener(
+					alertDialog, position));
+
+			// 点击取消
+			textViews[2].setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					alertDialog.dismiss();// 对话框关闭
+				}
+
+			});
+
+			return true;
+		}
+
+		/**
+		 * 修改标题点击监听器
+		 */
+		class ModifyClickListener implements OnClickListener {
+
+			/**
+			 * 显示的对话框
+			 */
+			private AlertDialog alertDialog;
+
+			/**
+			 * 条目索引
+			 */
+			private int position;
+
+			/**
+			 * 传入当前显示的对话框和选中条目索引
+			 * 
+			 * @param alertDialog
+			 *            显示的对话框
+			 * @param position
+			 *            条目索引
+			 */
+			private ModifyClickListener(int position, AlertDialog alertDialog) {
+				this.position = position;
+				this.alertDialog = alertDialog;
+			}
+
+			@Override
+			public void onClick(View v) {
+
+				alertDialog.dismiss();// 对话框关闭
+
+				View alertView = View.inflate(mActivity,
+						R.layout.alert_dialog_modify_title, null);
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+
+				builder.setView(alertView);
+
+				final AlertDialog alertDialog = builder.show();
+
+				final EditText titleView = (EditText) alertView
+						.findViewById(R.id.et_title);
+				TextView confirmButtom = (TextView) alertView
+						.findViewById(R.id.tv_yes);
+				TextView cancelButtom = (TextView) alertView
+						.findViewById(R.id.tv_no);
+
+				// 获取原来的标题
+				String orgTitle = ((ViewHolder) mListView.getChildAt(position)
+						.getTag()).mItemTitle.getText().toString();
+
+				titleView.setText(orgTitle);
+
+				// 确认按钮
+				confirmButtom.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						String newTitle = titleView.getText().toString();
+
+						if (TextUtils.isEmpty(newTitle)) {
+							titleView.startAnimation(AnimationUtils
+									.loadAnimation(mActivity,
+											R.anim.edit_text_translate));
+
+						} else {
+							// 修改标题
+							modifyFeedItemTitle(position, newTitle);
+							alertDialog.dismiss();
+						}
+
+					}
+				});
+
+				// 确认按钮
+				cancelButtom.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// 修改标题
+						alertDialog.dismiss();
+					}
+				});
+
+			}
+		}
+
+		/**
+		 * 删除点击监听器
+		 */
+		class DeleteClickListener implements OnClickListener {
+
+			/**
+			 * 显示的对话框
+			 */
+			private AlertDialog alertDialog;
+
+			/**
+			 * 条目索引
+			 */
+			private int position;
+
+			/**
+			 * 传入当前显示的对话框和选中条目索引
+			 * 
+			 * @param alertDialog
+			 *            显示的对话框
+			 * @param position
+			 *            条目索引
+			 */
+			public DeleteClickListener(AlertDialog alertDialog, int position) {
+				this.alertDialog = alertDialog;
+				this.position = position;
+			}
+
+			@Override
+			public void onClick(View v) {
+
+				alertDialog.dismiss();// 对话框关闭
+
+				// 再次确定是否删除
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+
+				builder.setTitle("是否确定删除？");
+				builder.setPositiveButton("确定",
+						new AlertDialog.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+								// 点击时删除条目
+								deleteFeedItem(position);
+
+							}
+
+						});
+
+				builder.setNegativeButton("取消",
+						new AlertDialog.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+								// 关闭信息框
+								dialog.dismiss();
+
+							}
+
+						});
+
+				builder.show();
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * 修改列表中的Item标题，并且刷新数据库
+	 * 
+	 * @param position
+	 *            要修改的Item的位置
+	 * @param newTitle
+	 *            新的标题
+	 */
+	private void modifyFeedItemTitle(int position, String newTitle) {
+
+		int dbPosition = position - mListView.getHeaderViewsCount();// 转成正确的下标，相对于数据库
+		
+		FeedItemBean feedItemBean = mItemInfoShowedList.get(dbPosition);
+
+		feedItemBean.setTitle(newTitle);
+
+		// 从数据库中更新
+		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+		feedItemDAO.updateItem(feedItemBean);
+
+		// 不完全更新界面
+		if (mListView.getFirstVisiblePosition() <= position
+				&& position <= mListView.getLastVisiblePosition()) {
+			((ViewHolder) mListView.getChildAt(position).getTag()).mItemTitle
+					.setText(newTitle);
+		}
 
 	}
 
@@ -590,7 +794,7 @@ public class FeedPager extends BasePager {
 	 */
 	private void deleteFeedItem(int position) {
 
-		position = position - mListView.getHeaderViewsCount();// 转成正确的下标
+		position = position - mListView.getHeaderViewsCount();// 转成正确的下标，相对于数据库
 
 		// 从数据库中删除
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
@@ -647,9 +851,9 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
-							
+
 							addNewFeedItem();
-							
+
 						}
 
 					});
@@ -679,7 +883,7 @@ public class FeedPager extends BasePager {
 
 						@Override
 						public void onClick(View v) {
-							//打开项目页面
+							// 打开项目页面
 							Intent intent = new Intent(
 									Intent.ACTION_VIEW,
 									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
@@ -703,12 +907,12 @@ public class FeedPager extends BasePager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 添加一个新的订阅信息
 	 */
 	private void addNewFeedItem() {
-		
+
 		if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
 			mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
 			mListView.setAdapter(mListViewAdapter);
@@ -716,33 +920,52 @@ public class FeedPager extends BasePager {
 			mNothingImg.setVisibility(View.INVISIBLE);
 		}
 
-		// TODO:插入测试数据
-		//addTestData();
-
-		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-		mListView.setSelection(mListView
-				.getHeaderViewsCount());// 显示第一个非HeaderView
-
 		closePopupWindow();
-		
-		Intent intent = new Intent(mActivity,AddFeedActivity.class);
-		
-		//打开并获得添加结果
+
+		Intent intent = new Intent(mActivity, AddFeedActivity.class);
+
+		// 打开并获得添加结果
 		mActivity.startActivityForResult(intent, 1);
-		
+
 	}
 
 	/**
 	 * 完成添加订阅信息
-	 * @param feedItemBean 添加了的数据bean
+	 * 
+	 * @See 添加测试数据：{@link #addTestData()}
+	 * @param feedItemBean
+	 *            添加了的数据bean
 	 */
 	public void finishedAddItem(FeedItemBean feedItemBean) {
-		
+
+		// 插入测试数据
+		// addTestData();
+
 		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
-		
+
 		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
-		mListView.setSelection(mListView
-				.getHeaderViewsCount());// 显示第一个非HeaderView
+		mListView.setSelection(mListView.getHeaderViewsCount());// 显示第一个非HeaderView
+	}
+
+	/**
+	 * 添加测试数据
+	 */
+	@SuppressWarnings("unused")
+	private void addTestData() {
+
+		FeedItemBean feedItemBean = new FeedItemBean();
+		feedItemBean.setFeedURL("http://blog.csdn.net/maxwell_nc/rss/list");
+		feedItemBean
+				.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
+		feedItemBean.setTitle("我的GitHub"
+				+ new Random().nextInt(Integer.MAX_VALUE));
+		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
+		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
+
+		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+		feedItemDAO.addItem(feedItemBean);
+
+		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
 	}
 
 }

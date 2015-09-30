@@ -145,7 +145,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 	 * 
 	 * @return 返回是否成功添加
 	 */
-	private boolean addItem() {
+	public boolean addItem() {
 
 		//显示处理中
 		mLoadingFrame.setVisibility(View.VISIBLE);
