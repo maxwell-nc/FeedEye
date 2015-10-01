@@ -15,10 +15,11 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
+import pres.nc.maxwell.feedeye.view.ThemeAlertDialog;
+import pres.nc.maxwell.feedeye.view.ThemeAlertDialog.ThemeAlertDialogAdapter;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -35,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -627,59 +629,78 @@ public class FeedPager extends BasePager {
 
 				alertDialog.dismiss();// 对话框关闭
 
-				View alertView = View.inflate(mActivity,
-						R.layout.alert_dialog_modify_title, null);
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-				builder.setView(alertView);
-
-				final AlertDialog alertDialog = builder.show();
-
-				final EditText titleView = (EditText) alertView
-						.findViewById(R.id.et_title);
-				TextView confirmButtom = (TextView) alertView
-						.findViewById(R.id.tv_yes);
-				TextView cancelButtom = (TextView) alertView
-						.findViewById(R.id.tv_no);
-
-				// 获取原来的标题
-				String orgTitle = ((ViewHolder) mListView.getChildAt(position)
-						.getTag()).mItemTitle.getText().toString();
-
-				titleView.setText(orgTitle);
-
-				// 确认按钮
-				confirmButtom.setOnClickListener(new OnClickListener() {
+				//显示修改的对话框
+				new ThemeAlertDialog(mActivity).setAdapter(new ThemeAlertDialogAdapter() {
+					
+					/**
+					 * 输入框
+					 */
+					private EditText mTitleView;
 
 					@Override
-					public void onClick(View v) {
-
-						String newTitle = titleView.getText().toString();
-
-						if (TextUtils.isEmpty(newTitle)) {
-							titleView.startAnimation(AnimationUtils
-									.loadAnimation(mActivity,
-											R.anim.edit_text_translate));
-
-						} else {
-							// 修改标题
-							modifyFeedItemTitle(position, newTitle);
-							alertDialog.dismiss();
-						}
-
+					public String getTitle() {
+						return null;
 					}
-				});
+					
+					//确认按钮事件
+					@Override
+					public OnClickListener getOnConfirmClickLister(final AlertDialog alertDialog) {
+						return new OnClickListener() {
 
-				// 确认按钮
-				cancelButtom.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								String newTitle = mTitleView.getText().toString();
+
+								if (TextUtils.isEmpty(newTitle)) {//提示不能为空
+									mTitleView.startAnimation(AnimationUtils
+											.loadAnimation(mActivity,
+													R.anim.edit_text_translate));
+
+								} else {
+									// 修改标题
+									modifyFeedItemTitle(position, newTitle);
+									alertDialog.dismiss();
+								}
+
+							}
+						};
+					}
+					
+					//取消点击事件
+					@Override
+					public OnClickListener getOnCancelClickLister(final AlertDialog alertDialog) {
+						return new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// 关闭对话框
+								alertDialog.dismiss();
+							}
+						};
+					}
+					
+					@Override
+					public View getContentView() {
+						View view = View.inflate(mActivity,
+								R.layout.alert_dialog_container_modify_title, null);
+						mTitleView = (EditText) view.findViewById(R.id.et_title);
+						return view;
+					}
 
 					@Override
-					public void onClick(View v) {
-						// 修改标题
-						alertDialog.dismiss();
+					public void changeViewAtLast(TextView title,
+							FrameLayout container, TextView confirmButtom,
+							TextView cancelButtom) {
+						// 获取原来的标题
+						String orgTitle = ((ViewHolder) mListView.getChildAt(position)
+								.getTag()).mItemTitle.getText().toString();
+
+						mTitleView.setText(orgTitle);
 					}
+					
+				
 				});
+
 
 			}
 		}
@@ -717,39 +738,82 @@ public class FeedPager extends BasePager {
 
 				alertDialog.dismiss();// 对话框关闭
 
-				// 再次确定是否删除
-				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-				builder.setTitle("是否确定删除？");
-				builder.setPositiveButton("确定",
-						new AlertDialog.OnClickListener() {
+				// 再次确认删除
+				new ThemeAlertDialog(mActivity)
+						.setAdapter(new ThemeAlertDialogAdapter() {
 
 							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+							public String getTitle() {
+								return "是否确定删除？";
+							}
 
-								// 点击时删除条目
-								deleteFeedItem(position);
+							// 点击时删除条目
+							@Override
+							public OnClickListener getOnConfirmClickLister(
+									final AlertDialog alertDialog) {
+
+								return new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+
+										deleteFeedItem(position);
+										// 关闭信息框
+										alertDialog.dismiss();
+									}
+								};
 
 							}
 
-						});
-
-				builder.setNegativeButton("取消",
-						new AlertDialog.OnClickListener() {
-
+							// 点击取消删除
 							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+							public OnClickListener getOnCancelClickLister(
+									final AlertDialog alertDialog) {
 
-								// 关闭信息框
-								dialog.dismiss();
+								return new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										// 关闭信息框
+										alertDialog.dismiss();
+									}
+								};
 
 							}
 
-						});
+							//显示被删除的标题
+							@Override
+							public View getContentView() {
 
-				builder.show();
+								View view = View
+										.inflate(
+												mActivity,
+												R.layout.alert_dialog_container_delete_title,
+												null);
+								
+								//获取原来的标题
+								String deleteItemTitle = mItemInfoShowedList
+										.get(position
+												- mListView
+														.getHeaderViewsCount())
+										.getTitle();
+								
+								((TextView) view
+										.findViewById(R.id.tv_delete_title))
+										.setText(deleteItemTitle);
+
+								return view;
+							}
+
+
+							@Override
+							public void changeViewAtLast(TextView title,
+									FrameLayout container,
+									TextView confirmButtom,
+									TextView cancelButtom) {
+								
+							}
+						});
 
 			}
 
@@ -768,7 +832,7 @@ public class FeedPager extends BasePager {
 	private void modifyFeedItemTitle(int position, String newTitle) {
 
 		int dbPosition = position - mListView.getHeaderViewsCount();// 转成正确的下标，相对于数据库
-		
+
 		FeedItemBean feedItemBean = mItemInfoShowedList.get(dbPosition);
 
 		feedItemBean.setTitle(newTitle);
