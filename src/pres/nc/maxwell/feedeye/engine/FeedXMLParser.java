@@ -14,9 +14,6 @@ import android.util.Xml;
 
 /**
  * 订阅解析器，支持XML格式
- * 
- * @author Forest
- * 
  */
 public class FeedXMLParser {
 
@@ -48,7 +45,22 @@ public class FeedXMLParser {
 	/**
 	 * 编码方式
 	 */
-	private String encodingString;
+	public String encodingString;
+
+	/**
+	 * RSS类型：item标签数
+	 */
+	public int mItemCount;
+
+	/**
+	 * ATOM类型：entry标签数
+	 */
+	public int mEntryCount;
+
+	/**
+	 * 完成解析XML监听器
+	 */
+	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
 
 	/**
 	 * 解析的订阅地址
@@ -64,17 +76,25 @@ public class FeedXMLParser {
 		new ParseTask().execute();
 	}
 
+	/**
+	 * 完成解析XML监听器
+	 */
 	public interface OnFinishedParseXMLListener {
-		public void onFinishedParseXML(boolean result);
+		public void onFinishedParseXMLBaseInfo(boolean result);
 	}
 
-	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
-
+	/**
+	 * 设置完成解析XML的监听器
+	 * @param onFinishedParseXMLListener 监听器
+	 */
 	public void setOnFinishedParseXMLListener(
 			OnFinishedParseXMLListener onFinishedParseXMLListener) {
 		this.mOnFinishedParseXMLListener = onFinishedParseXMLListener;
 	}
 
+	/**
+	 * 解析任务
+	 */
 	class ParseTask extends AsyncTask<Void, Void, Boolean> {
 
 		@Override
@@ -92,7 +112,7 @@ public class FeedXMLParser {
 		protected void onPostExecute(Boolean result) {// 主线程
 
 			if (mOnFinishedParseXMLListener != null) {
-				mOnFinishedParseXMLListener.onFinishedParseXML(result);
+				mOnFinishedParseXMLListener.onFinishedParseXMLBaseInfo(result);
 			}
 
 			super.onPostExecute(result);
@@ -102,38 +122,43 @@ public class FeedXMLParser {
 
 	/**
 	 * 从网络读取XML
+	 * 
 	 * @return 是否成功读取XML
 	 */
 	private boolean getXML() {
-		
+
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
-			
+
 			@Override
 			public void onSuccess(InputStream inputStream) {
-				parseXML(inputStream);
+				parseXMLBaseInfo(inputStream);
 			}
-			
+
 			@Override
 			public void onFailure() {
-				
+
 			}
 		});
-		
+
 		return httpUtils.Connect(mFeedUrl, 10000, 10000);
 	}
 
 	/**
-	 * 解析XML输入流
+	 * 解析XML输入流基本信息
 	 * 
 	 * @param inputStream
 	 *            XML输入流
 	 */
-	private void parseXML(InputStream inputStream) {
+	private void parseXMLBaseInfo(InputStream inputStream) {
 
 		XmlPullParser parser = Xml.newPullParser();
 		try {
 			parser.setInput(inputStream, encodingString);
 			int eventType = parser.getEventType();
+
+			// 统计归零
+			mItemCount = 0;
+			mEntryCount = 0;
 
 			// 不断解析
 			while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -190,7 +215,15 @@ public class FeedXMLParser {
 
 				}
 
-				// TODO：图标、数量
+				// 检查数量
+				if ("item".equals(parser.getName())) {// ATOM
+					mItemCount++;
+				}
+				if ("entry".equals(parser.getName())) {// RSS
+					mEntryCount++;
+				}
+
+				// TODO：图标
 
 				eventType = parser.next();
 			}

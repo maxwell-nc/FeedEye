@@ -178,7 +178,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				.setOnFinishedParseXMLListener(new OnFinishedParseXMLListener() {
 
 					@Override
-					public void onFinishedParseXML(boolean result) {
+					public void onFinishedParseXMLBaseInfo(boolean result) {
 
 						if (result) {//成功读取
 							// 设置标题
@@ -225,10 +225,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 							//返回数据给MainActivity
 							Intent returnData = new Intent();
 							returnData.putExtra("feedItemBean", feedItemBean);
+							
+							//返回数量
+							if(feedXMLParser.mFeedType == "RSS"){
+								returnData.putExtra("count", feedXMLParser.mItemCount);
+							}else if (feedXMLParser.mFeedType == "ATOM") {
+								returnData.putExtra("count", feedXMLParser.mEntryCount);
+							}
+							
 							setResult(0, returnData);
 							
 							Toast.makeText(mThisActivity, "添加成功", Toast.LENGTH_LONG).show();
-							
+
 							//关闭Activity
 							finish();
 							
