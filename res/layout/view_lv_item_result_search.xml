@@ -2,13 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:background="@drawable/selector_press_background_transparent"
     android:gravity="center_vertical"
-    android:padding="6dp" >
+    android:paddingTop="6dp" >
 
     <ImageView
         android:id="@+id/iv_item_pic"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginLeft="6dp"
         android:scaleType="centerCrop"
         android:src="@color/grey" />
 
@@ -18,11 +20,19 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
+        android:layout_marginRight="9dp"
         android:layout_toRightOf="@id/iv_item_pic"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="订阅标题"
         android:textColor="@color/black"
         android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_below="@id/iv_item_pic"
+        android:layout_marginTop="6dp"
+        android:background="@color/hr_line" />
 
 </RelativeLayout>

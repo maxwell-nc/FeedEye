@@ -119,6 +119,10 @@ public class DragRefreshListView extends ListView {
 		initHeaderView();
 		initFooterView();
 
+		//设置selector为透明
+		this.setSelector(R.color.transparent);
+		this.setCacheColorHint(R.color.transparent);
+		
 		// 设置滚动监听监听
 		setOnScrollListener(new DefaultOnScrollListener());
 	}

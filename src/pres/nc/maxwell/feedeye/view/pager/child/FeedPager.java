@@ -6,10 +6,10 @@ import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
+import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
-import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
@@ -519,11 +519,13 @@ public class FeedPager extends BasePager {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				// TODO：待添加点击事件
-
 				// 检查NaturePositionOnItemClickListener是否生效
-				LogUtils.w("FeedPager", "item position:" + position);
-
+				//LogUtils.w("FeedPager", "item position:" + position);
+				
+				Intent intent = new Intent(mActivity,ItemDetailList.class);
+				intent.putExtra("FeedItemBean", mItemInfoShowedList.get(position));
+				mActivity.startActivity(intent);
+				
 			}
 		});
 

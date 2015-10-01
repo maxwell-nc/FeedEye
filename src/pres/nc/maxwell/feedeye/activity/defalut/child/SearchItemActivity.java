@@ -81,11 +81,11 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 		addView(R.layout.activity_search_item_bar, R.layout.activity_search_item_container);
 
-		mSearchText = (EditText) mBarView.findViewById(R.id.et_search);
-		mLoading = (ProgressBar) mContainerView.findViewById(R.id.pb_loading);
-		mResultListView = (ListView) mContainerView
+		mSearchText = (EditText) mCustomBarView.findViewById(R.id.et_search);
+		mLoading = (ProgressBar) mCustomContainerView.findViewById(R.id.pb_loading);
+		mResultListView = (ListView) mCustomContainerView
 				.findViewById(R.id.lv_search_result);
-		mNothingFound = (TextView) mContainerView
+		mNothingFound = (TextView) mCustomContainerView
 				.findViewById(R.id.tv_nothing_found);
 	}
 

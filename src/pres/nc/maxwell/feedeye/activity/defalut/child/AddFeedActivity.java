@@ -74,13 +74,13 @@ public class AddFeedActivity extends DefaultNewActivity {
 		addView(R.layout.activity_add_feed_bar,
 				R.layout.activity_add_feed_container);
 
-		mFinishButtonView = (ImageView) mBarView.findViewById(R.id.iv_finish);
+		mFinishButtonView = (ImageView) mCustomBarView.findViewById(R.id.iv_finish);
 
-		mUrlText = (EditText) mContainerView.findViewById(R.id.et_url);
-		mTitleText = (EditText) mContainerView.findViewById(R.id.et_title);
+		mUrlText = (EditText) mCustomContainerView.findViewById(R.id.et_url);
+		mTitleText = (EditText) mCustomContainerView.findViewById(R.id.et_title);
 
-		mEncodingGroup = (RadioGroup) mContainerView.findViewById(R.id.rg_encoding);
-		mLoadingFrame = (FrameLayout) mContainerView.findViewById(R.id.fl_loading);
+		mEncodingGroup = (RadioGroup) mCustomContainerView.findViewById(R.id.rg_encoding);
+		mLoadingFrame = (FrameLayout) mCustomContainerView.findViewById(R.id.fl_loading);
 		
 	}
 

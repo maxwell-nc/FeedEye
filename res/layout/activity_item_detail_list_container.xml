@@ -19,15 +19,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
-        android:text="@string/search_result_nothing_found"
+        android:text="无任何接收到的数据"
         android:textColor="@color/grey"
         android:textSize="18sp" />
 
-    <ListView
-        android:id="@+id/lv_search_result"
+    <pres.nc.maxwell.feedeye.view.DragRefreshListView
+        android:id="@+id/lv_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null"
-        android:visibility="invisible" />
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:divider="@null" />
 
 </FrameLayout>

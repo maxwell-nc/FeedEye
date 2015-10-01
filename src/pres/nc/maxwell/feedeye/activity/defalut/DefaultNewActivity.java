@@ -32,12 +32,12 @@ public class DefaultNewActivity extends Activity {
 	/**
 	 * 顶部View
 	 */
-	protected View mBarView;
+	protected View mCustomBarView;
 
 	/**
 	 * 内容View
 	 */
-	protected View mContainerView;
+	protected View mCustomContainerView;
 
 	/**
 	 * 创建时执行
@@ -50,18 +50,24 @@ public class DefaultNewActivity extends Activity {
 
 		initView();
 		initData();
-	
+
 	}
 
 	/**
 	 * 添加子View
 	 */
 	protected void addView(int barViewId, int containerViewId) {
-		mBarView = View.inflate(this, barViewId, null);
-		mBar.addView(mBarView);
 		
-		mContainerView = View.inflate(this, containerViewId, null);
-		mContainer.addView(mContainerView);
+		if (barViewId != -1) {
+			mCustomBarView = View.inflate(this, barViewId, null);
+			mBar.addView(mCustomBarView);
+		}
+
+		if (containerViewId != -1) {
+			mCustomContainerView = View.inflate(this, containerViewId, null);
+			mContainer.addView(mCustomContainerView);
+		}
+
 	}
 
 	/**
@@ -70,7 +76,7 @@ public class DefaultNewActivity extends Activity {
 	protected void setAsCloseImage() {
 		mBack.setImageResource(R.drawable.btn_close);
 	}
-	
+
 	/**
 	 * 初始化View对象
 	 */
@@ -84,12 +90,13 @@ public class DefaultNewActivity extends Activity {
 
 	/**
 	 * 在关闭界面前处理事情
+	 * 
 	 * @return 是否允许关闭
 	 */
 	protected boolean beforeClose() {
 		return true;
 	}
-	
+
 	/**
 	 * 初始化数据
 	 */
@@ -102,16 +109,14 @@ public class DefaultNewActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				
-				//在关闭界面前处理事情
-				if(beforeClose()){
+
+				// 在关闭界面前处理事情
+				if (beforeClose()) {
 					// 关闭当前界面
 					finish();
 				}
-				
-			}
 
-			
+			}
 
 		});
 
