@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:gravity="center_vertical"
-    android:padding="6dp" 
     android:background="@drawable/selector_press_background_transparent"
-    >
+    android:gravity="center_vertical"
+    android:paddingTop="6dp" >
 
     <ImageView
         android:id="@+id/iv_item_feed_pic"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginLeft="6dp"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -51,7 +51,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginRight="9dp"
         android:orientation="vertical" >
 
         <TextView
@@ -70,8 +70,14 @@
             android:layout_gravity="right"
             android:layout_marginTop="8dp"
             android:src="@drawable/shape_oval"
-            android:visibility="invisible"
-             />
+            android:visibility="invisible" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_below="@id/iv_item_feed_pic"
+        android:layout_marginTop="6dp"
+        android:background="@color/hr_line" />
 
 </RelativeLayout>

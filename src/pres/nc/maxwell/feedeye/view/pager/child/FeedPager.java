@@ -108,7 +108,7 @@ public class FeedPager extends BasePager {
 		super.initView();
 
 		mTitle.setText("ÎÒµÄ¶©ÔÄ");
-		mViewContent = setContainerContent(R.layout.pager_main_feed);
+		mViewContent = setContainerContent(R.layout.pager_feed);
 		mListView = (DragRefreshListView) mViewContent
 				.findViewById(R.id.lv_feed_list);
 
