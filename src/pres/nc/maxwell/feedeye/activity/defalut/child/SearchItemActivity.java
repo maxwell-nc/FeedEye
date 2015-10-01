@@ -8,6 +8,8 @@ import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.Spannable;
@@ -17,6 +19,8 @@ import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,6 +35,11 @@ import android.widget.TextView;
 @SuppressLint("DefaultLocale")
 public class SearchItemActivity extends DefaultNewActivity {
 
+	/**
+	 * 代表当前Activity，用于跳转Activity
+	 */
+	private Activity mThisActivity;
+	
 	/**
 	 * 搜索关键字输入框
 	 */
@@ -76,9 +85,11 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 */
 	@Override
 	protected void initView() {
-
+		
+		mThisActivity = this;
+		
 		super.initView();
-
+		
 		addView(R.layout.activity_search_item_bar, R.layout.activity_search_item_container);
 
 		mSearchText = (EditText) mCustomBarView.findViewById(R.id.et_search);
@@ -147,6 +158,44 @@ public class SearchItemActivity extends DefaultNewActivity {
 					mNothingFound.setVisibility(View.VISIBLE);
 				}
 
+			}
+		});
+		
+		//搜索后跳转到结果页面
+		mResultListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				int clickItem = mResultList.get(position).getItemId();
+				
+				for (int i = 0; i < mShowedList.size(); i++) {
+
+					// 搜索已显示的列表
+					if (mShowedList.get(i).getItemId() == clickItem) {
+						Intent intent = new Intent(mThisActivity,ItemDetailList.class);
+						intent.putExtra("FeedItemBean", mShowedList.get(i));
+						mThisActivity.startActivity(intent);
+						
+						finish();//不需要搜索界面？
+					}
+					
+				}
+				
+				
+				for (int i = 0; i < mUnShowList.size(); i++) {
+
+					// 搜索未显示的列表
+					if (mUnShowList.get(i).getItemId() == clickItem) {
+						Intent intent = new Intent(mThisActivity,ItemDetailList.class);
+						intent.putExtra("FeedItemBean", mUnShowList.get(i));
+						mThisActivity.startActivity(intent);
+						
+						finish();//不需要搜索界面？
+					}
+				}
+				
+				
 			}
 		});
 

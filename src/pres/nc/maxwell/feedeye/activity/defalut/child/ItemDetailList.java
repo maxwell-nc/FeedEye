@@ -131,9 +131,9 @@ public class ItemDetailList extends DefaultNewActivity {
 	 * @see ItemDetailListAdapter
 	 */
 	static class ViewHolder {
-		public TextView title;
-		public TextView preview;
-		public TextView time;
+		TextView title;
+		TextView preview;
+		TextView time;
 	}
 
 }
