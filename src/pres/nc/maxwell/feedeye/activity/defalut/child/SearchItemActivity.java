@@ -284,6 +284,11 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 */
 	class ResultListAdapter extends BaseAdapter {
 
+		/**
+		 * Bitmap三级缓存
+		 */
+		BitmapCacheUtils cacheUtils = new BitmapCacheUtils();
+		
 		@Override
 		public int getCount() {
 			return mResultList.size();
@@ -312,7 +317,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 			}
 
 			// 使用三级缓存加载图片
-			new BitmapCacheUtils().displayBitmap(holder.pic,
+			cacheUtils.displayBitmap(holder.pic,
 					mResultList.get(position).getPicURL(),
 					R.anim.refresh_rotate);
 

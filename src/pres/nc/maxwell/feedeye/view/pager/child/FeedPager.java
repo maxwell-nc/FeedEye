@@ -78,6 +78,12 @@ public class FeedPager extends BasePager {
 	 */
 	private ImageView mNothingImg;
 
+
+	/**
+	 * Bitmap三级缓存
+	 */
+	BitmapCacheUtils mCacheUtils = new BitmapCacheUtils();
+
 	/**
 	 * ListView数据适配器
 	 */
@@ -497,7 +503,7 @@ public class FeedPager extends BasePager {
 		}
 
 		// 使用三级缓存加载图片
-		new BitmapCacheUtils().displayBitmap(viewHolder.mItemPic,
+		mCacheUtils.displayBitmap(viewHolder.mItemPic,
 				feedItemBean.getPicURL(), R.anim.refresh_rotate);
 		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
 		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
