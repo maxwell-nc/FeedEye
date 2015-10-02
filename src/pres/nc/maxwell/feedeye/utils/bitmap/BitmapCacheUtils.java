@@ -1,7 +1,10 @@
 package pres.nc.maxwell.feedeye.utils.bitmap;
 
+import java.io.File;
+
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapLocalCahe;
+import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapLocalCahe.OnFinishedGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapMemoryCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache;
 import pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache.OnFinishedGetNetworkCacheListener;
@@ -19,15 +22,6 @@ public class BitmapCacheUtils {
 	 */
 	private BitmapMemoryCache mBitmapMemoryCache;
 
-	/**
-	 * 本地缓存对象
-	 */
-	private BitmapLocalCahe mBitmapLocalCahe;
-
-	/**
-	 * 网络缓存对象
-	 */
-	private BitmapNetworkCache mBitmapNetworkCache;
 
 	/**
 	 * 是否开启网络缓存
@@ -53,15 +47,6 @@ public class BitmapCacheUtils {
 
 		// 内存缓存对象
 		mBitmapMemoryCache = new BitmapMemoryCache();
-		// 本地缓存对象
-		mBitmapLocalCahe = new BitmapLocalCahe();
-
-		if (mIsEnableNetworkCache) {
-			// 网络缓存对象
-			mBitmapNetworkCache = new BitmapNetworkCache();
-		} else {
-			LogUtils.i("BitmapCacheUtils", "不使用网络缓存");
-		}
 
 	}
 
@@ -74,52 +59,92 @@ public class BitmapCacheUtils {
 	 *            要显示的图片URL
 	 */
 	public void displayBitmap(ImageView imageView, String url) {
+		
 
+		
+		// 注意：网络缓存会创建新的子线程，不要复用对象，否则出现部分图片无法加载问题
+		BitmapNetworkCache networkCache = null;
+
+		// 本地缓存对象
+		final BitmapLocalCahe localCahe = new BitmapLocalCahe();
+	
+		
+		if (mIsEnableNetworkCache) {
+			// 网络缓存对象
+			networkCache = new BitmapNetworkCache();
+		} else {
+			LogUtils.i("BitmapCacheUtils", "不使用网络缓存");
+		}
+
+		
+		// 防止空指针
 		if (imageView == null) {
 			return;
 		}
-
-		//设置完成读取网路缓存的处理
-		mBitmapNetworkCache
-				.setOnFinishedGetNetworkCache(new OnFinishedGetNetworkCacheListener() {
-
-					@Override
-					public void onFinishedGetNetworkCache(ImageView imageView,
-							String url, boolean result) {
-						if (!result) {// 获取失败
-
-							mBitmapNetworkCache.showErrorBitmap();
-						} else {// 成功获取
-							// 调用本地缓存对象处理
-							if (!mBitmapLocalCahe.displayBitmap(imageView,
-									url,mBitmapMemoryCache)) {
-								mBitmapNetworkCache.showErrorBitmap();
-							}
-						}
-					}
-				});
-
 		
+		imageView.setTag(url);// ImageView与URL绑定，防止重用显示错误图片
+		
+		if (networkCache != null) {
+			// 设置完成读取网路缓存的处理
+			networkCache
+					.setOnFinishedGetNetworkCache(new OnFinishedGetNetworkCacheListener() {
+
+						@Override
+						public void onFinishedGetNetworkCache(
+								pres.nc.maxwell.feedeye.utils.bitmap.cache.child.BitmapNetworkCache thisCache,
+								ImageView imageView, String url, boolean result) {
+
+							if (!result) {// 获取失败
+								thisCache.showErrorBitmap();
+							} else {// 成功获取
+								// 调用本地缓存对象处理
+								if (!localCahe.displayBitmap(imageView,
+										url, mBitmapMemoryCache)) {
+									thisCache.showErrorBitmap();
+								}
+							}
+
+						}
+					});
+		}
+		
+		
+		localCahe.setOnFinishedGetLocalCacheListener(new OnFinishedGetLocalCacheListener() {
+			
+			@Override
+			public void onFinishedGetLocalCache(ImageView imageView, String url, File cacheFile) {
+				// 设置内存缓存
+				mBitmapMemoryCache.setCache(cacheFile);
+
+
+				// 从内存中显示
+				mBitmapMemoryCache.displayBitmap(imageView, url, null);
+
+			
+			}
+		});
+
 		// 1.读取内存缓存
 		if (!mBitmapMemoryCache.displayBitmap(imageView, url, null)) {// 内存中没有缓存
 
 			LogUtils.i("BitmapCacheUtils", "内存中没有缓存");
 
 			// 2.读取本地缓存
-			if (!mBitmapLocalCahe.displayBitmap(imageView, url,mBitmapMemoryCache)) {// 本地中没有缓存
+			if (!localCahe.displayBitmap(imageView, url,
+					mBitmapMemoryCache)) {// 本地中没有缓存
 
 				LogUtils.i("BitmapCacheUtils", "本地中没有缓存");
 
 				if (mIsEnableNetworkCache) {
 					// 3.读取网络缓存
-					mBitmapNetworkCache.displayBitmap(imageView, url,mBitmapLocalCahe);// 永真，网络无法获取则显示错误图片
+					networkCache
+							.displayBitmap(imageView, url, localCahe);// 永真，网络无法获取则显示错误图片
 				} else {// 不使用网络缓存且本地缓存不存在
-					mBitmapLocalCahe.showErrorBitmap();
+					localCahe.showErrorBitmap();
 				}
 			}
 
 		}
-
 	}
 
 	/**

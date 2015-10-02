@@ -89,7 +89,6 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 	public boolean displayBitmap(ImageView imageView, String url,BitmapCache cache) {
 
 		setParams(imageView, url);
-		mImageView.setTag(mURL);// ImageView与URL绑定，防止重用显示错误图片
 
 		return getCache();
 	}
@@ -115,7 +114,7 @@ public class BitmapMemoryCache extends BitmapCacheDefaultImpl {
 				mImageView.setImageBitmap(bitmapCache);
 				return true;
 			}else {//wrong tag
-				mImageView.setTag(null);
+				//mImageView.setTag(null);
 				return false;
 			}
 			

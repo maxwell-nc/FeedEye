@@ -19,11 +19,6 @@ import android.widget.ImageView;
 public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 
 	/**
-	 * 用于设置内存缓存
-	 */
-	private BitmapMemoryCache mBitmapMemoryCache;
-
-	/**
 	 * 本地缓存的文件名
 	 */
 	private String mFileName;
@@ -38,17 +33,41 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 
 	/**
 	 * 从本地中获取Bitmap，写到内存缓存，再读入显示
-	 * @param cache 接收BitmapMemoryCache对象
+	 * 
+	 * @param cache
+	 *            接收BitmapMemoryCache对象
 	 * @return 返回是否成功获取本地缓存
 	 */
 	@Override
-	public boolean displayBitmap(ImageView imageView, String url,BitmapCache cache) {
+	public boolean displayBitmap(ImageView imageView, String url,
+			BitmapCache cache) {
 
-		// 获取BitmapMemoryCache
-		mBitmapMemoryCache = (BitmapMemoryCache) cache;
-		
 		setParams(imageView, url);
 		return getCache();
+	}
+
+	/**
+	 * 完成本地缓存获取的监听器实例对象
+	 */
+	private OnFinishedGetLocalCacheListener onFinishedListener;
+
+	/**
+	 * 完成本地缓存获取的监听器
+	 */
+	public interface OnFinishedGetLocalCacheListener {
+		public void onFinishedGetLocalCache(ImageView imageView, String url,
+				File cacheFile);
+	}
+
+	/**
+	 * 提供外部调用的设置完成本地缓存获取的监听器方法
+	 * 
+	 * @param listener
+	 *            监听器
+	 */
+	public void setOnFinishedGetLocalCacheListener(
+			OnFinishedGetLocalCacheListener listener) {
+		this.onFinishedListener = listener;
 	}
 
 	/**
@@ -64,19 +83,11 @@ public class BitmapLocalCahe extends BitmapCacheDefaultImpl {
 		File cacheFile = getCacheFile();
 		if (cacheFile.exists()) {// 本地缓存存在
 
-			// 设置内存缓存
-			mBitmapMemoryCache.setCache(cacheFile);
-
-			// 从内存中显示
-			if (!mBitmapMemoryCache.displayBitmap(mImageView, mURL,null)) {
-
-				return false;
-
-			} else {
-
-				return true;
-
+			// 调用外部方法来完成处理结果
+			if (onFinishedListener != null) {
+				onFinishedListener.onFinishedGetLocalCache(mImageView, mURL, cacheFile);
 			}
+			return true;
 
 		} else {// 本地缓存不存在
 			return false;

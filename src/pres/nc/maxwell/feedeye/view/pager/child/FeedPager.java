@@ -78,7 +78,6 @@ public class FeedPager extends BasePager {
 	 */
 	private ImageView mNothingImg;
 
-
 	/**
 	 * Bitmap三级缓存
 	 */
@@ -370,8 +369,8 @@ public class FeedPager extends BasePager {
 						.findViewById(R.id.tv_item_feed_preview);// 预览
 				holder.mItemTime = (TextView) view
 						.findViewById(R.id.tv_item_feed_time);// 时间
-				//holder.mItemCount = (ImageView) view
-				//		.findViewById(R.id.iv_item_feed_count);// 数量
+				// holder.mItemCount = (ImageView) view
+				// .findViewById(R.id.iv_item_feed_count);// 数量
 
 				view.setTag(holder);
 
@@ -497,20 +496,22 @@ public class FeedPager extends BasePager {
 	 * @return 是否成功解析
 	 */
 	private boolean parseBean(FeedItemBean feedItemBean, ViewHolder viewHolder) {
+	
+			if (feedItemBean == null) {
+				return false;
+			}
 
-		if (feedItemBean == null) {
-			return false;
-		}
+			// 使用三级缓存加载图片
+			mCacheUtils.displayBitmap(viewHolder.mItemPic,
+					feedItemBean.getPicURL(), R.anim.refresh_rotate);
 
-		// 使用三级缓存加载图片
-		mCacheUtils.displayBitmap(viewHolder.mItemPic,
-				feedItemBean.getPicURL(), R.anim.refresh_rotate);
-		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
-		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
-		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "a HH:mm"));
+			viewHolder.mItemTitle.setText(feedItemBean.getTitle());
+			viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
+			viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
+					feedItemBean.getLastTime(), "a HH:mm"));
 
-		return true;
+			return true;
+	
 	}
 
 	/**
@@ -526,12 +527,13 @@ public class FeedPager extends BasePager {
 					int position, long id) {
 
 				// 检查NaturePositionOnItemClickListener是否生效
-				//LogUtils.w("FeedPager", "item position:" + position);
-				
-				Intent intent = new Intent(mActivity,ItemDetailList.class);
-				intent.putExtra("FeedItemBean", mItemInfoShowedList.get(position));
+				// LogUtils.w("FeedPager", "item position:" + position);
+
+				Intent intent = new Intent(mActivity, ItemDetailList.class);
+				intent.putExtra("FeedItemBean",
+						mItemInfoShowedList.get(position));
 				mActivity.startActivity(intent);
-				
+
 			}
 		});
 
@@ -637,78 +639,89 @@ public class FeedPager extends BasePager {
 
 				alertDialog.dismiss();// 对话框关闭
 
-				//显示修改的对话框
-				new ThemeAlertDialog(mActivity).setAdapter(new ThemeAlertDialogAdapter() {
-					
-					/**
-					 * 输入框
-					 */
-					private EditText mTitleView;
+				// 显示修改的对话框
+				new ThemeAlertDialog(mActivity)
+						.setAdapter(new ThemeAlertDialogAdapter() {
 
-					@Override
-					public String getTitle() {
-						return null;
-					}
-					
-					//确认按钮事件
-					@Override
-					public OnClickListener getOnConfirmClickLister(final AlertDialog alertDialog) {
-						return new OnClickListener() {
+							/**
+							 * 输入框
+							 */
+							private EditText mTitleView;
 
 							@Override
-							public void onClick(View v) {
-								String newTitle = mTitleView.getText().toString();
-
-								if (TextUtils.isEmpty(newTitle)) {//提示不能为空
-									mTitleView.startAnimation(AnimationUtils
-											.loadAnimation(mActivity,
-													R.anim.edit_text_translate));
-
-								} else {
-									// 修改标题
-									modifyFeedItemTitle(position, newTitle);
-									alertDialog.dismiss();
-								}
-
+							public String getTitle() {
+								return null;
 							}
-						};
-					}
-					
-					//取消点击事件
-					@Override
-					public OnClickListener getOnCancelClickLister(final AlertDialog alertDialog) {
-						return new OnClickListener() {
+
+							// 确认按钮事件
+							@Override
+							public OnClickListener getOnConfirmClickLister(
+									final AlertDialog alertDialog) {
+								return new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										String newTitle = mTitleView.getText()
+												.toString();
+
+										if (TextUtils.isEmpty(newTitle)) {// 提示不能为空
+											mTitleView
+													.startAnimation(AnimationUtils
+															.loadAnimation(
+																	mActivity,
+																	R.anim.edit_text_translate));
+
+										} else {
+											// 修改标题
+											modifyFeedItemTitle(position,
+													newTitle);
+											alertDialog.dismiss();
+										}
+
+									}
+								};
+							}
+
+							// 取消点击事件
+							@Override
+							public OnClickListener getOnCancelClickLister(
+									final AlertDialog alertDialog) {
+								return new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										// 关闭对话框
+										alertDialog.dismiss();
+									}
+								};
+							}
 
 							@Override
-							public void onClick(View v) {
-								// 关闭对话框
-								alertDialog.dismiss();
+							public View getContentView() {
+								View view = View
+										.inflate(
+												mActivity,
+												R.layout.alert_dialog_container_modify_title,
+												null);
+								mTitleView = (EditText) view
+										.findViewById(R.id.et_title);
+								return view;
 							}
-						};
-					}
-					
-					@Override
-					public View getContentView() {
-						View view = View.inflate(mActivity,
-								R.layout.alert_dialog_container_modify_title, null);
-						mTitleView = (EditText) view.findViewById(R.id.et_title);
-						return view;
-					}
 
-					@Override
-					public void changeViewAtLast(TextView title,
-							FrameLayout container, TextView confirmButtom,
-							TextView cancelButtom) {
-						// 获取原来的标题
-						String orgTitle = ((ViewHolder) mListView.getChildAt(position)
-								.getTag()).mItemTitle.getText().toString();
+							@Override
+							public void changeViewAtLast(TextView title,
+									FrameLayout container,
+									TextView confirmButtom,
+									TextView cancelButtom) {
+								// 获取原来的标题
+								String orgTitle = ((ViewHolder) mListView
+										.getChildAt(position).getTag()).mItemTitle
+										.getText().toString();
 
-						mTitleView.setText(orgTitle);
-					}
-					
-				
-				});
+								mTitleView.setText(orgTitle);
+							}
 
+						});
 
 			}
 		}
@@ -789,7 +802,7 @@ public class FeedPager extends BasePager {
 
 							}
 
-							//显示被删除的标题
+							// 显示被删除的标题
 							@Override
 							public View getContentView() {
 
@@ -798,14 +811,14 @@ public class FeedPager extends BasePager {
 												mActivity,
 												R.layout.alert_dialog_container_delete_title,
 												null);
-								
-								//获取原来的标题
+
+								// 获取原来的标题
 								String deleteItemTitle = mItemInfoShowedList
 										.get(position
 												- mListView
 														.getHeaderViewsCount())
 										.getTitle();
-								
+
 								((TextView) view
 										.findViewById(R.id.tv_delete_title))
 										.setText(deleteItemTitle);
@@ -813,13 +826,12 @@ public class FeedPager extends BasePager {
 								return view;
 							}
 
-
 							@Override
 							public void changeViewAtLast(TextView title,
 									FrameLayout container,
 									TextView confirmButtom,
 									TextView cancelButtom) {
-								
+
 							}
 						});
 

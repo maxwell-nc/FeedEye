@@ -17,6 +17,20 @@ import android.widget.ImageView;
 public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 
 	/**
+	 * 当前网络缓存对象
+	 */
+	private BitmapNetworkCache mThisBitmapNetworkCache;
+
+	/**
+	 * 初始化
+	 */
+	public BitmapNetworkCache() {
+
+		mThisBitmapNetworkCache = this;
+
+	}
+
+	/**
 	 * 用于设置本地缓存
 	 */
 	private BitmapLocalCahe mBitmapLocalCahe;
@@ -44,7 +58,7 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 		mBitmapLocalCahe = (BitmapLocalCahe) cahe;
 
 		setParams(imageView, url);
-
+		
 		// 开启AsyncTask执行下载图片并显示
 		new GetBitmapTask().execute();
 
@@ -60,13 +74,15 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 	 * 完成网络缓存获取的监听器
 	 */
 	public interface OnFinishedGetNetworkCacheListener {
-		public void onFinishedGetNetworkCache(ImageView imageView, String url,
-				boolean result);
+		public void onFinishedGetNetworkCache(BitmapNetworkCache thisCache,
+				ImageView imageView, String url, boolean result);
 	}
 
 	/**
 	 * 提供外部调用的设置完成网络缓存获取的监听器方法
-	 * @param listener 监听器
+	 * 
+	 * @param listener
+	 *            监听器
 	 */
 	public void setOnFinishedGetNetworkCache(
 			OnFinishedGetNetworkCacheListener listener) {
@@ -91,10 +107,10 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 		@Override
 		protected void onPostExecute(Boolean result) {// 主线程
 
-			//调用外部方法来完成处理结果
+			// 调用外部方法来完成处理结果
 			if (onFinishedListener != null) {
-				onFinishedListener.onFinishedGetNetworkCache(mImageView, mURL,
-						result);
+				onFinishedListener.onFinishedGetNetworkCache(
+						mThisBitmapNetworkCache, mImageView, mURL, result);
 			}
 
 		};
@@ -111,7 +127,6 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 
 		LogUtils.i("BitmapNetworkCache", "从网络中读取Cache");
 
-
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
@@ -127,8 +142,8 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 
 			}
 		});
-	
-		return	httpUtils.Connect(mURL, 5000, 5000);
+
+		return httpUtils.Connect(mURL, 5000, 5000);
 	}
 
 	/**
