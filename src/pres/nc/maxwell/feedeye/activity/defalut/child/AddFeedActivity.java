@@ -1,6 +1,8 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
 import java.sql.Timestamp;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
@@ -29,8 +31,8 @@ public class AddFeedActivity extends DefaultNewActivity {
 	/**
 	 * Activity对象
 	 */
-	private final AddFeedActivity  mThisActivity = this;
-	
+	private final AddFeedActivity mThisActivity = this;
+
 	/**
 	 * 完成添加按钮
 	 */
@@ -55,12 +57,17 @@ public class AddFeedActivity extends DefaultNewActivity {
 	 * 编码格式，默认UTF-8
 	 */
 	private String mEncodingString = "utf-8";
-	
+
 	/**
 	 * 加载中帧布局
 	 */
 	private FrameLayout mLoadingFrame;
-	
+
+	/**
+	 * 要添加的订阅的地址
+	 */
+	private String mUrlString;
+
 	/**
 	 * 初始化View对象
 	 */
@@ -74,17 +81,20 @@ public class AddFeedActivity extends DefaultNewActivity {
 		addView(R.layout.activity_add_feed_bar,
 				R.layout.activity_add_feed_container);
 
-		mFinishButtonView = (ImageView) mCustomBarView.findViewById(R.id.iv_finish);
+		mFinishButtonView = (ImageView) mCustomBarView
+				.findViewById(R.id.iv_finish);
 
 		mUrlText = (EditText) mCustomContainerView.findViewById(R.id.et_url);
-		mTitleText = (EditText) mCustomContainerView.findViewById(R.id.et_title);
+		mTitleText = (EditText) mCustomContainerView
+				.findViewById(R.id.et_title);
 
-		mEncodingGroup = (RadioGroup) mCustomContainerView.findViewById(R.id.rg_encoding);
-		mLoadingFrame = (FrameLayout) mCustomContainerView.findViewById(R.id.fl_loading);
-		
+		mEncodingGroup = (RadioGroup) mCustomContainerView
+				.findViewById(R.id.rg_encoding);
+		mLoadingFrame = (FrameLayout) mCustomContainerView
+				.findViewById(R.id.fl_loading);
+
 	}
 
-	
 	/**
 	 * 初始化数据
 	 */
@@ -106,40 +116,40 @@ public class AddFeedActivity extends DefaultNewActivity {
 			}
 
 		});
-		
+
 		/**
 		 * 判断编码类型
 		 */
-		mEncodingGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		mEncodingGroup
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				
-				switch (group.getCheckedRadioButtonId()) {
-				case R.id.rb_utf8:
-					mEncodingString = "utf-8";
-					break;
-				case R.id.rb_gb2312:
-					mEncodingString = "gbk";
-					break;
-				case R.id.rb_iso8859_1:
-					mEncodingString = "iso8859-1";
-					break;
-				}
-				
-			}
-		});
-		
+					@Override
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+						switch (group.getCheckedRadioButtonId()) {
+							case R.id.rb_utf8 :
+								mEncodingString = "utf-8";
+								break;
+							case R.id.rb_gb2312 :
+								mEncodingString = "gbk";
+								break;
+							case R.id.rb_iso8859_1 :
+								mEncodingString = "iso8859-1";
+								break;
+						}
+
+					}
+				});
+
 	}
 
-	
 	@Override
 	protected boolean beforeClose() {
 
-		setResult(-1, null);//-1表示没有返回数据
+		setResult(-1, null);// -1表示没有返回数据
 		return super.beforeClose();
 	}
-	
+
 	/**
 	 * 完成添加
 	 * 
@@ -147,22 +157,24 @@ public class AddFeedActivity extends DefaultNewActivity {
 	 */
 	public boolean addItem() {
 
-		//显示处理中
+		// 显示处理中
 		mLoadingFrame.setVisibility(View.VISIBLE);
-		//禁止在提交
+		// 禁止在提交
 		mFinishButtonView.setVisibility(View.INVISIBLE);
-		
-		String urlString = mUrlText.getText().toString();
-		if (TextUtils.isEmpty(urlString)) {
+
+		mUrlString = mUrlText.getText().toString();
+		if (TextUtils.isEmpty(mUrlString)) {
 			return false;
 		}
 
 		final String titleString = mTitleText.getText().toString();
-		
 
-		if (!(urlString.startsWith("http://") || urlString
+		//自动补全http头
+		if (!(mUrlString.startsWith("http://") || mUrlString
 				.startsWith("https://"))) {
-			return false;// 无效
+
+			mUrlString = "http://" + mUrlString;
+
 		}
 
 		// 添加信息
@@ -170,7 +182,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		final FeedItemDAO feedItemDAO = new FeedItemDAO(this);
 
 		// 设置URL
-		feedItemBean.setFeedURL(urlString);
+		feedItemBean.setFeedURL(mUrlString);
 
 		final FeedXMLParser feedXMLParser = new FeedXMLParser();
 
@@ -180,14 +192,15 @@ public class AddFeedActivity extends DefaultNewActivity {
 					@Override
 					public void onFinishedParseXMLBaseInfo(boolean result) {
 
-						if (result) {//成功读取
+						if (result) {// 成功读取
 							// 设置标题
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
 								if (TextUtils.isEmpty(feedXMLParser.mFeedTitle)) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
-									feedItemBean.setTitle(feedXMLParser.mFeedTitle);
+									feedItemBean
+											.setTitle(feedXMLParser.mFeedTitle);
 								}
 
 							} else {// 用户自定义
@@ -204,58 +217,79 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 							// 设置时间
 							if (!TextUtils.isEmpty(feedXMLParser.mFeedTime)) {
-								
-								
+
 								if ("RSS".equals(feedXMLParser.mFeedType)) {
 									feedItemBean.setLastTime(TimeUtils
 											.varString2Timestamp(feedXMLParser.mFeedTime));
 								}
-								
-								
+
 							} else {
 								feedItemBean.setLastTime(new Timestamp(System
 										.currentTimeMillis()));
 							}
 
-							// TODO：图片待获取
-							feedItemBean.setPicURL("null");
+							// favicon获取
+
+							Pattern p = Pattern
+									.compile("(?<=//|)((\\w)+\\.)+\\w+");// 匹配顶级域名
+
+							Matcher m = p.matcher(mUrlString);
+
+							if (m.find()) {
+
+								// 补全http头
+								String host = m.group();
+								if (host.startsWith("http://")
+										|| host.startsWith("https://")) {
+									feedItemBean.setPicURL(host
+											+ "/favicon.ico");
+								} else {
+									feedItemBean.setPicURL("http://" + host
+											+ "/favicon.ico");
+								}
+
+							} else {
+								feedItemBean.setPicURL("null");
+							}
 
 							feedItemDAO.addItem(feedItemBean);
 
-							//返回数据给MainActivity
+							// 返回数据给MainActivity
 							Intent returnData = new Intent();
 							returnData.putExtra("feedItemBean", feedItemBean);
-							
-							//返回数量
-							if(feedXMLParser.mFeedType == "RSS"){
-								returnData.putExtra("count", feedXMLParser.mItemCount);
-							}else if (feedXMLParser.mFeedType == "ATOM") {
-								returnData.putExtra("count", feedXMLParser.mEntryCount);
+
+							// 返回数量
+							if (feedXMLParser.mFeedType == "RSS") {
+								returnData.putExtra("count",
+										feedXMLParser.mItemCount);
+							} else if (feedXMLParser.mFeedType == "ATOM") {
+								returnData.putExtra("count",
+										feedXMLParser.mEntryCount);
 							}
-							
+
 							setResult(0, returnData);
-							
-							Toast.makeText(mThisActivity, "添加成功", Toast.LENGTH_LONG).show();
 
-							//关闭Activity
+							Toast.makeText(mThisActivity, "添加成功",
+									Toast.LENGTH_LONG).show();
+
+							// 关闭Activity
 							finish();
-							
-						}else {//读取失败
 
-							//恢复
+						} else {// 读取失败
+
+							// 恢复
 							mLoadingFrame.setVisibility(View.GONE);
 							mFinishButtonView.setVisibility(View.VISIBLE);
-							
-							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络", Toast.LENGTH_LONG).show();
+
+							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络",
+									Toast.LENGTH_LONG).show();
 						}
 					}
 
 				});
 
-		//解析数据
-		feedXMLParser.parseUrl(urlString,mEncodingString);
-
-		
+		// 解析数据
+		feedXMLParser.parseUrl(mUrlString, mEncodingString);
 
 		return true;
 	}

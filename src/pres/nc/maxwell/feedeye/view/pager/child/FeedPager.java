@@ -364,8 +364,8 @@ public class FeedPager extends BasePager {
 						.findViewById(R.id.tv_item_feed_preview);// 预览
 				holder.mItemTime = (TextView) view
 						.findViewById(R.id.tv_item_feed_time);// 时间
-				holder.mItemCount = (ImageView) view
-						.findViewById(R.id.iv_item_feed_count);// 数量
+				//holder.mItemCount = (ImageView) view
+				//		.findViewById(R.id.iv_item_feed_count);// 数量
 
 				view.setTag(holder);
 
@@ -502,7 +502,7 @@ public class FeedPager extends BasePager {
 		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
 		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "HH:mm"));
+				feedItemBean.getLastTime(), "a HH:mm"));
 
 		return true;
 	}
