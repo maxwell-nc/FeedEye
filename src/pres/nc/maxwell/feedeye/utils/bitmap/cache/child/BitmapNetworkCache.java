@@ -1,6 +1,5 @@
 package pres.nc.maxwell.feedeye.utils.bitmap.cache.child;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
@@ -58,7 +57,7 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 		mBitmapLocalCahe = (BitmapLocalCahe) cahe;
 
 		setParams(imageView, url);
-		
+
 		// 开启AsyncTask执行下载图片并显示
 		new GetBitmapTask().execute();
 
@@ -120,7 +119,7 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 	/**
 	 * 从网络中下载图片，设置本地缓存
 	 * 
-	 * @return 返回是否成功
+	 * @return 返回是否成功，无效值，永真
 	 */
 	@Override
 	public boolean getCache() {
@@ -130,20 +129,24 @@ public class BitmapNetworkCache extends BitmapCacheDefaultImpl {
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onSuccess(InputStream inputStream) {
-				BufferedInputStream bufferedInputStream = new BufferedInputStream(
-						inputStream);
-
-				mBitmapLocalCahe.setCache(bufferedInputStream);
+			public void onConnect(InputStream inputStream) {
+				
+				mBitmapLocalCahe.setCache(inputStream);
 			}
+			
 
 			@Override
-			public void onFailure() {
-
+			public void onSuccess() {
 			}
-		});
+			
+			@Override
+			public void onFailure() {
+			}
 
-		return httpUtils.Connect(mURL, 5000, 5000);
+		});
+		httpUtils.Connect(mURL, 5000, 5000);
+		//TODO：注：无法获得返回值
+		return true;
 	}
 
 	/**

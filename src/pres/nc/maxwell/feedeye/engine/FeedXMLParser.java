@@ -8,7 +8,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Xml;
 
@@ -73,7 +72,8 @@ public class FeedXMLParser {
 	public void parseUrl(String feedUrl, String encodingString) {
 		this.mFeedUrl = feedUrl;
 		this.encodingString = encodingString;
-		new ParseTask().execute();
+
+		getXML();
 	}
 
 	/**
@@ -85,7 +85,9 @@ public class FeedXMLParser {
 
 	/**
 	 * 设置完成解析XML的监听器
-	 * @param onFinishedParseXMLListener 监听器
+	 * 
+	 * @param onFinishedParseXMLListener
+	 *            监听器
 	 */
 	public void setOnFinishedParseXMLListener(
 			OnFinishedParseXMLListener onFinishedParseXMLListener) {
@@ -93,54 +95,37 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * 解析任务
-	 */
-	class ParseTask extends AsyncTask<Void, Void, Boolean> {
-
-		@Override
-		protected Boolean doInBackground(Void... params) {// 子线程
-
-			return getXML();
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {// 主线程
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {// 主线程
-
-			if (mOnFinishedParseXMLListener != null) {
-				mOnFinishedParseXMLListener.onFinishedParseXMLBaseInfo(result);
-			}
-
-			super.onPostExecute(result);
-		}
-
-	}
-
-	/**
 	 * 从网络读取XML
-	 * 
-	 * @return 是否成功读取XML
 	 */
-	private boolean getXML() {
+	private void getXML() {
 
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onSuccess(InputStream inputStream) {
+			public void onConnect(InputStream inputStream) {//子线程
 				parseXMLBaseInfo(inputStream);
 			}
 
 			@Override
-			public void onFailure() {
+			public void onSuccess() {//主线程
+				if (mOnFinishedParseXMLListener != null) {
+					mOnFinishedParseXMLListener
+							.onFinishedParseXMLBaseInfo(true);
+				}
 
 			}
+
+			@Override
+			public void onFailure() {//主线程
+				if (mOnFinishedParseXMLListener != null) {
+					mOnFinishedParseXMLListener
+							.onFinishedParseXMLBaseInfo(false);
+				}
+			}
+
 		});
 
-		return httpUtils.Connect(mFeedUrl, 10000, 10000);
+		httpUtils.Connect(mFeedUrl, 10000, 10000);
 	}
 
 	/**

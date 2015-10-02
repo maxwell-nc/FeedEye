@@ -10,6 +10,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import android.os.AsyncTask;
+
 /**
  * HTTP连接工具类
  */
@@ -21,20 +23,24 @@ public class HTTPUtils {
 	private OnConnectListener onConnectListener;
 
 	/**
-	 * 连接监听器
+	 * 连接监听器，封装了Handler，运行在主线程
 	 */
 	public interface OnConnectListener {
 
 		/**
-		 * 连接成功（返回代码200时）调用的方法
+		 * （返回代码200时）调用的方法，运行在子线程
 		 * 
-		 * @param inputStream
-		 *            返回的输入流
+		 * @param inputStream返回的输入流
 		 */
-		public void onSuccess(InputStream inputStream);
+		public void onConnect(InputStream inputStream);
 
 		/**
-		 * 失败后处理
+		 * 处理成功，运行在主线程
+		 */
+		public void onSuccess();
+
+		/**
+		 * 失败后处理，运行在主线程
 		 */
 		public void onFailure();
 	}
@@ -58,6 +64,23 @@ public class HTTPUtils {
 	public HTTPUtils(OnConnectListener onConnectListener) {
 		this.onConnectListener = onConnectListener;
 	}
+
+	/**
+	 * 存储连接信息
+	 */
+	public class ConnectInfo {
+
+		public ConnectInfo(String url, int connectTimeout, int readTimeout) {
+			this.url = url;
+			this.connectTimeout = connectTimeout;
+			this.readTimeout = readTimeout;
+		}
+
+		public String url;
+		public int connectTimeout;
+		public int readTimeout;
+		
+	}
 	
 	/**
 	 * 连接HTTP和HTTPS
@@ -68,66 +91,91 @@ public class HTTPUtils {
 	 *            连接超时毫秒数
 	 * @param ReadTimeout
 	 *            读取超时毫秒数
-	 * @return 是否成功连接
 	 */
-	public boolean Connect(String url, int ConnectTimeout, int ReadTimeout) {
+	public void Connect(String url, int connectTimeout, int readTimeout) {
+		new ConnectTask().execute(new ConnectInfo(url, connectTimeout,
+				readTimeout));
+	}
 
-		HttpURLConnection connection = null;
-		try {
+	/**
+	 * 异步连接任务
+	 */
+	class ConnectTask extends AsyncTask<ConnectInfo, Void, Boolean> {
 
-			if (url.startsWith("https://")) {
-				// 信任所有HTTPS连接
-				HttpsURLConnection
-						.setDefaultHostnameVerifier(new HostnameVerifier() {
-							public boolean verify(String string, SSLSession ssls) {
-								return true;
-							}
-						});
-				connection = null;
-				connection = (HttpsURLConnection) new URL(url).openConnection();
-			} else if (url.startsWith("http://")) {
-				connection = null;
-				connection = (HttpURLConnection) new URL(url).openConnection();
-			}else {
-				return false;
-			}
+		@Override
+		protected Boolean doInBackground(ConnectInfo... params) {// 子线程
 
-			connection.setConnectTimeout(ConnectTimeout);
-			connection.setReadTimeout(ReadTimeout);
+			HttpURLConnection connection = null;
+			try {
 
-			connection.setRequestMethod("GET");
-			connection.connect();
+				if (params[0].url.startsWith("https://")) {
+					// 信任所有HTTPS连接
+					HttpsURLConnection
+							.setDefaultHostnameVerifier(new HostnameVerifier() {
+								public boolean verify(String string,
+										SSLSession ssls) {
+									return true;
+								}
+							});
+					connection = null;
+					connection = (HttpsURLConnection) new URL(params[0].url)
+							.openConnection();
+				} else {//非HTTPS
+					connection = null;
+					connection = (HttpURLConnection) new URL(params[0].url)
+							.openConnection();
+				} 
 
-			LogUtils.w("HTTPUtils",
-					"ResponseCode:" + connection.getResponseCode());
-			if (connection.getResponseCode() == 200) {
+				connection.setConnectTimeout(params[0].connectTimeout);
+				connection.setReadTimeout(params[0].readTimeout);
 
-				if (onConnectListener != null) {
-					onConnectListener.onSuccess(connection.getInputStream());
+				connection.setRequestMethod("GET");
+				connection.connect();
+
+				LogUtils.i("HTTPUtils",
+						"ResponseCode:" + connection.getResponseCode());
+
+				if (connection.getResponseCode() == 200) {
+
+					// 调用监听器
+					if (onConnectListener != null) {
+						onConnectListener
+								.onConnect(connection.getInputStream());
+					}
+					
 					return true;
-				} else {//TODO:添加其他情况
-				
+				}
+
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+
+				if (connection != null) {
+					connection.disconnect();// 不要忘记断开
 				}
 			}
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+			return false;
 
-			if (connection != null) {
-				connection.disconnect();// 不要忘记断开
+		}
+		@Override
+		protected void onPostExecute(Boolean result) {//主线程
+
+			if (onConnectListener != null) {
+
+				if (result.booleanValue()) {// 成功接收
+					onConnectListener.onSuccess();
+				} else {//接收失败
+					onConnectListener.onFailure();
+				}
+
 			}
-
 		}
-		
-		if (onConnectListener != null) {
-			onConnectListener.onFailure();
-		}
-		
-		return false;
 
+		
 	}
+	
 
 }
