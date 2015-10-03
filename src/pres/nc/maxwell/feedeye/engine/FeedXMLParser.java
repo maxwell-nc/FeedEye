@@ -23,34 +23,58 @@ public class FeedXMLParser {
 	private String mFeedUrl;
 
 	/**
-	 * 订阅类型
-	 */
-	public String mFeedType;
-
-	/**
-	 * 订阅标题
-	 */
-	public String mFeedTitle;
-
-	/**
-	 * 订阅时间
-	 */
-	public String mFeedTime;
-
-	/**
-	 * 订阅概要
-	 */
-	public String mFeedSummary;
-
-	/**
 	 * 编码方式
 	 */
 	public String mEncodingString;
 
 	/**
-	 * 完成解析XML监听器
+	 * 基本信息集合
 	 */
-	private OnFinishParseListener mOnFinishParseListener;
+	public BaseInfo mBaseInfo;
+
+	/**
+	 * 内容信息集合
+	 */
+	public ContentInfo mContentInfo;
+
+	/**
+	 * 基本信息
+	 */
+	public static class BaseInfo {
+
+		/**
+		 * 订阅类型
+		 */
+		public String mFeedType;
+
+		/**
+		 * 订阅标题
+		 */
+		public String mFeedTitle;
+
+		/**
+		 * 订阅时间
+		 */
+		public String mFeedTime;
+
+		/**
+		 * 订阅概要
+		 */
+		public String mFeedSummary;
+
+	}
+
+	/**
+	 * 内容信息
+	 */
+	public static class ContentInfo {
+
+		/**
+		 * 信息数量
+		 */
+		public int mContentCount;
+
+	}
 
 	/**
 	 * Http连接工具类对象
@@ -58,36 +82,31 @@ public class FeedXMLParser {
 	private HTTPUtils mHttpUtils;
 
 	/**
-	 * 解析的订阅地址
-	 * 
-	 * @param feedUrl
-	 *            订阅地址
-	 * @param encodingString
-	 *            编码方式
+	 * 完成解析XML监听器
 	 */
-	public void parse(String feedUrl, String encodingString) {
-		this.mFeedUrl = feedUrl;
-		this.mEncodingString = encodingString;
-
-		getXMLBaseInfo();
-	}
-
-	/**
-	 * 取消解析XML
-	 */
-	public void cancelParse() {
-
-		if (mHttpUtils != null) {
-			mHttpUtils.Disconnet();
-		}
-
-	}
+	private OnFinishParseListener mOnFinishParseListener;
 
 	/**
 	 * 完成解析XML监听器
 	 */
 	public interface OnFinishParseListener {
 		public void onFinishParseBaseInfo(boolean result);
+		public void onFinishParseContent(boolean result);
+	}
+
+	/**
+	 * 默认的XML解析完成监听器，什么都不做
+	 */
+	public class OnFinishParseDefaultListener implements OnFinishParseListener {
+
+		@Override
+		public void onFinishParseBaseInfo(boolean result) {
+		}
+
+		@Override
+		public void onFinishParseContent(boolean result) {
+		}
+
 	}
 
 	/**
@@ -102,7 +121,63 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * 从网络读取XML
+	 * 只解析基本信息
+	 * 
+	 * @see #parse(String, String, int)
+	 */
+	public static final int TYPE_PARSE_BASE_INFO = 1;
+
+	/**
+	 * 解析内容
+	 * 
+	 * @see #parse(String, String, int)
+	 */
+	public static final int TYPE_PARSE_CONTENT = 2;
+
+	/**
+	 * 解析的订阅地址
+	 * 
+	 * @param feedUrl
+	 *            订阅地址
+	 * @param encodingString
+	 *            编码方式
+	 * @param parseType
+	 *            解析类型，可选：{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}或者
+	 *            {@link FeedXMLParser#TYPE_PARSE_CONTENT}
+	 */
+	public void parse(String feedUrl, String encodingString, int parseType) {
+
+		this.mFeedUrl = feedUrl;
+		this.mEncodingString = encodingString;
+
+		// 判断解析类型
+		if (parseType == TYPE_PARSE_BASE_INFO) {
+
+			this.mBaseInfo = new BaseInfo();
+
+			getXMLBaseInfo();
+		} else {
+
+			this.mContentInfo = new ContentInfo();
+
+			getXMLContentInfo();
+		}
+
+	}
+
+	/**
+	 * 取消解析XML
+	 */
+	public void cancelParse() {
+
+		if (mHttpUtils != null) {
+			mHttpUtils.Disconnet();
+		}
+
+	}
+
+	/**
+	 * 从网络读取XML的基本信息并解析
 	 */
 	private void getXMLBaseInfo() {
 
@@ -143,65 +218,65 @@ public class FeedXMLParser {
 
 		XMLUtils xmlUtils = new XMLUtils();
 
-		
 		xmlUtils.setOnParseListener(new OnParseListener() {
-			
-			@Override
-			public void onGetName(XmlPullParser parser, String name) throws XmlPullParserException, IOException {
 
-				//LogUtils.w("FeedXMLParser", name);
-				
+			@Override
+			public void onGetName(XmlPullParser parser, String name)
+					throws XmlPullParserException, IOException {
+
+				// LogUtils.w("FeedXMLParser", name);
+
 				// 检查XML类型
-				if (TextUtils.isEmpty(mFeedType)) {
+				if (TextUtils.isEmpty(mBaseInfo.mFeedType)) {
 
 					if ("rss".equals(name)) {// rss类型
-						mFeedType = "RSS";
+						mBaseInfo.mFeedType = "RSS";
 					} else if ("feed".equals(name)) {// atom类型
-						mFeedType = "ATOM";
+						mBaseInfo.mFeedType = "ATOM";
 					}
 
 				}
-				
+
 				// 检查XML标题
-				if (TextUtils.isEmpty(mFeedTitle)) {
+				if (TextUtils.isEmpty(mBaseInfo.mFeedTitle)) {
 
 					if ("title".equals(name)) {// 标题
-						mFeedTitle = parser.nextText();
+						mBaseInfo.mFeedTitle = parser.nextText();
 					}
 
 				}
 
 				// 检查XML时间
-				if (TextUtils.isEmpty(mFeedTime)) {
+				if (TextUtils.isEmpty(mBaseInfo.mFeedTime)) {
 
 					if ("updated".equals(name)) {// ATOM
-						mFeedTime = parser.nextText();
+						mBaseInfo.mFeedTime = parser.nextText();
 					} else if ("pubDate".equals(name)) {// RSS
-						mFeedTime = parser.nextText();
+						mBaseInfo.mFeedTime = parser.nextText();
 					}
 
 				}
 
 				// 检查XML概要
-				if (TextUtils.isEmpty(mFeedSummary)) {
+				if (TextUtils.isEmpty(mBaseInfo.mFeedSummary)) {
 
 					if ("subtitle".equals(name)) {// ATOM
-						mFeedSummary = parser.nextText();
+						mBaseInfo.mFeedSummary = parser.nextText();
 					} else if ("description".equals(name)) {// RSS
-						mFeedSummary = parser.nextText();
+						mBaseInfo.mFeedSummary = parser.nextText();
 					}
 
 				}
 			}
-			
+
 			@Override
 			public boolean isOnlyParseStartTag() {
 				return true;
 			}
-			
+
 			@Override
 			public boolean isInterruptParse(XmlPullParser parser) {
-				
+
 				// 第一个元素退出解析,不必解析全部
 				if ("item".equals(parser.getName())) {// RSS
 					return true;
@@ -209,12 +284,88 @@ public class FeedXMLParser {
 				if ("entry".equals(parser.getName())) {// ATOM
 					return true;
 				}
-				
+
 				return false;
 			}
 		});
-		
+
 		xmlUtils.parseStream(inputStream, mEncodingString);
 
 	}
+
+	/**
+	 * 从网络读取XML的内容并解析
+	 */
+	private void getXMLContentInfo() {
+
+		mHttpUtils = new HTTPUtils(new OnConnectListener() {
+
+			@Override
+			public void onConnect(InputStream inputStream) {// 子线程
+				parseXMLContent(inputStream);
+
+			}
+
+			@Override
+			public void onSuccess() {// 主线程
+				if (mOnFinishParseListener != null) {
+					mOnFinishParseListener.onFinishParseContent(true);
+				}
+
+			}
+
+			@Override
+			public void onFailure() {// 主线程
+				if (mOnFinishParseListener != null) {
+					mOnFinishParseListener.onFinishParseContent(false);
+				}
+			}
+		});
+
+		mHttpUtils.Connect(mFeedUrl, 15000, 15000);
+	}
+
+	/**
+	 * 解析XML输入流内容
+	 * 
+	 * @param inputStream
+	 *            XML输入流
+	 */
+	private void parseXMLContent(InputStream inputStream) {
+
+		// 计数清零
+		mContentInfo.mContentCount = 0;
+
+		XMLUtils xmlUtils = new XMLUtils();
+
+		xmlUtils.setOnParseListener(new OnParseListener() {
+
+			@Override
+			public void onGetName(XmlPullParser parser, String name)
+					throws XmlPullParserException, IOException {
+
+				if ("item".equals(parser.getName())) {// RSS
+					mContentInfo.mContentCount++;
+				}
+				if ("entry".equals(parser.getName())) {// ATOM
+					mContentInfo.mContentCount++;
+				}
+
+			}
+
+			@Override
+			public boolean isOnlyParseStartTag() {
+				return true;
+			}
+
+			@Override
+			public boolean isInterruptParse(XmlPullParser parser) {
+				return false;
+			}
+		});
+
+		xmlUtils.parseStream(inputStream, mEncodingString);
+
+	}
+
 }

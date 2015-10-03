@@ -40,12 +40,12 @@ public class HTTPUtils {
 		public void onConnect(InputStream inputStream);
 
 		/**
-		 * 处理成功，运行在主线程
+		 * 在onConnect方法之后，处理成功，运行在主线程
 		 */
 		public void onSuccess();
 
 		/**
-		 * 失败后处理，运行在主线程
+		 * 在onConnect方法之后，处理失败，运行在主线程
 		 */
 		public void onFailure();
 	}

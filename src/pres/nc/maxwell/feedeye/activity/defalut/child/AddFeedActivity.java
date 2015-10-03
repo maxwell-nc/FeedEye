@@ -9,7 +9,6 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
@@ -247,7 +246,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mFeedXMLParser = new FeedXMLParser();
 
 		mFeedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishParseListener() {
+				.setOnFinishedParseXMLListener(mFeedXMLParser.new OnFinishParseDefaultListener() {
 
 					@Override
 					public void onFinishParseBaseInfo(boolean result) {
@@ -257,11 +256,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
 								if (TextUtils
-										.isEmpty(mFeedXMLParser.mFeedTitle)) {// 网络结果为空
+										.isEmpty(mFeedXMLParser.mBaseInfo.mFeedTitle)) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
 									feedItemBean
-											.setTitle(mFeedXMLParser.mFeedTitle);
+											.setTitle(mFeedXMLParser.mBaseInfo.mFeedTitle);
 								}
 
 							} else {// 用户自定义
@@ -269,18 +268,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 							}
 
 							// 设置预览内容
-							if (!TextUtils.isEmpty(mFeedXMLParser.mFeedSummary)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo.mFeedSummary)) {
 								feedItemBean
-										.setPreviewContent(mFeedXMLParser.mFeedSummary);
+										.setPreviewContent(mFeedXMLParser.mBaseInfo.mFeedSummary);
 							} else {
 								feedItemBean.setPreviewContent("没有接收到数据");
 							}
 
 							// 设置时间
-							if (!TextUtils.isEmpty(mFeedXMLParser.mFeedTime)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo.mFeedTime)) {
 
 								String timeString = TimeUtils
-										.LoopToTransTime(mFeedXMLParser.mFeedTime);
+										.LoopToTransTime(mFeedXMLParser.mBaseInfo.mFeedTime);
 								Timestamp timestamp = TimeUtils
 										.string2Timestamp(timeString);
 								feedItemBean.setLastTime(timestamp);
@@ -366,7 +365,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				});
 
 		// 解析数据
-		mFeedXMLParser.parse(mUrlString, mEncodingString);
+		mFeedXMLParser.parse(mUrlString, mEncodingString,FeedXMLParser.TYPE_PARSE_BASE_INFO);
 
 		return true;
 	}
