@@ -1,6 +1,7 @@
 package pres.nc.maxwell.feedeye.db;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
@@ -53,7 +54,7 @@ public class FeedItemDAO {
 		map.put("title", feedItemBean.getTitle());
 		map.put("preview_content", feedItemBean.getPreviewContent());
 		map.put("last_time", TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss"));
+				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss",Locale.getDefault()));
 		map.put("delete_flag", feedItemBean.getDeleteFlag());
 
 		return map;

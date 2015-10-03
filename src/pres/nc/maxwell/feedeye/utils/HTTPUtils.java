@@ -145,13 +145,16 @@ public class HTTPUtils {
 
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
-
+				
+				connection.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.1)");
 				connection.setRequestMethod("GET");
 				connection.connect();
 
 				LogUtils.i("HTTPUtils",
 						"ResponseCode:" + connection.getResponseCode());
-
+				LogUtils.i("HTTPUtils",
+						"ResponseCode:" + connection.getResponseMessage());
+				
 				if (connection.getResponseCode() == 200) {
 
 					// µ÷ÓÃ¼àÌýÆ÷

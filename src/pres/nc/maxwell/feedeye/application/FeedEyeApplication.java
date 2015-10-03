@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Date;
 
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
@@ -42,7 +41,7 @@ public class FeedEyeApplication extends Application {
 		@Override
 		public void uncaughtException(Thread thread, Throwable ex) {
 
-			String timeStr = TimeUtils.date2String(new Date(), "yyyy-MM-dd-HH-mm-ss");
+			String timeStr = TimeUtils.LoopToTransTime("getCurrentTime","yyyy-MM-dd-HH-mm-ss");
 	
 			File file = IOUtils.getFileInSdcard("/FeedEyeErrLog", "errorLog" + timeStr + ".log");
 			

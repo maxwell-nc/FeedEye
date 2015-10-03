@@ -9,7 +9,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishedParseXMLListener;
+import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
@@ -202,8 +202,8 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 	@Override
 	protected boolean beforeClose() {
-		
-		if (mFeedXMLParser!=null) {
+
+		if (mFeedXMLParser != null) {
 			mFeedXMLParser.cancelParse();
 		}
 		setResult(-1, null);// -1表示没有返回数据
@@ -247,16 +247,17 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mFeedXMLParser = new FeedXMLParser();
 
 		mFeedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishedParseXMLListener() {
+				.setOnFinishedParseXMLListener(new OnFinishParseListener() {
 
 					@Override
-					public void onFinishedParseXMLBaseInfo(boolean result) {
+					public void onFinishParseBaseInfo(boolean result) {
 
 						if (result) {// 成功读取
 							// 设置标题
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
-								if (TextUtils.isEmpty(mFeedXMLParser.mFeedTitle)) {// 网络结果为空
+								if (TextUtils
+										.isEmpty(mFeedXMLParser.mFeedTitle)) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
 									feedItemBean
@@ -278,16 +279,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 							// 设置时间
 							if (!TextUtils.isEmpty(mFeedXMLParser.mFeedTime)) {
 
-								if ("RSS".equals(mFeedXMLParser.mFeedType)) {
-									feedItemBean.setLastTime(TimeUtils
-											.varString2Timestamp(mFeedXMLParser.mFeedTime));
-								}
+								String timeString = TimeUtils
+										.LoopToTransTime(mFeedXMLParser.mFeedTime);
+								Timestamp timestamp = TimeUtils
+										.string2Timestamp(timeString);
+								feedItemBean.setLastTime(timestamp);
 
 							} else {
 								feedItemBean.setLastTime(new Timestamp(System
 										.currentTimeMillis()));
 							}
 
+							// 设置图片
 							String customImagePath = mCustomImagePath.getText()
 									.toString();
 
@@ -313,8 +316,17 @@ public class AddFeedActivity extends DefaultNewActivity {
 										feedItemBean.setPicURL(host
 												+ "/favicon.ico");
 									} else {
-										feedItemBean.setPicURL("http://" + host
-												+ "/favicon.ico");
+
+										if (mUrlString.startsWith("https://")) {
+
+											feedItemBean.setPicURL("https://"
+													+ host + "/favicon.ico");
+
+										} else {
+											feedItemBean.setPicURL("http://"
+													+ host + "/favicon.ico");
+										}
+
 									}
 
 								} else {
@@ -323,20 +335,14 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 							}
 
+							// 设置订阅URL
+							feedItemBean.setFeedURL(mUrlString);
+
 							feedItemDAO.addItem(feedItemBean);
 
 							// 返回数据给MainActivity
 							Intent returnData = new Intent();
 							returnData.putExtra("feedItemBean", feedItemBean);
-
-							// 返回数量
-							if (mFeedXMLParser.mFeedType == "RSS") {
-								returnData.putExtra("count",
-										mFeedXMLParser.mItemCount);
-							} else if (mFeedXMLParser.mFeedType == "ATOM") {
-								returnData.putExtra("count",
-										mFeedXMLParser.mEntryCount);
-							}
 
 							setResult(0, returnData);
 
@@ -360,7 +366,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				});
 
 		// 解析数据
-		mFeedXMLParser.parseUrl(mUrlString, mEncodingString);
+		mFeedXMLParser.parse(mUrlString, mEncodingString);
 
 		return true;
 	}

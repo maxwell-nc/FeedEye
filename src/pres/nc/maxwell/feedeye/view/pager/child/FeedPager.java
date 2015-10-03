@@ -2,6 +2,7 @@ package pres.nc.maxwell.feedeye.view.pager.child;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
@@ -10,8 +11,8 @@ import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
-import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
@@ -508,7 +509,7 @@ public class FeedPager extends BasePager {
 		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
 		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "a HH:mm"));
+				feedItemBean.getLastTime(), "a HH:mm", Locale.getDefault()));
 
 		return true;
 

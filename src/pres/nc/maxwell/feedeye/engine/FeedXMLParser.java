@@ -8,11 +8,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
+import pres.nc.maxwell.feedeye.utils.XMLUtils;
+import pres.nc.maxwell.feedeye.utils.XMLUtils.OnParseListener;
 import android.text.TextUtils;
-import android.util.Xml;
 
 /**
- * 订阅解析器，支持XML格式
+ * 订阅信息解析器，支持网络XML
  */
 public class FeedXMLParser {
 
@@ -44,23 +45,16 @@ public class FeedXMLParser {
 	/**
 	 * 编码方式
 	 */
-	public String encodingString;
-
-	/**
-	 * RSS类型：item标签数
-	 */
-	public int mItemCount;
-
-	/**
-	 * ATOM类型：entry标签数
-	 */
-	public int mEntryCount;
+	public String mEncodingString;
 
 	/**
 	 * 完成解析XML监听器
 	 */
-	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
+	private OnFinishParseListener mOnFinishParseListener;
 
+	/**
+	 * Http连接工具类对象
+	 */
 	private HTTPUtils mHttpUtils;
 
 	/**
@@ -71,46 +65,46 @@ public class FeedXMLParser {
 	 * @param encodingString
 	 *            编码方式
 	 */
-	public void parseUrl(String feedUrl, String encodingString) {
+	public void parse(String feedUrl, String encodingString) {
 		this.mFeedUrl = feedUrl;
-		this.encodingString = encodingString;
+		this.mEncodingString = encodingString;
 
-		getXML();
+		getXMLBaseInfo();
 	}
 
 	/**
 	 * 取消解析XML
 	 */
 	public void cancelParse() {
-		
+
 		if (mHttpUtils != null) {
 			mHttpUtils.Disconnet();
 		}
-		
+
 	}
 
 	/**
 	 * 完成解析XML监听器
 	 */
-	public interface OnFinishedParseXMLListener {
-		public void onFinishedParseXMLBaseInfo(boolean result);
+	public interface OnFinishParseListener {
+		public void onFinishParseBaseInfo(boolean result);
 	}
 
 	/**
 	 * 设置完成解析XML的监听器
 	 * 
-	 * @param onFinishedParseXMLListener
+	 * @param onFinishParseXMLListener
 	 *            监听器
 	 */
 	public void setOnFinishedParseXMLListener(
-			OnFinishedParseXMLListener onFinishedParseXMLListener) {
-		this.mOnFinishedParseXMLListener = onFinishedParseXMLListener;
+			OnFinishParseListener onFinishParseXMLListener) {
+		this.mOnFinishParseListener = onFinishParseXMLListener;
 	}
 
 	/**
 	 * 从网络读取XML
 	 */
-	private void getXML() {
+	private void getXMLBaseInfo() {
 
 		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
@@ -121,18 +115,16 @@ public class FeedXMLParser {
 
 			@Override
 			public void onSuccess() {// 主线程
-				if (mOnFinishedParseXMLListener != null) {
-					mOnFinishedParseXMLListener
-							.onFinishedParseXMLBaseInfo(true);
+				if (mOnFinishParseListener != null) {
+					mOnFinishParseListener.onFinishParseBaseInfo(true);
 				}
 
 			}
 
 			@Override
 			public void onFailure() {// 主线程
-				if (mOnFinishedParseXMLListener != null) {
-					mOnFinishedParseXMLListener
-							.onFinishedParseXMLBaseInfo(false);
+				if (mOnFinishParseListener != null) {
+					mOnFinishParseListener.onFinishParseBaseInfo(false);
 				}
 			}
 
@@ -149,41 +141,31 @@ public class FeedXMLParser {
 	 */
 	private void parseXMLBaseInfo(InputStream inputStream) {
 
-		XmlPullParser parser = Xml.newPullParser();
-		try {
-			parser.setInput(inputStream, encodingString);
-			int eventType = parser.getEventType();
+		XMLUtils xmlUtils = new XMLUtils();
 
-			// 统计归零
-			mItemCount = 0;
-			mEntryCount = 0;
+		
+		xmlUtils.setOnParseListener(new OnParseListener() {
+			
+			@Override
+			public void onGetName(XmlPullParser parser, String name) throws XmlPullParserException, IOException {
 
-			// 不断解析
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-
-				if (eventType != XmlPullParser.START_TAG
-						|| parser.getName() == null) {
-					eventType = parser.next();
-					continue;
-				}
-
-				// LogUtils.w("FeedXMLParser", parser.getName() );
-
+				//LogUtils.w("FeedXMLParser", name);
+				
 				// 检查XML类型
 				if (TextUtils.isEmpty(mFeedType)) {
 
-					if ("rss".equals(parser.getName())) {// rss类型
+					if ("rss".equals(name)) {// rss类型
 						mFeedType = "RSS";
-					} else if (parser.getName() == "feed") {// atom类型
+					} else if ("feed".equals(name)) {// atom类型
 						mFeedType = "ATOM";
 					}
 
 				}
-
+				
 				// 检查XML标题
 				if (TextUtils.isEmpty(mFeedTitle)) {
 
-					if ("title".equals(parser.getName())) {// 标题
+					if ("title".equals(name)) {// 标题
 						mFeedTitle = parser.nextText();
 					}
 
@@ -192,10 +174,9 @@ public class FeedXMLParser {
 				// 检查XML时间
 				if (TextUtils.isEmpty(mFeedTime)) {
 
-					if ("updated".equals(parser.getName())) {// ATOM
+					if ("updated".equals(name)) {// ATOM
 						mFeedTime = parser.nextText();
-					}
-					if ("pubDate".equals(parser.getName())) {// RSS
+					} else if ("pubDate".equals(name)) {// RSS
 						mFeedTime = parser.nextText();
 					}
 
@@ -204,32 +185,36 @@ public class FeedXMLParser {
 				// 检查XML概要
 				if (TextUtils.isEmpty(mFeedSummary)) {
 
-					if ("subtitle".equals(parser.getName())) {// ATOM
+					if ("subtitle".equals(name)) {// ATOM
+						mFeedSummary = parser.nextText();
+					} else if ("description".equals(name)) {// RSS
 						mFeedSummary = parser.nextText();
 					}
-					if ("description".equals(parser.getName())) {// RSS
-						mFeedSummary = parser.nextText();
-					}
 
 				}
-
-				// 检查数量
-				if ("item".equals(parser.getName())) {// ATOM
-					mItemCount++;
-				}
-				if ("entry".equals(parser.getName())) {// RSS
-					mEntryCount++;
-				}
-
-				eventType = parser.next();
 			}
-
-		} catch (XmlPullParserException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			
+			@Override
+			public boolean isOnlyParseStartTag() {
+				return true;
+			}
+			
+			@Override
+			public boolean isInterruptParse(XmlPullParser parser) {
+				
+				// 第一个元素退出解析,不必解析全部
+				if ("item".equals(parser.getName())) {// RSS
+					return true;
+				}
+				if ("entry".equals(parser.getName())) {// ATOM
+					return true;
+				}
+				
+				return false;
+			}
+		});
+		
+		xmlUtils.parseStream(inputStream, mEncodingString);
 
 	}
-
 }
