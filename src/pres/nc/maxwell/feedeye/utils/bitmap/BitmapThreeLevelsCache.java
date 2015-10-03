@@ -72,7 +72,10 @@ public class BitmapThreeLevelsCache {
 		this.mIsEnableNetworkCache = isEnableNetworkCache;
 		mImageView.setTag(mURL);
 	}
-
+	
+	/**
+	 * 从缓存中读取并显示图片
+	 */
 	public void displayBitmap() {
 
 		if (isLocalFile()) {// 本地图片
@@ -128,6 +131,10 @@ public class BitmapThreeLevelsCache {
 		return false;
 	}
 
+	/**
+	 * 设置内存缓存
+	 * @param bitmapFile 图片文件对象
+	 */
 	private void setMemoryCache(File bitmapFile) {
 
 		// 解析File对象
@@ -141,6 +148,10 @@ public class BitmapThreeLevelsCache {
 
 	}
 
+	/**
+	 * 设置本地缓存
+	 * @param bitmapNetworkStream 图片网络流
+	 */
 	private void setLocalCache(InputStream bitmapNetworkStream) {
 		BufferedOutputStream bufferedOutputStream = getBufferedOutputStream();
 
@@ -157,6 +168,9 @@ public class BitmapThreeLevelsCache {
 		}
 	}
 
+	/**
+	 * 设置网络缓存，不要调用
+	 */
 	@SuppressWarnings("unused")
 	private void setNetworkCache() {
 
@@ -166,6 +180,10 @@ public class BitmapThreeLevelsCache {
 
 	}
 
+	/**
+	 * 读取内存缓存
+	 * @return 是否成功读取
+	 */
 	private boolean getMemoryCache() {
 
 		Bitmap bitmapCache = BitmapLruCacheDispatcher.getInstance()
@@ -192,6 +210,10 @@ public class BitmapThreeLevelsCache {
 
 	}
 
+	/**
+	 * 读取本地缓存
+	 * @return 是否成功读取
+	 */
 	private boolean getLocalCache() {
 
 		File cacheFile = getCacheFile();
@@ -214,6 +236,9 @@ public class BitmapThreeLevelsCache {
 
 	}
 
+	/**
+	 * 读取网络缓存
+	 */
 	private void getNetworkCache() {
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
@@ -234,7 +259,7 @@ public class BitmapThreeLevelsCache {
 			@Override
 			public void onFailure() {// 主线程
 
-				// TODO：获取favicon失败
+				// 获取失败
 				String tagURL = (String) mImageView.getTag();
 				if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
 

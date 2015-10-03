@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -37,6 +37,18 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@drawable/selector_press_text_color</item>
         <item name="android:background">@drawable/selector_press_background_transparent</item>
+    </style>
+
+    <!-- 添加订阅页面标题的样式 -->
+    <style name="add_feed_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawableLeft">@drawable/img_text_left_64</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textSize">25dp</item>
     </style>
 
 </resources>

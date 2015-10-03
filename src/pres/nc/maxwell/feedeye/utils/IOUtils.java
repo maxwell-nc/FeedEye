@@ -7,7 +7,11 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 /**
  * 处理IO工具类
@@ -93,8 +97,11 @@ public class IOUtils {
 
 	/**
 	 * 获得SD卡中的存储File对象
-	 * @param dir SD卡下的目录，如"/xxx"
-	 * @param filename 文件名
+	 * 
+	 * @param dir
+	 *            SD卡下的目录，如"/xxx"
+	 * @param filename
+	 *            文件名
 	 * @return File对象
 	 */
 	public static File getFileInSdcard(String dir, String filename) {
@@ -111,7 +118,7 @@ public class IOUtils {
 		}
 
 		File file = new File(savePath, filename);
-		
+
 		return file;
 	}
 
@@ -137,5 +144,27 @@ public class IOUtils {
 		}
 
 	}
+	
+	
+	/**
+	 * 转换URI为绝对路径
+	 * @param activity Activity对象
+	 * @param uri Uri
+	 * @return 绝对路径文本
+	 */
+	public static String getAbsolutePathFromURI(Activity activity,
+			Uri uri) {
+		String absPath = null;
+		String[] projection = {MediaStore.Images.Media.DATA};
+		Cursor cursor = activity.getContentResolver().query(uri, projection,
+				null, null, null);
+		if (cursor.moveToFirst()) {
 
+			int index = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			absPath = cursor.getString(index);
+		}
+		cursor.close();
+		return absPath;
+	}
 }

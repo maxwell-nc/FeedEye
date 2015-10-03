@@ -10,9 +10,12 @@ import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishedParseXMLListener;
+import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -69,6 +73,16 @@ public class AddFeedActivity extends DefaultNewActivity {
 	private String mUrlString;
 
 	/**
+	 * 自定义的图标
+	 */
+	private ImageView mCustomImage;
+
+	/**
+	 * 自定义的图片路径
+	 */
+	private TextView mCustomImagePath;
+
+	/**
 	 * 初始化View对象
 	 */
 	@Override
@@ -87,6 +101,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mUrlText = (EditText) mCustomContainerView.findViewById(R.id.et_url);
 		mTitleText = (EditText) mCustomContainerView
 				.findViewById(R.id.et_title);
+
+		mCustomImage = (ImageView) mCustomContainerView
+				.findViewById(R.id.iv_pic);
+		mCustomImagePath = (TextView) mCustomContainerView
+				.findViewById(R.id.tv_pic_tips);
 
 		mEncodingGroup = (RadioGroup) mCustomContainerView
 				.findViewById(R.id.rg_encoding);
@@ -141,6 +160,40 @@ public class AddFeedActivity extends DefaultNewActivity {
 					}
 				});
 
+		// 自定义图标
+		mCustomImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				Intent intent = new Intent();
+				intent.setType("image/*");
+				intent.setAction(Intent.ACTION_GET_CONTENT);
+				// 请求码为1
+				startActivityForResult(intent, 1);
+			}
+		});
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == 1) {// 获取自定义的图标
+
+			if (resultCode == RESULT_OK) {
+				Uri uri = data.getData();// 获取返回的URI
+				String customImagePath = IOUtils.getAbsolutePathFromURI(
+						mThisActivity, uri);
+				mCustomImagePath.setText(customImagePath);
+				//显示出来
+				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage, customImagePath);
+			}
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+
 	}
 
 	@Override
@@ -169,7 +222,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 		final String titleString = mTitleText.getText().toString();
 
-		//自动补全http头
+		// 自动补全http头
 		if (!(mUrlString.startsWith("http://") || mUrlString
 				.startsWith("https://"))) {
 
@@ -228,36 +281,40 @@ public class AddFeedActivity extends DefaultNewActivity {
 										.currentTimeMillis()));
 							}
 
-							// favicon获取
-
-							Pattern p = Pattern
-									.compile("(?<=//|)((\\w)+\\.)+\\w+");// 匹配顶级域名
-
-							Matcher m = p.matcher(mUrlString);
-
-							if (m.find()) {
-
-								// 补全http头
-								String host = m.group();
-								if (host.startsWith("http://")
-										|| host.startsWith("https://")) {
-									feedItemBean.setPicURL(host
-											+ "/favicon.ico");
-								} else {
-									feedItemBean.setPicURL("http://" + host
-											+ "/favicon.ico");
-								}
-
-							} else {
-								feedItemBean.setPicURL("null");
-							}
-
-							//TODO:添加设置本地图片
-							/*feedItemBean.setPicURL(Environment.getExternalStorageDirectory()
-									.getAbsolutePath() + "/Download/1.png");
-							LogUtils.w("AddFeedActivity", Environment.getExternalStorageDirectory()
-									.getAbsolutePath() + "/Download/1.png");*/
+							String customImagePath = mCustomImagePath.getText().toString();
 							
+							if (customImagePath.startsWith("/")) {//使用本地图片
+								
+								feedItemBean.setPicURL(customImagePath);
+								
+							}else{//没有设置
+								
+								// favicon获取
+
+								Pattern p = Pattern
+										.compile("(?<=//|)((\\w)+\\.)+\\w+");// 匹配顶级域名
+
+								Matcher m = p.matcher(mUrlString);
+
+								if (m.find()) {
+
+									// 补全http头
+									String host = m.group();
+									if (host.startsWith("http://")
+											|| host.startsWith("https://")) {
+										feedItemBean.setPicURL(host
+												+ "/favicon.ico");
+									} else {
+										feedItemBean.setPicURL("http://" + host
+												+ "/favicon.ico");
+									}
+
+								} else {
+									feedItemBean.setPicURL("null");
+								}
+								
+							}
+								
 							feedItemDAO.addItem(feedItemBean);
 
 							// 返回数据给MainActivity

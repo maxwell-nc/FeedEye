@@ -5,19 +5,15 @@
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:text="设置标题"
-        android:textSize="25sp" />
+        style="@style/add_feed_title"
+        android:text="设置标题" />
 
     <EditText
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_title"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:hint="请输入要订阅的标题(可选)" >
@@ -26,21 +22,51 @@
     </EditText>
 
     <TextView
-        android:id="@+id/tv_encoding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/tv_pic"
+        style="@style/add_feed_title"
         android:layout_below="@id/et_title"
+        android:text="自定义图标(可选)" />
+
+    <ImageView
+        android:id="@+id/iv_pic"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/tv_pic"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="25dp"
+        android:scaleType="center"
+        android:src="@drawable/selector_add_bound" >
+    </ImageView>
+
+    <TextView
+        android:id="@+id/tv_pic_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/iv_pic"
+        android:layout_alignTop="@id/iv_pic"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:text="编码类型"
-        android:textSize="25sp" />
+        android:layout_toRightOf="@id/iv_pic"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:ellipsize="start"
+        android:text="点击图标自定义"
+        android:textColor="@color/grey"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_encoding"
+        style="@style/add_feed_title"
+        android:layout_below="@id/iv_pic"
+        android:text="编码类型" />
 
     <RadioGroup
         android:id="@+id/rg_encoding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_encoding"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:orientation="horizontal" >
 
@@ -66,14 +92,9 @@
 
     <TextView
         android:id="@+id/tv_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/add_feed_title"
         android:layout_below="@id/rg_encoding"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:text="订阅地址"
-        android:textSize="25sp" />
+        android:text="订阅地址" />
 
     <EditText
         android:id="@+id/et_url"
