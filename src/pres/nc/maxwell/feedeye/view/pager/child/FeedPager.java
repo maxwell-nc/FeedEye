@@ -502,11 +502,8 @@ public class FeedPager extends BasePager {
 		}
 
 		// 使用三级缓存加载图片
-		// mCacheUtils.displayBitmap(viewHolder.mItemPic,
-		// feedItemBean.getPicURL(), R.anim.refresh_rotate);
-
-		pres.nc.maxwell.feedeye.utils.bitmapNew.BitmapCacheUtils.displayBitmap(
-				mActivity, viewHolder.mItemPic, feedItemBean.getPicURL());
+		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
+				feedItemBean.getPicURL());
 
 		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
 		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());

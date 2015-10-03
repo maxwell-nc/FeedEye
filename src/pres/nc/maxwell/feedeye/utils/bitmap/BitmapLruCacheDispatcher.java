@@ -1,4 +1,4 @@
-package pres.nc.maxwell.feedeye.utils.bitmapNew;
+package pres.nc.maxwell.feedeye.utils.bitmap;
 
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import android.graphics.Bitmap;

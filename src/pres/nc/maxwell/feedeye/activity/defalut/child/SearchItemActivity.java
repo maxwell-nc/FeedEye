@@ -39,7 +39,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 * 代表当前Activity，用于跳转Activity
 	 */
 	private Activity mThisActivity;
-	
+
 	/**
 	 * 搜索关键字输入框
 	 */
@@ -85,15 +85,17 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 */
 	@Override
 	protected void initView() {
-		
+
 		mThisActivity = this;
-		
+
 		super.initView();
-		
-		addView(R.layout.activity_search_item_bar, R.layout.activity_search_item_container);
+
+		addView(R.layout.activity_search_item_bar,
+				R.layout.activity_search_item_container);
 
 		mSearchText = (EditText) mCustomBarView.findViewById(R.id.et_search);
-		mLoading = (ProgressBar) mCustomContainerView.findViewById(R.id.pb_loading);
+		mLoading = (ProgressBar) mCustomContainerView
+				.findViewById(R.id.pb_loading);
 		mResultListView = (ListView) mCustomContainerView
 				.findViewById(R.id.lv_search_result);
 		mNothingFound = (TextView) mCustomContainerView
@@ -160,42 +162,42 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 			}
 		});
-		
-		//搜索后跳转到结果页面
+
+		// 搜索后跳转到结果页面
 		mResultListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				int clickItem = mResultList.get(position).getItemId();
-				
+
 				for (int i = 0; i < mShowedList.size(); i++) {
 
 					// 搜索已显示的列表
 					if (mShowedList.get(i).getItemId() == clickItem) {
-						Intent intent = new Intent(mThisActivity,ItemDetailList.class);
+						Intent intent = new Intent(mThisActivity,
+								ItemDetailList.class);
 						intent.putExtra("FeedItemBean", mShowedList.get(i));
 						mThisActivity.startActivity(intent);
-						
-						finish();//不需要搜索界面？
+
+						finish();// 不需要搜索界面？
 					}
-					
+
 				}
-				
-				
+
 				for (int i = 0; i < mUnShowList.size(); i++) {
 
 					// 搜索未显示的列表
 					if (mUnShowList.get(i).getItemId() == clickItem) {
-						Intent intent = new Intent(mThisActivity,ItemDetailList.class);
+						Intent intent = new Intent(mThisActivity,
+								ItemDetailList.class);
 						intent.putExtra("FeedItemBean", mUnShowList.get(i));
 						mThisActivity.startActivity(intent);
-						
-						finish();//不需要搜索界面？
+
+						finish();// 不需要搜索界面？
 					}
 				}
-				
-				
+
 			}
 		});
 
@@ -284,11 +286,6 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 */
 	class ResultListAdapter extends BaseAdapter {
 
-		/**
-		 * Bitmap三级缓存
-		 */
-		BitmapCacheUtils cacheUtils = new BitmapCacheUtils();
-		
 		@Override
 		public int getCount() {
 			return mResultList.size();
@@ -317,9 +314,8 @@ public class SearchItemActivity extends DefaultNewActivity {
 			}
 
 			// 使用三级缓存加载图片
-			cacheUtils.displayBitmap(holder.pic,
-					mResultList.get(position).getPicURL(),
-					R.anim.refresh_rotate);
+			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
+					mResultList.get(position).getPicURL());
 
 			String title = mResultList.get(position).getTitle();
 

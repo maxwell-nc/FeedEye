@@ -1,4 +1,4 @@
-package pres.nc.maxwell.feedeye.utils.bitmapNew;
+package pres.nc.maxwell.feedeye.utils.bitmap;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
