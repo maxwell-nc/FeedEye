@@ -77,9 +77,10 @@ public class BitmapThreeLevelsCache {
 
 		if (isLocalFile()) {// 本地图片
 
-			LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，直接存取内存缓存");
+			LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，获取内存缓存");
 			if (!getMemoryCache()) {// 1.获取内存缓存
 
+				LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，写入内存缓存");
 				File file = new File(mURL);
 				setMemoryCache(file);// 写到内存缓存中
 				getMemoryCache();// 重新从内存缓存中读取
