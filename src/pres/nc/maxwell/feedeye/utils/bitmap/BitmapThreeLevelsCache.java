@@ -86,8 +86,12 @@ public class BitmapThreeLevelsCache {
 				LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，写入内存缓存");
 				File file = new File(mURL);
 				setMemoryCache(file);// 写到内存缓存中
-				getMemoryCache();// 重新从内存缓存中读取
-
+				
+				// 重新从内存缓存中读取
+				if (!getMemoryCache()) {//路径不合法或者文件已经被删除
+					showErrorBitmap();
+				}
+				
 			}
 
 		} else {// 网络图片
