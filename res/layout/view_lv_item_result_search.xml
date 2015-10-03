@@ -8,9 +8,11 @@
 
     <ImageView
         android:id="@+id/iv_item_pic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="6dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:scaleType="centerCrop"
         android:src="@color/grey" />
 

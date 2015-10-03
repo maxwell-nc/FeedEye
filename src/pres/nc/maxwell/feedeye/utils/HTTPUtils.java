@@ -13,7 +13,7 @@ import javax.net.ssl.SSLSession;
 import android.os.AsyncTask;
 
 /**
- * HTTP连接工具类
+ * HTTP连接工具类，建议一个连接使用单独的对象
  */
 public class HTTPUtils {
 
@@ -21,6 +21,11 @@ public class HTTPUtils {
 	 * 连接监听
 	 */
 	private OnConnectListener onConnectListener;
+	
+	/**
+	 * 连接的线程
+	 */
+	private ConnectTask mCurrentTask;
 
 	/**
 	 * 连接监听器，封装了Handler，运行在主线程
@@ -93,8 +98,20 @@ public class HTTPUtils {
 	 *            读取超时毫秒数
 	 */
 	public void Connect(String url, int connectTimeout, int readTimeout) {
-		new ConnectTask().execute(new ConnectInfo(url, connectTimeout,
+		mCurrentTask = new ConnectTask();
+		mCurrentTask.execute(new ConnectInfo(url, connectTimeout,
 				readTimeout));
+	}
+	
+	/**
+	 * 取消连接
+	 */
+	public void Disconnet(){
+		
+		if (mCurrentTask!=null) {
+			mCurrentTask.cancel(true);
+		}
+		
 	}
 
 	/**

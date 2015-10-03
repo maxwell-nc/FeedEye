@@ -61,6 +61,8 @@ public class FeedXMLParser {
 	 */
 	private OnFinishedParseXMLListener mOnFinishedParseXMLListener;
 
+	private HTTPUtils mHttpUtils;
+
 	/**
 	 * 解析的订阅地址
 	 * 
@@ -74,6 +76,17 @@ public class FeedXMLParser {
 		this.encodingString = encodingString;
 
 		getXML();
+	}
+
+	/**
+	 * 取消解析XML
+	 */
+	public void cancelParse() {
+		
+		if (mHttpUtils != null) {
+			mHttpUtils.Disconnet();
+		}
+		
 	}
 
 	/**
@@ -99,15 +112,15 @@ public class FeedXMLParser {
 	 */
 	private void getXML() {
 
-		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
+		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onConnect(InputStream inputStream) {//子线程
+			public void onConnect(InputStream inputStream) {// 子线程
 				parseXMLBaseInfo(inputStream);
 			}
 
 			@Override
-			public void onSuccess() {//主线程
+			public void onSuccess() {// 主线程
 				if (mOnFinishedParseXMLListener != null) {
 					mOnFinishedParseXMLListener
 							.onFinishedParseXMLBaseInfo(true);
@@ -116,7 +129,7 @@ public class FeedXMLParser {
 			}
 
 			@Override
-			public void onFailure() {//主线程
+			public void onFailure() {// 主线程
 				if (mOnFinishedParseXMLListener != null) {
 					mOnFinishedParseXMLListener
 							.onFinishedParseXMLBaseInfo(false);
@@ -125,7 +138,7 @@ public class FeedXMLParser {
 
 		});
 
-		httpUtils.Connect(mFeedUrl, 10000, 10000);
+		mHttpUtils.Connect(mFeedUrl, 10000, 10000);
 	}
 
 	/**

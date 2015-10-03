@@ -11,7 +11,6 @@ import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishedParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
-import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.content.Intent;
@@ -83,6 +82,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 	private TextView mCustomImagePath;
 
 	/**
+	 * XML解析器
+	 */
+	private FeedXMLParser mFeedXMLParser;
+
+	/**
 	 * 初始化View对象
 	 */
 	@Override
@@ -129,8 +133,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 			@Override
 			public void onClick(View v) {
 
-				boolean finishAdd = addItem();
-				LogUtils.e("AddFeedActivity", finishAdd + "");
+				addItem();
 
 			}
 
@@ -186,8 +189,9 @@ public class AddFeedActivity extends DefaultNewActivity {
 				String customImagePath = IOUtils.getAbsolutePathFromURI(
 						mThisActivity, uri);
 				mCustomImagePath.setText(customImagePath);
-				//显示出来
-				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage, customImagePath);
+				// 显示出来
+				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage,
+						customImagePath);
 			}
 
 		}
@@ -198,15 +202,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 	@Override
 	protected boolean beforeClose() {
-
+		
+		if (mFeedXMLParser!=null) {
+			mFeedXMLParser.cancelParse();
+		}
 		setResult(-1, null);// -1表示没有返回数据
 		return super.beforeClose();
 	}
 
 	/**
-	 * 完成添加
+	 * 添加订阅信息
 	 * 
-	 * @return 返回是否成功添加
+	 * @return 返回是否开始添加（未必成）
 	 */
 	public boolean addItem() {
 
@@ -237,9 +244,9 @@ public class AddFeedActivity extends DefaultNewActivity {
 		// 设置URL
 		feedItemBean.setFeedURL(mUrlString);
 
-		final FeedXMLParser feedXMLParser = new FeedXMLParser();
+		mFeedXMLParser = new FeedXMLParser();
 
-		feedXMLParser
+		mFeedXMLParser
 				.setOnFinishedParseXMLListener(new OnFinishedParseXMLListener() {
 
 					@Override
@@ -249,11 +256,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 							// 设置标题
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
-								if (TextUtils.isEmpty(feedXMLParser.mFeedTitle)) {// 网络结果为空
+								if (TextUtils.isEmpty(mFeedXMLParser.mFeedTitle)) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
 									feedItemBean
-											.setTitle(feedXMLParser.mFeedTitle);
+											.setTitle(mFeedXMLParser.mFeedTitle);
 								}
 
 							} else {// 用户自定义
@@ -261,19 +268,19 @@ public class AddFeedActivity extends DefaultNewActivity {
 							}
 
 							// 设置预览内容
-							if (!TextUtils.isEmpty(feedXMLParser.mFeedSummary)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mFeedSummary)) {
 								feedItemBean
-										.setPreviewContent(feedXMLParser.mFeedSummary);
+										.setPreviewContent(mFeedXMLParser.mFeedSummary);
 							} else {
 								feedItemBean.setPreviewContent("没有接收到数据");
 							}
 
 							// 设置时间
-							if (!TextUtils.isEmpty(feedXMLParser.mFeedTime)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mFeedTime)) {
 
-								if ("RSS".equals(feedXMLParser.mFeedType)) {
+								if ("RSS".equals(mFeedXMLParser.mFeedType)) {
 									feedItemBean.setLastTime(TimeUtils
-											.varString2Timestamp(feedXMLParser.mFeedTime));
+											.varString2Timestamp(mFeedXMLParser.mFeedTime));
 								}
 
 							} else {
@@ -281,14 +288,15 @@ public class AddFeedActivity extends DefaultNewActivity {
 										.currentTimeMillis()));
 							}
 
-							String customImagePath = mCustomImagePath.getText().toString();
-							
-							if (customImagePath.startsWith("/")) {//使用本地图片
-								
+							String customImagePath = mCustomImagePath.getText()
+									.toString();
+
+							if (customImagePath.startsWith("/")) {// 使用本地图片
+
 								feedItemBean.setPicURL(customImagePath);
-								
-							}else{//没有设置
-								
+
+							} else {// 没有设置
+
 								// favicon获取
 
 								Pattern p = Pattern
@@ -312,9 +320,9 @@ public class AddFeedActivity extends DefaultNewActivity {
 								} else {
 									feedItemBean.setPicURL("null");
 								}
-								
+
 							}
-								
+
 							feedItemDAO.addItem(feedItemBean);
 
 							// 返回数据给MainActivity
@@ -322,12 +330,12 @@ public class AddFeedActivity extends DefaultNewActivity {
 							returnData.putExtra("feedItemBean", feedItemBean);
 
 							// 返回数量
-							if (feedXMLParser.mFeedType == "RSS") {
+							if (mFeedXMLParser.mFeedType == "RSS") {
 								returnData.putExtra("count",
-										feedXMLParser.mItemCount);
-							} else if (feedXMLParser.mFeedType == "ATOM") {
+										mFeedXMLParser.mItemCount);
+							} else if (mFeedXMLParser.mFeedType == "ATOM") {
 								returnData.putExtra("count",
-										feedXMLParser.mEntryCount);
+										mFeedXMLParser.mEntryCount);
 							}
 
 							setResult(0, returnData);
@@ -352,7 +360,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				});
 
 		// 解析数据
-		feedXMLParser.parseUrl(mUrlString, mEncodingString);
+		mFeedXMLParser.parseUrl(mUrlString, mEncodingString);
 
 		return true;
 	}

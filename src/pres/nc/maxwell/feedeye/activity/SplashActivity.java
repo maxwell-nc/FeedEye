@@ -16,6 +16,9 @@ import android.widget.TextView;
  */
 public class SplashActivity extends Activity {
 
+	/**
+	 * 版本信息
+	 */
 	private TextView tv_splash_ver;
 
 	@Override
@@ -76,4 +79,12 @@ public class SplashActivity extends Activity {
 
 	}
 
+	/**
+	 * 在Splash点击返回按钮
+	 */
+	@Override
+	public void onBackPressed() {
+		//不作处理
+		//super.onBackPressed();
+	}
 }
