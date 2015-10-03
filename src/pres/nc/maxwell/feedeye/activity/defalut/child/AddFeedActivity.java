@@ -13,6 +13,7 @@ import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishedParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.content.Intent;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -252,6 +253,12 @@ public class AddFeedActivity extends DefaultNewActivity {
 								feedItemBean.setPicURL("null");
 							}
 
+							//测试本地图
+							feedItemBean.setPicURL(Environment.getExternalStorageDirectory()
+									.getAbsolutePath() + "/Download/1.png");
+							LogUtils.w("AddFeedActivity", Environment.getExternalStorageDirectory()
+									.getAbsolutePath() + "/Download/1.png");
+							
 							feedItemDAO.addItem(feedItemBean);
 
 							// 返回数据给MainActivity

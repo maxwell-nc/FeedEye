@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
@@ -32,6 +31,11 @@ public class BitmapThreeLevelsCache {
 	public String mURL;
 
 	/**
+	 * 加载失败时加载的图片
+	 */
+	public Bitmap mErrBitmap;
+
+	/**
 	 * 是否使用自动压缩参数，若要自定参数，请调用setCompressOptions方法
 	 */
 	private boolean isAutoCompress = true;
@@ -54,30 +58,57 @@ public class BitmapThreeLevelsCache {
 	 * @param url
 	 *            要显示图片的URL
 	 */
-	public BitmapThreeLevelsCache(ImageView imageView, String url) {
+	public BitmapThreeLevelsCache(ImageView imageView, String url,
+			Bitmap errBitmap) {
 		this.mImageView = imageView;
 		this.mURL = url;
+		this.mErrBitmap = errBitmap;
 		mImageView.setTag(mURL);
 	}
 
 	public void displayBitmap() {
 
-		// 设置加载中的图片
-		mImageView.setImageResource(R.drawable.listview_refresh_rotate);
+		if (isLocalFile()) {// 本地图片
 
-		LogUtils.i("BitmapThreeLevelsCache", "L1:获取内存缓存");
-		if (!getMemoryCache()) {// 1.获取内存缓存
+			LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，直接存取内存缓存");
+			if (!getMemoryCache()) {// 1.获取内存缓存
 
-			LogUtils.i("BitmapThreeLevelsCache", "L2:获取本地缓存");
-			if (!getLocalCache()) {// 2.获取本地缓存
-
-				LogUtils.i("BitmapThreeLevelsCache", "L3:获取网路缓存");
-				getNetworkCache();// 3.获取网络缓存
+				File file = new File(mURL);
+				setMemoryCache(file);// 写到内存缓存中
+				getMemoryCache();// 重新从内存缓存中读取
 
 			}
 
+		} else {// 网络图片
+
+			LogUtils.i("BitmapThreeLevelsCache", "L1:获取内存缓存");
+			if (!getMemoryCache()) {// 1.获取内存缓存
+
+				LogUtils.i("BitmapThreeLevelsCache", "L2:获取本地缓存");
+				if (!getLocalCache()) {// 2.获取本地缓存
+
+					LogUtils.i("BitmapThreeLevelsCache", "L3:获取网路缓存");
+					getNetworkCache();// 3.获取网络缓存
+
+				}
+
+			}
 		}
 
+	}
+
+	/**
+	 * 判断是否为本地文件
+	 * 
+	 * @return 若是本地文件返回真，否则返回假
+	 */
+	private boolean isLocalFile() {
+
+		if (mURL.startsWith("/")) {// 如： /sdcard/xxx/xxx.jpg
+			return true;
+		}
+
+		return false;
 	}
 
 	private void setMemoryCache(File bitmapFile) {
@@ -170,24 +201,38 @@ public class BitmapThreeLevelsCache {
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onConnect(InputStream inputStream) {//子线程
+			public void onConnect(InputStream inputStream) {// 子线程
 				// 设置本地缓存
 				setLocalCache(inputStream);
+				LogUtils.i("BitmapThreeLevelsCache", mURL);
+
 			}
 
 			@Override
-			public void onSuccess() {//主线程
+			public void onSuccess() {// 主线程
 				// 重新读取缓存
 				getLocalCache();
 			}
-			
+
 			@Override
-			public void onFailure() {//主线程
-				
+			public void onFailure() {// 主线程
+
 				// TODO：获取favicon失败
 				String tagURL = (String) mImageView.getTag();
 				if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
-					mImageView.setImageResource(R.drawable.img_load_error);
+
+					// 失败后设置内存缓存为加载失败的图片，防止多次访问网络
+					if (mErrBitmap != null) {
+
+						mImageView.setImageBitmap(mErrBitmap);
+						// 加入内存缓存
+						BitmapLruCacheDispatcher.getInstance()
+								.getmMemoryCache().put(mURL, mErrBitmap);
+					} else {
+						LogUtils.i("BitmapThreeLevelsCache",
+								"mErrBitmap is null");
+					}
+
 				} else {// wrong tag
 
 				}

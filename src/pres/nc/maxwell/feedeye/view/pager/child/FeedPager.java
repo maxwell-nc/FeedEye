@@ -13,7 +13,6 @@ import pres.nc.maxwell.feedeye.domain.FeedItemBean;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
-import pres.nc.maxwell.feedeye.utils.bitmapNew.BitmapThreeLevelsCache;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.ThemeAlertDialog;
@@ -497,27 +496,26 @@ public class FeedPager extends BasePager {
 	 * @return 是否成功解析
 	 */
 	private boolean parseBean(FeedItemBean feedItemBean, ViewHolder viewHolder) {
-	
-			if (feedItemBean == null) {
-				return false;
-			}
 
-			// 使用三级缓存加载图片
-			//mCacheUtils.displayBitmap(viewHolder.mItemPic,
-			//		feedItemBean.getPicURL(), R.anim.refresh_rotate);
+		if (feedItemBean == null) {
+			return false;
+		}
 
-			new BitmapThreeLevelsCache(viewHolder.mItemPic,
-					feedItemBean.getPicURL()).displayBitmap();
-			
-			viewHolder.mItemTitle.setText(feedItemBean.getTitle());
-			viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
-			viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-					feedItemBean.getLastTime(), "a HH:mm"));
+		// 使用三级缓存加载图片
+		// mCacheUtils.displayBitmap(viewHolder.mItemPic,
+		// feedItemBean.getPicURL(), R.anim.refresh_rotate);
 
-			return true;
-	
+		pres.nc.maxwell.feedeye.utils.bitmapNew.BitmapCacheUtils.displayBitmap(
+				mActivity, viewHolder.mItemPic, feedItemBean.getPicURL());
+
+		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
+		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
+		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
+				feedItemBean.getLastTime(), "a HH:mm"));
+
+		return true;
+
 	}
-
 	/**
 	 * 添加ListView的各种监听器
 	 */
