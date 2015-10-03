@@ -49,6 +49,12 @@ public class BitmapThreeLevelsCache {
 	 * 颜色配置
 	 */
 	private Bitmap.Config mConfig;
+	
+
+	/**
+	 * 是否开启网络缓存
+	 */
+	private boolean mIsEnableNetworkCache = true;
 
 	/**
 	 * 每次使用请创建新的对象
@@ -59,10 +65,11 @@ public class BitmapThreeLevelsCache {
 	 *            要显示图片的URL
 	 */
 	public BitmapThreeLevelsCache(ImageView imageView, String url,
-			Bitmap errBitmap) {
+			Bitmap errBitmap,boolean isEnableNetworkCache) {
 		this.mImageView = imageView;
 		this.mURL = url;
 		this.mErrBitmap = errBitmap;
+		this.mIsEnableNetworkCache = isEnableNetworkCache;
 		mImageView.setTag(mURL);
 	}
 
@@ -87,8 +94,17 @@ public class BitmapThreeLevelsCache {
 				LogUtils.i("BitmapThreeLevelsCache", "L2:获取本地缓存");
 				if (!getLocalCache()) {// 2.获取本地缓存
 
-					LogUtils.i("BitmapThreeLevelsCache", "L3:获取网路缓存");
-					getNetworkCache();// 3.获取网络缓存
+					if (mIsEnableNetworkCache) {//开启网络缓存
+						
+						LogUtils.i("BitmapThreeLevelsCache", "L3:获取网路缓存");
+						getNetworkCache();// 3.获取网络缓存
+						
+					}else {//不使用网络缓存
+						
+						LogUtils.i("BitmapThreeLevelsCache", "L2:不使用网络缓存");
+						showErrorBitmap();
+						
+					}
 
 				}
 
@@ -221,17 +237,7 @@ public class BitmapThreeLevelsCache {
 				String tagURL = (String) mImageView.getTag();
 				if (mURL.equals(tagURL)) {// 检查是否为需要显示的ImageView
 
-					// 失败后设置内存缓存为加载失败的图片，防止多次访问网络
-					if (mErrBitmap != null) {
-
-						mImageView.setImageBitmap(mErrBitmap);
-						// 加入内存缓存
-						BitmapLruCacheDispatcher.getInstance()
-								.getmMemoryCache().put(mURL, mErrBitmap);
-					} else {
-						LogUtils.i("BitmapThreeLevelsCache",
-								"mErrBitmap is null");
-					}
+					showErrorBitmap();
 
 				} else {// wrong tag
 
@@ -331,6 +337,23 @@ public class BitmapThreeLevelsCache {
 		}
 
 		return bitmapCache;
+	}
+
+	/**
+	 * 失败：显示加载失败的的图片
+	 */
+	private void showErrorBitmap() {
+		// 失败后设置内存缓存为加载失败的图片，防止多次访问网络
+		if (mErrBitmap != null) {
+
+			mImageView.setImageBitmap(mErrBitmap);
+			// 加入内存缓存
+			BitmapLruCacheDispatcher.getInstance()
+					.getmMemoryCache().put(mURL, mErrBitmap);
+		} else {
+			LogUtils.i("BitmapThreeLevelsCache",
+					"mErrBitmap is null");
+		}
 	}
 
 }

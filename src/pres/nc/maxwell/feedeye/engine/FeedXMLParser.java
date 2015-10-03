@@ -208,8 +208,6 @@ public class FeedXMLParser {
 					mEntryCount++;
 				}
 
-				// TODO£ºÍ¼±ê
-
 				eventType = parser.next();
 			}
 
