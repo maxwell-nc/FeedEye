@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfoBean;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.XMLUtils;
@@ -30,39 +31,12 @@ public class FeedXMLParser {
 	/**
 	 * 基本信息集合
 	 */
-	public BaseInfo mBaseInfo;
+	public FeedXMLBaseInfoBean mBaseInfoBean;
 
 	/**
 	 * 内容信息集合
 	 */
 	public ContentInfo mContentInfo;
-
-	/**
-	 * 基本信息
-	 */
-	public static class BaseInfo {
-
-		/**
-		 * 订阅类型
-		 */
-		public String mFeedType;
-
-		/**
-		 * 订阅标题
-		 */
-		public String mFeedTitle;
-
-		/**
-		 * 订阅时间
-		 */
-		public String mFeedTime;
-
-		/**
-		 * 订阅概要
-		 */
-		public String mFeedSummary;
-
-	}
 
 	/**
 	 * 内容信息
@@ -153,7 +127,7 @@ public class FeedXMLParser {
 		// 判断解析类型
 		if (parseType == TYPE_PARSE_BASE_INFO) {
 
-			this.mBaseInfo = new BaseInfo();
+			this.mBaseInfoBean = new FeedXMLBaseInfoBean();
 
 			getXMLBaseInfo();
 		} else {
@@ -219,51 +193,57 @@ public class FeedXMLParser {
 		XMLUtils xmlUtils = new XMLUtils();
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
+			
+			String feedType = mBaseInfoBean.getFeedType();
+			String feedTitle = mBaseInfoBean.getFeedTitle();
+			String feedTime = mBaseInfoBean.getFeedTime();
+			String feedSummary = mBaseInfoBean.getFeedSummary();
 
 			@Override
 			public void onGetName(XmlPullParser parser, String name)
 					throws XmlPullParserException, IOException {
-
+				
+				
 				// LogUtils.w("FeedXMLParser", name);
 
 				// 检查XML类型
-				if (TextUtils.isEmpty(mBaseInfo.mFeedType)) {
+				if (TextUtils.isEmpty(feedType)) {
 
 					if ("rss".equals(name)) {// rss类型
-						mBaseInfo.mFeedType = "RSS";
+						feedType = "RSS";
 					} else if ("feed".equals(name)) {// atom类型
-						mBaseInfo.mFeedType = "ATOM";
+						feedType = "ATOM";
 					}
 
 				}
 
 				// 检查XML标题
-				if (TextUtils.isEmpty(mBaseInfo.mFeedTitle)) {
+				if (TextUtils.isEmpty(feedTitle)) {
 
 					if ("title".equals(name)) {// 标题
-						mBaseInfo.mFeedTitle = parser.nextText();
+						feedTitle = parser.nextText();
 					}
 
 				}
 
 				// 检查XML时间
-				if (TextUtils.isEmpty(mBaseInfo.mFeedTime)) {
+				if (TextUtils.isEmpty(feedTime)) {
 
 					if ("updated".equals(name)) {// ATOM
-						mBaseInfo.mFeedTime = parser.nextText();
+						feedTime = parser.nextText();
 					} else if ("pubDate".equals(name)) {// RSS
-						mBaseInfo.mFeedTime = parser.nextText();
+						feedTime = parser.nextText();
 					}
 
 				}
 
 				// 检查XML概要
-				if (TextUtils.isEmpty(mBaseInfo.mFeedSummary)) {
+				if (TextUtils.isEmpty(feedSummary)) {
 
 					if ("subtitle".equals(name)) {// ATOM
-						mBaseInfo.mFeedSummary = parser.nextText();
+						feedSummary = parser.nextText();
 					} else if ("description".equals(name)) {// RSS
-						mBaseInfo.mFeedSummary = parser.nextText();
+						feedSummary = parser.nextText();
 					}
 
 				}

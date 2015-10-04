@@ -256,11 +256,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
 								if (TextUtils
-										.isEmpty(mFeedXMLParser.mBaseInfo.mFeedTitle)) {// 网络结果为空
+										.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedTitle())) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
 									feedItemBean
-											.setTitle(mFeedXMLParser.mBaseInfo.mFeedTitle);
+											.setTitle(mFeedXMLParser.mBaseInfoBean.getFeedTitle());
 								}
 
 							} else {// 用户自定义
@@ -268,18 +268,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 							}
 
 							// 设置预览内容
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo.mFeedSummary)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedSummary())) {
 								feedItemBean
-										.setPreviewContent(mFeedXMLParser.mBaseInfo.mFeedSummary);
+										.setPreviewContent(mFeedXMLParser.mBaseInfoBean.getFeedSummary());
 							} else {
 								feedItemBean.setPreviewContent("没有接收到数据");
 							}
 
 							// 设置时间
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo.mFeedTime)) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedTime())) {
 
 								String timeString = TimeUtils
-										.LoopToTransTime(mFeedXMLParser.mBaseInfo.mFeedTime);
+										.LoopToTransTime(mFeedXMLParser.mBaseInfoBean.getFeedTime());
 								Timestamp timestamp = TimeUtils
 										.string2Timestamp(timeString);
 								feedItemBean.setLastTime(timestamp);
