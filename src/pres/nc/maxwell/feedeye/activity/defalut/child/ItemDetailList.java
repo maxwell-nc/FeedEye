@@ -103,7 +103,7 @@ public class ItemDetailList extends DefaultNewActivity {
 					@Override
 					public void onFinishParseContent(boolean result) {
 
-						mCount = feedXMLParser.mContentInfo.mContentCount;
+						mCount = feedXMLParser.mContentInfoBean.getContentCount();
 
 						Toast.makeText(mThisActivity, "加载了" + mCount + "条数据",
 								Toast.LENGTH_SHORT).show();

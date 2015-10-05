@@ -7,6 +7,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfoBean;
+import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.XMLUtils;
@@ -36,19 +37,8 @@ public class FeedXMLParser {
 	/**
 	 * 内容信息集合
 	 */
-	public ContentInfo mContentInfo;
+	public FeedXMLContentInfo mContentInfoBean;
 
-	/**
-	 * 内容信息
-	 */
-	public static class ContentInfo {
-
-		/**
-		 * 信息数量
-		 */
-		public int mContentCount;
-
-	}
 
 	/**
 	 * Http连接工具类对象
@@ -132,7 +122,7 @@ public class FeedXMLParser {
 			getXMLBaseInfo();
 		} else {
 
-			this.mContentInfo = new ContentInfo();
+			this.mContentInfoBean = new FeedXMLContentInfo();
 
 			getXMLContentInfo();
 		}
@@ -314,7 +304,7 @@ public class FeedXMLParser {
 	private void parseXMLContent(InputStream inputStream) {
 
 		// 计数清零
-		mContentInfo.mContentCount = 0;
+		mContentInfoBean.setContentCount(0);
 
 		XMLUtils xmlUtils = new XMLUtils();
 
@@ -325,10 +315,10 @@ public class FeedXMLParser {
 					throws XmlPullParserException, IOException {
 
 				if ("item".equals(parser.getName())) {// RSS
-					mContentInfo.mContentCount++;
+					mContentInfoBean.setContentCount(mContentInfoBean.getContentCount()+1);
 				}
 				if ("entry".equals(parser.getName())) {// ATOM
-					mContentInfo.mContentCount++;
+					mContentInfoBean.setContentCount(mContentInfoBean.getContentCount()+1);
 				}
 
 			}
