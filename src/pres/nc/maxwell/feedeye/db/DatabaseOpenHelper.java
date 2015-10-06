@@ -33,6 +33,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 				+ "pic_url text not null,"// 图片URL
 				+ "title varchar(100) not null,"// 标题
 				+ "preview_content varchar(100),"// 预览内容
+				+ "encoding varchar(10),"// 编码方式
 				+ "last_time timeStamp not null DEFAULT (datetime('now','localtime')),"// 时间
 				+ "delete_flag char(1) DEFAULT '0'"// 删除标记，用于同步
 				+ ");";

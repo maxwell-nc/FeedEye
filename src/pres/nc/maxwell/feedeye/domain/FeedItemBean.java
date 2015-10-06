@@ -33,6 +33,11 @@ public class FeedItemBean implements Serializable {
 	 * 预览内容
 	 */
 	private String previewContent;
+	
+	/**
+	 * 编码方式
+	 */
+	private String encoding;
 
 	/**
 	 * 上次更新时间
@@ -98,6 +103,14 @@ public class FeedItemBean implements Serializable {
 
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
 	}
 
 }
