@@ -53,8 +53,10 @@ public class FeedItemDAO {
 		map.put("feed_url", feedItemBean.getFeedURL());
 		map.put("title", feedItemBean.getTitle());
 		map.put("preview_content", feedItemBean.getPreviewContent());
+		map.put("encoding", feedItemBean.getEncoding());
 		map.put("last_time", TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss",Locale.getDefault()));
+				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss",
+				Locale.getDefault()));
 		map.put("delete_flag", feedItemBean.getDeleteFlag());
 
 		return map;
@@ -120,19 +122,6 @@ public class FeedItemDAO {
 			throw new RuntimeException("Do not delete no-id item");
 		}
 
-		/*
-		 * 暂时不需要删除 String idString = String.valueOf(feedItemBean.getItemId());
-		 * 
-		 * SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
-		 * 
-		 * int rowCount = db.delete(mTableName, "id=?", new String[] { idString
-		 * });
-		 * 
-		 * db.close();
-		 * 
-		 * db = null;
-		 */
-
 		// 设置删除标记，用于同步删除
 		feedItemBean.setDeleteFlag("-1");
 
@@ -142,7 +131,7 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		int rowCount = db.update(mTableName, map, "id=?",
-				new String[] { idString });
+				new String[]{idString});
 
 		db.close();
 		db = null;
@@ -174,7 +163,7 @@ public class FeedItemDAO {
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 		int rowCount = db.update(mTableName, map, "id=?",
-				new String[] { idString });
+				new String[]{idString});
 		db.close();
 		db = null;
 
@@ -209,7 +198,7 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
-				null, null, "id DESC");//新的数据放在第一
+				null, null, "id DESC");// 新的数据放在第一
 
 		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
 
@@ -230,8 +219,9 @@ public class FeedItemDAO {
 			feedItemBean.setPicURL(cursor.getString(2));
 			feedItemBean.setTitle(cursor.getString(3));
 			feedItemBean.setPreviewContent(cursor.getString(4));
+			feedItemBean.setEncoding(cursor.getString(5));
 			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
-					.getString(5)));
+					.getString(6)));
 
 			retList.add(feedItemBean);
 
@@ -257,7 +247,7 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(mTableName, null, "rowid=?",
-				new String[] { rowIdString }, null, null, null, null);
+				new String[]{rowIdString}, null, null, null, null);
 
 		String idString = null;
 		if (cursor.moveToNext()) {// 只有一条记录
