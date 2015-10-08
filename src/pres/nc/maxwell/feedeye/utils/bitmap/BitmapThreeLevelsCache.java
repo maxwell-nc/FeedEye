@@ -317,7 +317,7 @@ public class BitmapThreeLevelsCache {
 		// 以URL的MD5值为文件名
 		String fileName = MD5Utils.getMD5String(mURL);
 
-		File file = IOUtils.getFileInSdcard("/FeedEyeCache", fileName);
+		File file = IOUtils.getFileInSdcard("/FeedEye/ImgCache", fileName);
 
 		return file;
 	}

@@ -58,25 +58,29 @@ public class TimeUtils {
 		return outTime;
 	}
 
-	
 	/**
 	 * 任意文本转本地时间，匹配不到则返回系统时间
-	 * @param orgTime 时间文本，传入"getCurrentTime"为获取当前时间
+	 * 
+	 * @param orgTime
+	 *            时间文本，传入"getCurrentTime"为获取当前时间
 	 * @return "yyyy-MM-dd HH:mm:ss"格式的时间
 	 */
 	public static String LoopToTransTime(String orgTime) {
-		
-		return LoopToTransTime(orgTime,STANDARD_TIME_PATTERN);
-		
+
+		return LoopToTransTime(orgTime, STANDARD_TIME_PATTERN);
+
 	}
-	
+
 	/**
 	 * 任意文本转本地时间，匹配不到则返回系统时间
-	 * @param orgTime 时间文本，传入"getCurrentTime"为获取当前时间
-	 * @param pattern 输出的时间格式
+	 * 
+	 * @param orgTime
+	 *            时间文本，传入"getCurrentTime"为获取当前时间
+	 * @param pattern
+	 *            输出的时间格式
 	 * @return 时间
 	 */
-	public static String LoopToTransTime(String orgTime,String pattern) {
+	public static String LoopToTransTime(String orgTime, String pattern) {
 
 		if (orgTime == null) {
 			return null;
@@ -84,8 +88,8 @@ public class TimeUtils {
 
 		String resultTime = null;
 
-		if (orgTime!="getCurrentTime") {//不是取当前时间
-			
+		if (orgTime != "getCurrentTime") {// 不是取当前时间
+
 			/**
 			 * UTC/GMT时间
 			 */
@@ -98,8 +102,8 @@ public class TimeUtils {
 			}
 
 			// 自带时区的格式，如：Sat, 03 Oct 2005 12:58:04 GMT
-			resultTime = formatTimeToLocal(orgTime, "EEE, dd MMM yyyy HH:mm:ss z",
-					Locale.US, null, pattern);
+			resultTime = formatTimeToLocal(orgTime,
+					"EEE, dd MMM yyyy HH:mm:ss z", Locale.US, null, pattern);
 			if (resultTime != null) {
 				return resultTime;
 			}
@@ -126,10 +130,10 @@ public class TimeUtils {
 		/**
 		 * 上述不存在则返回当前时间
 		 */
-		resultTime = formatTimeToLocal(
-				new Date(System.currentTimeMillis()).toString(),
-				"EEE MMM dd HH:mm:ss zzz yyyy", Locale.US, null,
-				pattern);
+		Date nowTime = new Date(System.currentTimeMillis());
+		SimpleDateFormat formater = new SimpleDateFormat(pattern,
+				Locale.getDefault());
+		resultTime = formater.format(nowTime);
 
 		return resultTime;
 

@@ -41,25 +41,27 @@ public class FeedEyeApplication extends Application {
 		@Override
 		public void uncaughtException(Thread thread, Throwable ex) {
 
-			String timeStr = TimeUtils.LoopToTransTime("getCurrentTime","yyyy-MM-dd-HH-mm-ss");
-	
-			File file = IOUtils.getFileInSdcard("/FeedEyeErrLog", "errorLog" + timeStr + ".log");
-			
+			String timeStr = TimeUtils.LoopToTransTime("getCurrentTime",
+					"yyyy-MM-dd-HH-mm-ss");
+
+			File file = IOUtils.getFileInSdcard("/FeedEye/ErrLog", timeStr
+					+ ".log");
+
 			BufferedWriter bufferedWriter = null;
 			StringWriter stringWriter = null;
 			PrintWriter printWriter = null;
-			
+
 			try {
-				
+
 				FileWriter fileWriter = new FileWriter(file);
 				bufferedWriter = new BufferedWriter(fileWriter);
-				
-				//记录错误日志
+
+				// 记录错误日志
 				stringWriter = new StringWriter();
 				printWriter = new PrintWriter(stringWriter);
 				ex.printStackTrace(printWriter);
-				ex.printStackTrace();//打印一份到控制台
-				
+				ex.printStackTrace();// 打印一份到控制台
+
 				bufferedWriter.write(stringWriter.toString());
 				bufferedWriter.flush();
 
@@ -68,13 +70,13 @@ public class FeedEyeApplication extends Application {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				
+
 				IOUtils.closeQuietly(stringWriter);
 				IOUtils.closeQuietly(printWriter);
 				IOUtils.closeQuietly(bufferedWriter);
 				// 自杀
 				android.os.Process.killProcess(android.os.Process.myPid());
-				
+
 			}
 		}
 
