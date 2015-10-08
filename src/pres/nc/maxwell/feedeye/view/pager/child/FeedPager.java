@@ -1037,6 +1037,7 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
+	 * TODO:删除此段代码
 	 * 添加测试数据
 	 */
 	@SuppressWarnings("unused")
@@ -1050,7 +1051,7 @@ public class FeedPager extends BasePager {
 				+ new Random().nextInt(Integer.MAX_VALUE));
 		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
 		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
-
+		feedItemBean.setEncoding("utf-8");
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.addItem(feedItemBean);
 

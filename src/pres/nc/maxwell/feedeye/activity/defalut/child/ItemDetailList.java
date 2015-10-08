@@ -122,9 +122,9 @@ public class ItemDetailList extends DefaultNewActivity {
 
 				});
 
-
+		
 		// ½âÎöÊý¾Ý
-		feedXMLParser.parse(mInfoBean.getFeedURL(), "UTF-8" ,FeedXMLParser.TYPE_PARSE_CONTENT);
+		feedXMLParser.parse(mInfoBean.getFeedURL(), mInfoBean.getEncoding() ,FeedXMLParser.TYPE_PARSE_CONTENT);
 
 	}
 

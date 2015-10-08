@@ -346,7 +346,10 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 							// 设置订阅URL
 							feedItemBean.setFeedURL(mUrlString);
-
+							
+							//设置编码方式
+							feedItemBean.setEncoding(mEncodingString);
+							
 							feedItemDAO.addItem(feedItemBean);
 
 							// 返回数据给MainActivity
