@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -211,20 +212,23 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 	/**
 	 * 添加订阅信息
-	 * 
-	 * @return 返回是否开始添加（未必成）
 	 */
-	public boolean addItem() {
+	public void addItem() {
+
+		mUrlString = mUrlText.getText().toString();
+
+		if (TextUtils.isEmpty(mUrlString)) {// 提示不能为空
+
+			mUrlText.startAnimation(AnimationUtils.loadAnimation(mThisActivity,
+					R.anim.edit_text_translate));
+
+			return;
+		}
 
 		// 显示处理中
 		mLoadingFrame.setVisibility(View.VISIBLE);
 		// 禁止在提交
 		mFinishButtonView.setVisibility(View.INVISIBLE);
-
-		mUrlString = mUrlText.getText().toString();
-		if (TextUtils.isEmpty(mUrlString)) {
-			return false;
-		}
 
 		final String titleString = mTitleText.getText().toString();
 
@@ -256,11 +260,13 @@ public class AddFeedActivity extends DefaultNewActivity {
 							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
 								if (TextUtils
-										.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedTitle())) {// 网络结果为空
+										.isEmpty(mFeedXMLParser.mBaseInfoBean
+												.getFeedTitle())) {// 网络结果为空
 									feedItemBean.setTitle("无标题");
 								} else {// 用户不写，有网络数据
 									feedItemBean
-											.setTitle(mFeedXMLParser.mBaseInfoBean.getFeedTitle());
+											.setTitle(mFeedXMLParser.mBaseInfoBean
+													.getFeedTitle());
 								}
 
 							} else {// 用户自定义
@@ -268,18 +274,22 @@ public class AddFeedActivity extends DefaultNewActivity {
 							}
 
 							// 设置预览内容
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedSummary())) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean
+									.getFeedSummary())) {
 								feedItemBean
-										.setPreviewContent(mFeedXMLParser.mBaseInfoBean.getFeedSummary());
+										.setPreviewContent(mFeedXMLParser.mBaseInfoBean
+												.getFeedSummary());
 							} else {
 								feedItemBean.setPreviewContent("没有接收到数据");
 							}
 
 							// 设置时间
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean.getFeedTime())) {
+							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfoBean
+									.getFeedTime())) {
 
 								String timeString = TimeUtils
-										.LoopToTransTime(mFeedXMLParser.mBaseInfoBean.getFeedTime());
+										.LoopToTransTime(mFeedXMLParser.mBaseInfoBean
+												.getFeedTime());
 								Timestamp timestamp = TimeUtils
 										.string2Timestamp(timeString);
 								feedItemBean.setLastTime(timestamp);
@@ -365,8 +375,8 @@ public class AddFeedActivity extends DefaultNewActivity {
 				});
 
 		// 解析数据
-		mFeedXMLParser.parse(mUrlString, mEncodingString,FeedXMLParser.TYPE_PARSE_BASE_INFO);
+		mFeedXMLParser.parse(mUrlString, mEncodingString,
+				FeedXMLParser.TYPE_PARSE_BASE_INFO);
 
-		return true;
 	}
 }

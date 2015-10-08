@@ -104,7 +104,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:hint="请输入要订阅的网址，如：http://blog.csdn.net/maxwell_nc/rss/list"
-        android:text="http://feed.williamlong.info/" >
+        android:text="http://blog.csdn.net/maxwell_nc/rss/list" >
     </EditText>
 
     <FrameLayout

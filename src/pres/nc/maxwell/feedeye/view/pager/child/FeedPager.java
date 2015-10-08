@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.MainActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
@@ -994,15 +995,10 @@ public class FeedPager extends BasePager {
 
 	/**
 	 * 添加一个新的订阅信息
+	 * @see MainActivity#onActivityResult
 	 */
 	private void addNewFeedItem() {
 
-		if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
-			mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
-			mListView.setAdapter(mListViewAdapter);
-			mListView.setVisibility(View.VISIBLE);
-			mNothingImg.setVisibility(View.INVISIBLE);
-		}
 
 		closePopupWindow();
 
@@ -1022,9 +1018,18 @@ public class FeedPager extends BasePager {
 	 */
 	public void finishedAddItem(FeedItemBean feedItemBean) {
 
-		// 插入测试数据
-		// addTestData();
 
+		if (null == feedItemBean) {
+			return;
+		}
+		
+		if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
+			mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
+			mListView.setAdapter(mListViewAdapter);
+			mListView.setVisibility(View.VISIBLE);
+			mNothingImg.setVisibility(View.INVISIBLE);
+		}
+		
 		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
 
 		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
