@@ -6,7 +6,7 @@ import java.io.InputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfoBean;
+import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
@@ -32,7 +32,7 @@ public class FeedXMLParser {
 	/**
 	 * 基本信息集合
 	 */
-	public FeedXMLBaseInfoBean mBaseInfoBean;
+	public FeedXMLBaseInfo mBaseInfo;
 
 	/**
 	 * 内容信息集合
@@ -117,7 +117,7 @@ public class FeedXMLParser {
 		// 判断解析类型
 		if (parseType == TYPE_PARSE_BASE_INFO) {
 
-			this.mBaseInfoBean = new FeedXMLBaseInfoBean();
+			this.mBaseInfo = new FeedXMLBaseInfo();
 
 			getXMLBaseInfo();
 		} else {
@@ -184,10 +184,10 @@ public class FeedXMLParser {
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
 			
-			String feedType = mBaseInfoBean.getFeedType();
-			String feedTitle = mBaseInfoBean.getFeedTitle();
-			String feedTime = mBaseInfoBean.getFeedTime();
-			String feedSummary = mBaseInfoBean.getFeedSummary();
+			String feedType = mBaseInfo.feedType;
+			String feedTitle = mBaseInfo.feedTitle;
+			String feedTime = mBaseInfo.feedTime;
+			String feedSummary = mBaseInfo.feedSummary;
 
 			@Override
 			public void onGetName(XmlPullParser parser, String name)
