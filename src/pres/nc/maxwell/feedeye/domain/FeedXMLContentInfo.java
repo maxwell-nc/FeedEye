@@ -8,18 +8,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class FeedXMLContentInfo implements Serializable{
 
-
 	/**
 	 * 信息数量
 	 */
-	private int contentCount;
+	public int contentCount;
 
-	public int getContentCount() {
-		return contentCount;
-	}
-
-	public void setContentCount(int contentCount) {
-		this.contentCount = contentCount;
-	}
-	
 }

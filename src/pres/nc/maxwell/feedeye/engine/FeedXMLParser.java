@@ -304,7 +304,7 @@ public class FeedXMLParser {
 	private void parseXMLContent(InputStream inputStream) {
 
 		// º∆ ˝«Â¡„
-		mContentInfoBean.setContentCount(0);
+		mContentInfoBean.contentCount = 0;
 
 		XMLUtils xmlUtils = new XMLUtils();
 
@@ -315,10 +315,10 @@ public class FeedXMLParser {
 					throws XmlPullParserException, IOException {
 
 				if ("item".equals(parser.getName())) {// RSS
-					mContentInfoBean.setContentCount(mContentInfoBean.getContentCount()+1);
+					mContentInfoBean.contentCount++;
 				}
 				if ("entry".equals(parser.getName())) {// ATOM
-					mContentInfoBean.setContentCount(mContentInfoBean.getContentCount()+1);
+					mContentInfoBean.contentCount++;
 				}
 
 			}
