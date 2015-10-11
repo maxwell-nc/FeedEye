@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.annotation.SuppressLint;
@@ -63,17 +63,17 @@ public class SearchItemActivity extends DefaultNewActivity {
 	/**
 	 * 已经显示的列表
 	 */
-	private ArrayList<FeedItemBean> mShowedList;
+	private ArrayList<FeedItem> mShowedList;
 
 	/**
 	 * 未显示的列表
 	 */
-	private ArrayList<FeedItemBean> mUnShowList;
+	private ArrayList<FeedItem> mUnShowList;
 
 	/**
 	 * 搜索结果的列表
 	 */
-	private ArrayList<FeedItemBean> mResultList;
+	private ArrayList<FeedItem> mResultList;
 
 	/**
 	 * 结果ListView的适配器
@@ -112,11 +112,11 @@ public class SearchItemActivity extends DefaultNewActivity {
 		super.initData();
 
 		// 获得数据
-		mShowedList = (ArrayList<FeedItemBean>) getIntent()
+		mShowedList = (ArrayList<FeedItem>) getIntent()
 				.getSerializableExtra("ShowedList");
-		mUnShowList = (ArrayList<FeedItemBean>) getIntent()
+		mUnShowList = (ArrayList<FeedItem>) getIntent()
 				.getSerializableExtra("UnShowList");
-		mResultList = new ArrayList<FeedItemBean>();
+		mResultList = new ArrayList<FeedItem>();
 
 		// 设置适配器
 		mListViewAdapter = new ResultListAdapter();
@@ -169,15 +169,15 @@ public class SearchItemActivity extends DefaultNewActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				int clickItem = mResultList.get(position).getItemId();
+				int clickItem = mResultList.get(position).itemId;
 
 				for (int i = 0; i < mShowedList.size(); i++) {
 
 					// 搜索已显示的列表
-					if (mShowedList.get(i).getItemId() == clickItem) {
+					if (mShowedList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
 								ItemDetailList.class);
-						intent.putExtra("FeedItemBean", mShowedList.get(i));
+						intent.putExtra("FeedItem", mShowedList.get(i));
 						mThisActivity.startActivity(intent);
 
 						finish();// 不需要搜索界面？
@@ -188,10 +188,10 @@ public class SearchItemActivity extends DefaultNewActivity {
 				for (int i = 0; i < mUnShowList.size(); i++) {
 
 					// 搜索未显示的列表
-					if (mUnShowList.get(i).getItemId() == clickItem) {
+					if (mUnShowList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
 								ItemDetailList.class);
-						intent.putExtra("FeedItemBean", mUnShowList.get(i));
+						intent.putExtra("FeedItem", mUnShowList.get(i));
 						mThisActivity.startActivity(intent);
 
 						finish();// 不需要搜索界面？
@@ -267,14 +267,14 @@ public class SearchItemActivity extends DefaultNewActivity {
 		for (int i = 0; i < mShowedList.size(); i++) {
 
 			// 搜索已显示的列表
-			if (mShowedList.get(i).getTitle().toLowerCase().contains(keyword)) {
+			if (mShowedList.get(i).title.toLowerCase().contains(keyword)) {
 				mResultList.add(mShowedList.get(i));
 			}
 		}
 		for (int i = 0; i < mUnShowList.size(); i++) {
 
 			// 搜索未显示的列表,大小写不明感
-			if (mUnShowList.get(i).getTitle().toLowerCase().contains(keyword)) {
+			if (mUnShowList.get(i).title.toLowerCase().contains(keyword)) {
 				mResultList.add(mUnShowList.get(i));
 			}
 		}
@@ -315,9 +315,9 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 			// 使用三级缓存加载图片
 			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
-					mResultList.get(position).getPicURL());
+					mResultList.get(position).picURL);
 
-			String title = mResultList.get(position).getTitle();
+			String title = mResultList.get(position).title;
 
 			String keyword = mSearchText.getText().toString().toLowerCase();
 

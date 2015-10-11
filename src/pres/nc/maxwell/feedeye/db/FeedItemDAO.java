@@ -3,7 +3,7 @@ package pres.nc.maxwell.feedeye.db;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.content.ContentValues;
@@ -39,50 +39,49 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * 把Bean放进Map
+	 * 把FeedItem放进Map
 	 * 
-	 * @param feedItemBean
+	 * @param feedItem
 	 *            订阅信息
 	 * @return 返回map
 	 */
-	private ContentValues putBeanInMap(FeedItemBean feedItemBean) {
+	private ContentValues putFeedItemInMap(FeedItem feedItem) {
 
 		ContentValues map = new ContentValues();
 
-		map.put("pic_url", feedItemBean.getPicURL());
-		map.put("feed_url", feedItemBean.getFeedURL());
-		map.put("title", feedItemBean.getTitle());
-		map.put("preview_content", feedItemBean.getPreviewContent());
-		map.put("encoding", feedItemBean.getEncoding());
-		map.put("last_time", TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "yyyy-MM-dd HH:mm:ss",
-				Locale.getDefault()));
-		map.put("delete_flag", feedItemBean.getDeleteFlag());
+		map.put("pic_url", feedItem.picURL);
+		map.put("feed_url", feedItem.feedURL);
+		map.put("title", feedItem.title);
+		map.put("preview_content", feedItem.previewContent);
+		map.put("encoding", feedItem.encoding);
+		map.put("last_time", TimeUtils.timestamp2String(feedItem.lastTime,
+				"yyyy-MM-dd HH:mm:ss", Locale.getDefault()));
+		map.put("delete_flag", feedItem.deleteFlag);
 
 		return map;
 	}
 
 	/**
-	 * 添加一条订阅信息，自动修改bean的id信息
+	 * 添加一条订阅信息，自动修改FeedItem的id信息
 	 * 
-	 * @param feedItemBean
+	 * @param feedItem
 	 *            订阅消息
 	 * @return 是否成功添加
 	 */
-	public boolean addItem(FeedItemBean feedItemBean) {
+	public boolean addItem(FeedItem feedItem) {
 
-		int itemId = feedItemBean.getItemId();
+		int itemId = feedItem.itemId;
 		if (itemId != -1) {// 防止非法插入
 			throw new RuntimeException(
 					"Do not set item id if you want to add to database");
 		}
 
-		String isDeleted = feedItemBean.getDeleteFlag();
+		String isDeleted = feedItem.deleteFlag;
 		if (isDeleted == "-1") {// 已经标记为删除的对象
 			throw new RuntimeException("Do not update already deleted id item");
 		}
 
-		ContentValues map = putBeanInMap(feedItemBean);
+		ContentValues map = putFeedItemInMap(feedItem);
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
@@ -101,7 +100,7 @@ public class FeedItemDAO {
 		} else {// 插入成功
 
 			// 更新item的id，不要把rowid当id使用
-			feedItemBean.setItemId(queryIdByRowId(rowId));
+			feedItem.itemId = queryIdByRowId(rowId);
 
 			return true;
 		}
@@ -111,22 +110,22 @@ public class FeedItemDAO {
 	/**
 	 * 删除一条订阅信息（未实现同步，非真正删除）
 	 * 
-	 * @param feedItemBean
+	 * @param feedItem
 	 *            要删除的订阅信息
 	 * @return 是否成功删除
 	 */
-	public boolean removeItem(FeedItemBean feedItemBean) {
+	public boolean removeItem(FeedItem feedItem) {
 
-		int itemId = feedItemBean.getItemId();
+		int itemId = feedItem.itemId;
 		if (itemId <= -1) {// 防止非法更新
 			throw new RuntimeException("Do not delete no-id item");
 		}
 
 		// 设置删除标记，用于同步删除
-		feedItemBean.setDeleteFlag("-1");
+		feedItem.deleteFlag = "-1";
 
 		String idString = String.valueOf(itemId);
-		ContentValues map = putBeanInMap(feedItemBean);
+		ContentValues map = putFeedItemInMap(feedItem);
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
@@ -142,24 +141,24 @@ public class FeedItemDAO {
 	/**
 	 * 更新订阅信息
 	 * 
-	 * @param feedItemBean
+	 * @param feedItem
 	 *            订阅信息
 	 * @return 是否成功更新
 	 */
-	public boolean updateItem(FeedItemBean feedItemBean) {
+	public boolean updateItem(FeedItem feedItem) {
 
-		int itemId = feedItemBean.getItemId();
+		int itemId = feedItem.itemId;
 		if (itemId <= -1) {// 防止非法更新
 			throw new RuntimeException("Do not update non-set id item");
 		}
 
-		String isDeleted = feedItemBean.getDeleteFlag();
+		String isDeleted = feedItem.deleteFlag;
 		if (isDeleted == "-1") {// 已经标记为删除的对象
 			throw new RuntimeException("Do not update already deleted id item");
 		}
 
 		String idString = String.valueOf(itemId);
-		ContentValues map = putBeanInMap(feedItemBean);
+		ContentValues map = putFeedItemInMap(feedItem);
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 		int rowCount = db.update(mTableName, map, "id=?",
@@ -173,9 +172,9 @@ public class FeedItemDAO {
 	/**
 	 * 无条件查询所有的item，不包含已经删除的
 	 * 
-	 * @return item的bean集合
+	 * @return FeedItem集合
 	 */
-	public ArrayList<FeedItemBean> queryAllItems() {
+	public ArrayList<FeedItem> queryAllItems() {
 
 		return queryItems(null, null, false);
 
@@ -192,7 +191,7 @@ public class FeedItemDAO {
 	 *            是否显示已经删除但未同步删除的数据
 	 * @return 查询的结果
 	 */
-	public ArrayList<FeedItemBean> queryItems(String selection,
+	public ArrayList<FeedItem> queryItems(String selection,
 			String[] selectionArgs, boolean isReturnDeletedData) {
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
@@ -200,7 +199,7 @@ public class FeedItemDAO {
 		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
 				null, null, "id DESC");// 新的数据放在第一
 
-		ArrayList<FeedItemBean> retList = new ArrayList<FeedItemBean>();
+		ArrayList<FeedItem> retList = new ArrayList<FeedItem>();
 
 		while (cursor.moveToNext()) {// 查询所有结果
 
@@ -212,18 +211,18 @@ public class FeedItemDAO {
 
 			// 数据未删除
 
-			FeedItemBean feedItemBean = new FeedItemBean();
+			FeedItem feedItem = new FeedItem();
 
-			feedItemBean.setItemId(Integer.parseInt(cursor.getString(0)));
-			feedItemBean.setFeedURL(cursor.getString(1));
-			feedItemBean.setPicURL(cursor.getString(2));
-			feedItemBean.setTitle(cursor.getString(3));
-			feedItemBean.setPreviewContent(cursor.getString(4));
-			feedItemBean.setEncoding(cursor.getString(5));
-			feedItemBean.setLastTime(TimeUtils.string2Timestamp(cursor
-					.getString(6)));
+			feedItem.itemId=Integer.parseInt(cursor.getString(0));
+			feedItem.feedURL=cursor.getString(1);
+			feedItem.picURL=cursor.getString(2);
+			feedItem.title=cursor.getString(3);
+			feedItem.previewContent=cursor.getString(4);
+			feedItem.encoding=cursor.getString(5);
+			feedItem.lastTime=TimeUtils.string2Timestamp(cursor
+					.getString(6));
 
-			retList.add(feedItemBean);
+			retList.add(feedItem);
 
 		}
 

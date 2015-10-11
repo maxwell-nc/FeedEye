@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
@@ -104,11 +104,11 @@ public class MainActivity extends Activity {
 
 				if (resultCode != -1) {
 
-					FeedItemBean feedItemBean = (FeedItemBean) data.getExtras()
-							.getSerializable("feedItemBean");
+					FeedItem feedItem = (FeedItem) data.getExtras()
+							.getSerializable("FeedItem");
 
-					if (feedItemBean != null) {
-						mFeedPager.finishedAddItem(feedItemBean);
+					if (feedItem != null) {
+						mFeedPager.finishedAddItem(feedItem);
 					}
 
 				}

@@ -11,7 +11,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
@@ -63,12 +63,12 @@ public class FeedPager extends BasePager {
 	/**
 	 * 保存未显示的Item信息
 	 */
-	private ArrayList<FeedItemBean> mItemInfoUnshowList;
+	private ArrayList<FeedItem> mItemInfoUnshowList;
 
 	/**
 	 * 保存已经显示的信息
 	 */
-	private ArrayList<FeedItemBean> mItemInfoShowedList;
+	private ArrayList<FeedItem> mItemInfoShowedList;
 
 	/**
 	 * 一次展示的Item数量
@@ -124,8 +124,8 @@ public class FeedPager extends BasePager {
 		// ListView为空时显示的图片
 		mNothingImg = (ImageView) mViewContent.findViewById(R.id.iv_nothing);
 
-		mItemInfoUnshowList = new ArrayList<FeedItemBean>();
-		mItemInfoShowedList = new ArrayList<FeedItemBean>();
+		mItemInfoUnshowList = new ArrayList<FeedItem>();
+		mItemInfoShowedList = new ArrayList<FeedItem>();
 
 		useFunctionButton();
 	}
@@ -378,7 +378,7 @@ public class FeedPager extends BasePager {
 
 			}
 
-			parseBean(mItemInfoShowedList.get(position), holder);
+			parseFeedItem(mItemInfoShowedList.get(position), holder);
 			return view;
 		}
 
@@ -489,28 +489,28 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * 解析feedItemBean并显示
+	 * 解析FeedItem并显示
 	 * 
-	 * @param feedItemBean
+	 * @param feedItem
 	 *            订阅信息
 	 * @param viewHolder
 	 *            view集合
 	 * @return 是否成功解析
 	 */
-	private boolean parseBean(FeedItemBean feedItemBean, ViewHolder viewHolder) {
+	private boolean parseFeedItem(FeedItem feedItem, ViewHolder viewHolder) {
 
-		if (feedItemBean == null) {
+		if (feedItem == null) {
 			return false;
 		}
 
 		// 使用三级缓存加载图片
 		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
-				feedItemBean.getPicURL());
+				feedItem.picURL);
 
-		viewHolder.mItemTitle.setText(feedItemBean.getTitle());
-		viewHolder.mItemPreview.setText(feedItemBean.getPreviewContent());
+		viewHolder.mItemTitle.setText(feedItem.title);
+		viewHolder.mItemPreview.setText(feedItem.previewContent);
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItemBean.getLastTime(), "a HH:mm", Locale.getDefault()));
+				feedItem.lastTime, "a HH:mm", Locale.getDefault()));
 
 		return true;
 
@@ -531,7 +531,7 @@ public class FeedPager extends BasePager {
 				// LogUtils.w("FeedPager", "item position:" + position);
 
 				Intent intent = new Intent(mActivity, ItemDetailList.class);
-				intent.putExtra("FeedItemBean",
+				intent.putExtra("FeedItem",
 						mItemInfoShowedList.get(position));
 				mActivity.startActivity(intent);
 
@@ -817,8 +817,7 @@ public class FeedPager extends BasePager {
 								String deleteItemTitle = mItemInfoShowedList
 										.get(position
 												- mListView
-														.getHeaderViewsCount())
-										.getTitle();
+														.getHeaderViewsCount()).title;
 
 								((TextView) view
 										.findViewById(R.id.tv_delete_title))
@@ -854,13 +853,13 @@ public class FeedPager extends BasePager {
 
 		int dbPosition = position - mListView.getHeaderViewsCount();// 转成正确的下标，相对于数据库
 
-		FeedItemBean feedItemBean = mItemInfoShowedList.get(dbPosition);
+		FeedItem feedItem = mItemInfoShowedList.get(dbPosition);
 
-		feedItemBean.setTitle(newTitle);
+		feedItem.title = newTitle;
 
 		// 从数据库中更新
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
-		feedItemDAO.updateItem(feedItemBean);
+		feedItemDAO.updateItem(feedItem);
 
 		// 不完全更新界面
 		if (mListView.getFirstVisiblePosition() <= position
@@ -995,10 +994,10 @@ public class FeedPager extends BasePager {
 
 	/**
 	 * 添加一个新的订阅信息
+	 * 
 	 * @see MainActivity#onActivityResult
 	 */
 	private void addNewFeedItem() {
-
 
 		closePopupWindow();
 
@@ -1013,49 +1012,45 @@ public class FeedPager extends BasePager {
 	 * 完成添加订阅信息
 	 * 
 	 * @See 添加测试数据：{@link #addTestData()}
-	 * @param feedItemBean
-	 *            添加了的数据bean
+	 * @param feedItem
+	 *            添加了的FeedItem
 	 */
-	public void finishedAddItem(FeedItemBean feedItemBean) {
+	public void finishedAddItem(FeedItem feedItem) {
 
-
-		if (null == feedItemBean) {
+		if (null == feedItem) {
 			return;
 		}
-		
+
 		if (mItemInfoShowedList.size() == 0) {// 无数据时，初始化adapter防止空指针异常
 			mListViewAdapter = new FeedPagerListViewAdapter(); // 设置ListView适配器
 			mListView.setAdapter(mListViewAdapter);
 			mListView.setVisibility(View.VISIBLE);
 			mNothingImg.setVisibility(View.INVISIBLE);
 		}
-		
-		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
+
+		mItemInfoShowedList.add(0, feedItem);// 插到第一个
 
 		mListViewAdapter.notifyDataSetChanged();// 刷新适配器
 		mListView.setSelection(mListView.getHeaderViewsCount());// 显示第一个非HeaderView
 	}
 
 	/**
-	 * TODO:删除此段代码
-	 * 添加测试数据
+	 * TODO:删除此段代码 添加测试数据
 	 */
 	@SuppressWarnings("unused")
 	private void addTestData() {
 
-		FeedItemBean feedItemBean = new FeedItemBean();
-		feedItemBean.setFeedURL("http://blog.csdn.net/maxwell_nc/rss/list");
-		feedItemBean
-				.setPicURL("https://avatars3.githubusercontent.com/u/14196813?v=3&s=1");
-		feedItemBean.setTitle("我的GitHub"
-				+ new Random().nextInt(Integer.MAX_VALUE));
-		feedItemBean.setPreviewContent("最近又提交了很多代码，欢迎浏览我的GitHub仓库");
-		feedItemBean.setLastTime(new Timestamp(System.currentTimeMillis()));
-		feedItemBean.setEncoding("utf-8");
+		FeedItem feedItem = new FeedItem();
+		feedItem.feedURL = "http://blog.csdn.net/maxwell_nc/rss/list";
+		feedItem.picURL = "https://avatars3.githubusercontent.com/u/14196813?v=3&s=1";
+		feedItem.title = "我的GitHub"
+				+ new Random().nextInt(Integer.MAX_VALUE);
+		feedItem.previewContent = "最近又提交了很多代码，欢迎浏览我的GitHub仓库";
+		feedItem.lastTime = new Timestamp(System.currentTimeMillis());
+		feedItem.encoding = "utf-8";
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
-		feedItemDAO.addItem(feedItemBean);
+		feedItemDAO.addItem(feedItem);
 
-		mItemInfoShowedList.add(0, feedItemBean);// 插到第一个
+		mItemInfoShowedList.add(0, feedItem);// 插到第一个
 	}
-
 }

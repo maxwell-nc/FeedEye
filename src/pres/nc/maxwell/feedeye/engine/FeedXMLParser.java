@@ -37,7 +37,7 @@ public class FeedXMLParser {
 	/**
 	 * 内容信息集合
 	 */
-	public FeedXMLContentInfo mContentInfoBean;
+	public FeedXMLContentInfo mContentInfo;
 
 
 	/**
@@ -120,9 +120,10 @@ public class FeedXMLParser {
 			this.mBaseInfo = new FeedXMLBaseInfo();
 
 			getXMLBaseInfo();
+			
 		} else {
 
-			this.mContentInfoBean = new FeedXMLContentInfo();
+			this.mContentInfo = new FeedXMLContentInfo();
 
 			getXMLContentInfo();
 		}
@@ -183,11 +184,6 @@ public class FeedXMLParser {
 		XMLUtils xmlUtils = new XMLUtils();
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
-			
-			String feedType = mBaseInfo.feedType;
-			String feedTitle = mBaseInfo.feedTitle;
-			String feedTime = mBaseInfo.feedTime;
-			String feedSummary = mBaseInfo.feedSummary;
 
 			@Override
 			public void onGetName(XmlPullParser parser, String name)
@@ -197,43 +193,43 @@ public class FeedXMLParser {
 				// LogUtils.w("FeedXMLParser", name);
 
 				// 检查XML类型
-				if (TextUtils.isEmpty(feedType)) {
+				if (TextUtils.isEmpty(mBaseInfo.feedType)) {
 
 					if ("rss".equals(name)) {// rss类型
-						feedType = "RSS";
+						mBaseInfo.feedType = "RSS";
 					} else if ("feed".equals(name)) {// atom类型
-						feedType = "ATOM";
+						mBaseInfo.feedType = "ATOM";
 					}
 
 				}
 
 				// 检查XML标题
-				if (TextUtils.isEmpty(feedTitle)) {
+				if (TextUtils.isEmpty(mBaseInfo.feedTitle)) {
 
 					if ("title".equals(name)) {// 标题
-						feedTitle = parser.nextText();
+						mBaseInfo.feedTitle = parser.nextText();
 					}
 
 				}
 
 				// 检查XML时间
-				if (TextUtils.isEmpty(feedTime)) {
+				if (TextUtils.isEmpty(mBaseInfo.feedTime)) {
 
 					if ("updated".equals(name)) {// ATOM
-						feedTime = parser.nextText();
+						mBaseInfo.feedTime = parser.nextText();
 					} else if ("pubDate".equals(name)) {// RSS
-						feedTime = parser.nextText();
+						mBaseInfo.feedTime = parser.nextText();
 					}
 
 				}
 
 				// 检查XML概要
-				if (TextUtils.isEmpty(feedSummary)) {
+				if (TextUtils.isEmpty(mBaseInfo.feedSummary)) {
 
 					if ("subtitle".equals(name)) {// ATOM
-						feedSummary = parser.nextText();
+						mBaseInfo.feedSummary = parser.nextText();
 					} else if ("description".equals(name)) {// RSS
-						feedSummary = parser.nextText();
+						mBaseInfo.feedSummary = parser.nextText();
 					}
 
 				}
@@ -304,7 +300,7 @@ public class FeedXMLParser {
 	private void parseXMLContent(InputStream inputStream) {
 
 		// 计数清零
-		mContentInfoBean.contentCount = 0;
+		mContentInfo.contentCount = 0;
 
 		XMLUtils xmlUtils = new XMLUtils();
 
@@ -315,10 +311,10 @@ public class FeedXMLParser {
 					throws XmlPullParserException, IOException {
 
 				if ("item".equals(parser.getName())) {// RSS
-					mContentInfoBean.contentCount++;
+					mContentInfo.contentCount++;
 				}
 				if ("entry".equals(parser.getName())) {// ATOM
-					mContentInfoBean.contentCount++;
+					mContentInfo.contentCount++;
 				}
 
 			}

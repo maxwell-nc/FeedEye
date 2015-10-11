@@ -2,7 +2,7 @@ package pres.nc.maxwell.feedeye.activity.defalut.child;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import android.app.Activity;
@@ -50,9 +50,9 @@ public class ItemDetailList extends DefaultNewActivity {
 	private ItemDetailListAdapter mListViewAdapter;
 
 	/**
-	 * 当前页面的订阅bean
+	 * 当前页面的订阅条目信息
 	 */
-	private FeedItemBean mInfoBean;
+	private FeedItem mFeedItem;
 
 	private int mCount;
 
@@ -82,11 +82,11 @@ public class ItemDetailList extends DefaultNewActivity {
 	protected void initData() {
 		super.initData();
 
-		mInfoBean = (FeedItemBean) getIntent().getExtras().getSerializable(
-				"FeedItemBean");
+		mFeedItem = (FeedItem) getIntent().getExtras().getSerializable(
+				"FeedItem");
 
 		// 设置标题
-		mTitleView.setText(mInfoBean.getTitle());
+		mTitleView.setText(mFeedItem.title);
 
 		// 设置显示加载中
 		mNothingFoundText.setVisibility(View.INVISIBLE);
@@ -103,7 +103,7 @@ public class ItemDetailList extends DefaultNewActivity {
 					@Override
 					public void onFinishParseContent(boolean result) {
 
-						mCount = feedXMLParser.mContentInfoBean.contentCount;
+						mCount = feedXMLParser.mContentInfo.contentCount;
 
 						Toast.makeText(mThisActivity, "加载了" + mCount + "条数据",
 								Toast.LENGTH_SHORT).show();
@@ -124,7 +124,7 @@ public class ItemDetailList extends DefaultNewActivity {
 
 		
 		// 解析数据
-		feedXMLParser.parse(mInfoBean.getFeedURL(), mInfoBean.getEncoding() ,FeedXMLParser.TYPE_PARSE_CONTENT);
+		feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding ,FeedXMLParser.TYPE_PARSE_CONTENT);
 
 	}
 

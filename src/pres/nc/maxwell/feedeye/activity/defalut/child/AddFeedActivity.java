@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
-import pres.nc.maxwell.feedeye.domain.FeedItemBean;
+import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
@@ -241,11 +241,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 		}
 
 		// 添加信息
-		final FeedItemBean feedItemBean = new FeedItemBean();
+		final FeedItem feedItem = new FeedItem();
 		final FeedItemDAO feedItemDAO = new FeedItemDAO(this);
 
 		// 设置URL
-		feedItemBean.setFeedURL(mUrlString);
+		feedItem.feedURL = mUrlString;
 
 		mFeedXMLParser = new FeedXMLParser();
 
@@ -256,45 +256,44 @@ public class AddFeedActivity extends DefaultNewActivity {
 					public void onFinishParseBaseInfo(boolean result) {
 
 						if (result) {// 成功读取
-							// 设置标题
-							if (TextUtils.isEmpty(titleString)) {// 设置为空
 
-								if (TextUtils
-										.isEmpty(mFeedXMLParser.mBaseInfo.feedTitle)) {// 网络结果为空
-									feedItemBean.setTitle("无标题");
-								} else {// 用户不写，有网络数据
-									feedItemBean
-											.setTitle(mFeedXMLParser.mBaseInfo.feedTitle);
+							// 设置标题
+							if (!TextUtils.isEmpty(titleString)) {// 用户自定义
+
+								feedItem.title = titleString;
+
+							} else {// 设置为空,自动获取
+
+								if (!TextUtils
+										.isEmpty(mFeedXMLParser.mBaseInfo.feedTitle)) {// 用户不写，有网络数据
+									feedItem.title = mFeedXMLParser.mBaseInfo.feedTitle;
+								} else {// 网络结果为空
+									feedItem.title = "无标题";
 								}
 
-							} else {// 用户自定义
-								feedItemBean.setTitle(titleString);
 							}
 
 							// 设置预览内容
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo
-									.feedSummary)) {
-								feedItemBean
-										.setPreviewContent(mFeedXMLParser.mBaseInfo
-												.feedSummary);
+							if (!TextUtils
+									.isEmpty(mFeedXMLParser.mBaseInfo.feedSummary)) {
+								feedItem.previewContent = mFeedXMLParser.mBaseInfo.feedSummary;
 							} else {
-								feedItemBean.setPreviewContent("没有接收到数据");
+								feedItem.previewContent = "没有接收到数据";
 							}
 
 							// 设置时间
-							if (!TextUtils.isEmpty(mFeedXMLParser.mBaseInfo
-									.feedTime)) {
+							if (!TextUtils
+									.isEmpty(mFeedXMLParser.mBaseInfo.feedTime)) {
 
 								String timeString = TimeUtils
-										.LoopToTransTime(mFeedXMLParser.mBaseInfo
-												.feedTime);
+										.LoopToTransTime(mFeedXMLParser.mBaseInfo.feedTime);
 								Timestamp timestamp = TimeUtils
 										.string2Timestamp(timeString);
-								feedItemBean.setLastTime(timestamp);
+								feedItem.lastTime = timestamp;
 
 							} else {
-								feedItemBean.setLastTime(new Timestamp(System
-										.currentTimeMillis()));
+								feedItem.lastTime = new Timestamp(System
+										.currentTimeMillis());
 							}
 
 							// 设置图片
@@ -303,7 +302,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 							if (customImagePath.startsWith("/")) {// 使用本地图片
 
-								feedItemBean.setPicURL(customImagePath);
+								feedItem.picURL = customImagePath;
 
 							} else {// 没有设置
 
@@ -320,39 +319,38 @@ public class AddFeedActivity extends DefaultNewActivity {
 									String host = m.group();
 									if (host.startsWith("http://")
 											|| host.startsWith("https://")) {
-										feedItemBean.setPicURL(host
-												+ "/favicon.ico");
+										feedItem.picURL = host + "/favicon.ico";
 									} else {
 
 										if (mUrlString.startsWith("https://")) {
 
-											feedItemBean.setPicURL("https://"
-													+ host + "/favicon.ico");
+											feedItem.picURL = "https://" + host
+													+ "/favicon.ico";
 
 										} else {
-											feedItemBean.setPicURL("http://"
-													+ host + "/favicon.ico");
+											feedItem.picURL = "http://" + host
+													+ "/favicon.ico";
 										}
 
 									}
 
 								} else {
-									feedItemBean.setPicURL("null");
+									feedItem.picURL = "null";
 								}
 
 							}
 
 							// 设置订阅URL
-							feedItemBean.setFeedURL(mUrlString);
+							feedItem.feedURL = mUrlString;
 
 							// 设置编码方式
-							feedItemBean.setEncoding(mEncodingString);
+							feedItem.encoding = mEncodingString;
 
-							feedItemDAO.addItem(feedItemBean);
+							feedItemDAO.addItem(feedItem);
 
 							// 返回数据给MainActivity
 							Intent returnData = new Intent();
-							returnData.putExtra("feedItemBean", feedItemBean);
+							returnData.putExtra("FeedItem", feedItem);
 
 							setResult(0, returnData);
 
