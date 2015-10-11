@@ -17,5 +17,10 @@ public class FeedXMLContentInfo implements Serializable{
 	 * 内容描述
 	 */
 	public String description;
+	
+	/**
+	 * 内容发布时间
+	 */
+	public String pubDate;
 
 }

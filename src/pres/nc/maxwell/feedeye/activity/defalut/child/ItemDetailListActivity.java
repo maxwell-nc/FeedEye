@@ -7,6 +7,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import android.app.Activity;
 import android.text.Html;
@@ -111,27 +112,28 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					public void onFinishParseContent(boolean result) {
 
 						mContentInfoList = feedXMLParser.mContentInfoList;
-						
-						Toast.makeText(mThisActivity, "加载了" + mContentInfoList.size() + "条数据",
+
+						Toast.makeText(mThisActivity,
+								"加载了" + mContentInfoList.size() + "条数据",
 								Toast.LENGTH_SHORT).show();
 
 						// 设置数据适配器
 						mListViewAdapter = new ItemDetailListAdapter();
 						mListView.setAdapter(mListViewAdapter);
-						
+
 						// TODO：根据结果是否显示ListView
 						// 设置显示加载中
 						mNothingFoundText.setVisibility(View.INVISIBLE);
 						mLoadingPic.setVisibility(View.INVISIBLE);
 						mListView.setVisibility(View.VISIBLE);
-						
+
 					}
 
 				});
 
-		
 		// 解析数据
-		feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding ,FeedXMLParser.TYPE_PARSE_CONTENT);
+		feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding,
+				FeedXMLParser.TYPE_PARSE_CONTENT);
 
 	}
 
@@ -169,11 +171,15 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				itemView.setTag(holder);
 			}
-			
+
 			// 处理逻辑
 			holder.title.setText(mContentInfoList.get(position).title);
-			holder.preview.setText(Html.fromHtml(mContentInfoList.get(position).description));
-			holder.time.setText("发表于：2015-09-27 12:22");
+			holder.preview
+					.setText(Html.fromHtml(mContentInfoList.get(position).description));
+			holder.time
+					.setText("发表于："
+							+ TimeUtils.LoopToTransTime(mContentInfoList
+									.get(position).pubDate));
 
 			return itemView;
 		}

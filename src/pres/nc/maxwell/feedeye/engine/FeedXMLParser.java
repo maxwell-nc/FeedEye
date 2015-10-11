@@ -330,6 +330,11 @@ public class FeedXMLParser {
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
 					contentInfo.description = parser.nextText();
 				}
+				
+				if (startRssItemFlag == true && "pubDate".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
+					contentInfo.pubDate = parser.nextText();
+				}
 
 				if (startRssItemFlag == true && "item".equals(parser.getName())
 						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
