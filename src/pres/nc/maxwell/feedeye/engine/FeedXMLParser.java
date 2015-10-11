@@ -2,6 +2,7 @@ package pres.nc.maxwell.feedeye.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -37,8 +38,7 @@ public class FeedXMLParser {
 	/**
 	 * 内容信息集合
 	 */
-	public FeedXMLContentInfo mContentInfo;
-
+	public ArrayList<FeedXMLContentInfo> mContentInfoList;
 
 	/**
 	 * Http连接工具类对象
@@ -120,10 +120,10 @@ public class FeedXMLParser {
 			this.mBaseInfo = new FeedXMLBaseInfo();
 
 			getXMLBaseInfo();
-			
+
 		} else {
 
-			this.mContentInfo = new FeedXMLContentInfo();
+			this.mContentInfoList = new ArrayList<FeedXMLContentInfo>();
 
 			getXMLContentInfo();
 		}
@@ -186,10 +186,9 @@ public class FeedXMLParser {
 		xmlUtils.setOnParseListener(new OnParseListener() {
 
 			@Override
-			public void onGetName(XmlPullParser parser, String name)
-					throws XmlPullParserException, IOException {
-				
-				
+			public void onGetName(XmlPullParser parser, String name,
+					int eventType) throws XmlPullParserException, IOException {
+
 				// LogUtils.w("FeedXMLParser", name);
 
 				// 检查XML类型
@@ -253,6 +252,7 @@ public class FeedXMLParser {
 
 				return false;
 			}
+
 		});
 
 		xmlUtils.parseStream(inputStream, mEncodingString);
@@ -300,34 +300,62 @@ public class FeedXMLParser {
 	private void parseXMLContent(InputStream inputStream) {
 
 		// 计数清零
-		mContentInfo.contentCount = 0;
+		mContentInfoList.clear();
 
 		XMLUtils xmlUtils = new XMLUtils();
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
 
+			boolean startRssItemFlag = false;
+			FeedXMLContentInfo contentInfo = null;
+			
 			@Override
-			public void onGetName(XmlPullParser parser, String name)
-					throws XmlPullParserException, IOException {
+			public void onGetName(XmlPullParser parser, String name,
+					int eventType) throws XmlPullParserException, IOException {
 
-				if ("item".equals(parser.getName())) {// RSS
-					mContentInfo.contentCount++;
+				//----------------RSS---------------
+				
+				if ("item".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// RSS内容开始
+					contentInfo = new FeedXMLContentInfo();
+					startRssItemFlag = true;
 				}
+				
+				if (startRssItemFlag == true && "title".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// RSS内容标题
+					contentInfo.title = parser.nextText();
+				}
+				
+				if (startRssItemFlag == true && "description".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
+					contentInfo.description = parser.nextText();
+				}
+
+				if (startRssItemFlag == true && "item".equals(parser.getName())
+						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
+					mContentInfoList.add(contentInfo);
+					startRssItemFlag = false;
+				}
+				
+				
+				//----------------ATOM---------------
+				
 				if ("entry".equals(parser.getName())) {// ATOM
-					mContentInfo.contentCount++;
+					
 				}
 
 			}
 
 			@Override
 			public boolean isOnlyParseStartTag() {
-				return true;
+				return false;
 			}
 
 			@Override
 			public boolean isInterruptParse(XmlPullParser parser) {
 				return false;
 			}
+
 		});
 
 		xmlUtils.parseStream(inputStream, mEncodingString);

@@ -1,11 +1,15 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
+import java.util.ArrayList;
+
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
+import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import android.app.Activity;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,7 +21,7 @@ import android.widget.Toast;
 /**
  * 详细信息列表的页面的Activity
  */
-public class ItemDetailList extends DefaultNewActivity {
+public class ItemDetailListActivity extends DefaultNewActivity {
 
 	/**
 	 * 此Activity，方便匿名内部类调用
@@ -54,7 +58,10 @@ public class ItemDetailList extends DefaultNewActivity {
 	 */
 	private FeedItem mFeedItem;
 
-	private int mCount;
+	/**
+	 * 内容信息集合
+	 */
+	public ArrayList<FeedXMLContentInfo> mContentInfoList;
 
 	@Override
 	protected void initView() {
@@ -103,9 +110,9 @@ public class ItemDetailList extends DefaultNewActivity {
 					@Override
 					public void onFinishParseContent(boolean result) {
 
-						mCount = feedXMLParser.mContentInfo.contentCount;
-
-						Toast.makeText(mThisActivity, "加载了" + mCount + "条数据",
+						mContentInfoList = feedXMLParser.mContentInfoList;
+						
+						Toast.makeText(mThisActivity, "加载了" + mContentInfoList.size() + "条数据",
 								Toast.LENGTH_SHORT).show();
 
 						// 设置数据适配器
@@ -135,7 +142,7 @@ public class ItemDetailList extends DefaultNewActivity {
 
 		@Override
 		public int getCount() {
-			return mCount;
+			return mContentInfoList.size();
 		}
 
 		@Override
@@ -162,11 +169,11 @@ public class ItemDetailList extends DefaultNewActivity {
 
 				itemView.setTag(holder);
 			}
-
+			
 			// 处理逻辑
-			holder.title.setText("测试信息标题");
-			holder.preview.setText("测试信息内容：如果内容很长则自动变换高度，最长为三行！");
-			holder.time.setText("上午11:10");
+			holder.title.setText(mContentInfoList.get(position).title);
+			holder.preview.setText(Html.fromHtml(mContentInfoList.get(position).description));
+			holder.time.setText("发表于：2015-09-27 12:22");
 
 			return itemView;
 		}

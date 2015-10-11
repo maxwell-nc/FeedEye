@@ -8,7 +8,7 @@ import java.util.Random;
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.MainActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
-import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList;
+import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
@@ -530,7 +530,7 @@ public class FeedPager extends BasePager {
 				// 检查NaturePositionOnItemClickListener是否生效
 				// LogUtils.w("FeedPager", "item position:" + position);
 
-				Intent intent = new Intent(mActivity, ItemDetailList.class);
+				Intent intent = new Intent(mActivity, ItemDetailListActivity.class);
 				intent.putExtra("FeedItem",
 						mItemInfoShowedList.get(position));
 				mActivity.startActivity(intent);

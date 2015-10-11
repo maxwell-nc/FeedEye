@@ -35,7 +35,7 @@
         </activity>
         <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity" >
         </activity>
-        <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailList" >
+        <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity" >
         </activity>
     </application>
 

@@ -8,7 +8,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Xml;
 
-
 /**
  * XML的工具类
  */
@@ -32,8 +31,10 @@ public class XMLUtils {
 		 *            解析器
 		 * @param name
 		 *            标签名
+		 * @param eventType
+		 *            解析到的类型
 		 */
-		public void onGetName(XmlPullParser parser, String name)
+		public void onGetName(XmlPullParser parser, String name, int eventType)
 				throws XmlPullParserException, IOException;
 
 		/**
@@ -92,7 +93,8 @@ public class XMLUtils {
 
 					}
 
-					onParseListener.onGetName(parser, parser.getName());// 解析标签名
+					onParseListener.onGetName(parser, parser.getName(),
+							eventType);// 解析标签名
 
 					if (onParseListener.isInterruptParse(parser)) {// 跳出
 						break;

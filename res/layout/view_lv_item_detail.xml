@@ -16,10 +16,11 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
+            android:textColor="@color/theme_color"
             android:singleLine="true"
             android:text="新闻标题"
             android:textSize="18sp" />
@@ -31,7 +32,7 @@
             android:layout_below="@id/tv_title"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="5"
             android:text="内容预览：这是一个listView的预览文本，用于测试时使用。"
             android:textColor="@color/drak_grey"
             android:textSize="14sp" />
@@ -40,9 +41,9 @@
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_marginTop="2dp"
-            android:text="上午18:30"
+            android:layout_below="@id/tv_preview"
+            android:text="发表于：2015-09-27 12:22"
             android:textColor="@color/grey"
             android:textSize="10sp" />
     </RelativeLayout>

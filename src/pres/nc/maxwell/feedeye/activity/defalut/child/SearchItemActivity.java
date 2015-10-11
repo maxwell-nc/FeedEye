@@ -176,7 +176,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 					// 搜索已显示的列表
 					if (mShowedList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
-								ItemDetailList.class);
+								ItemDetailListActivity.class);
 						intent.putExtra("FeedItem", mShowedList.get(i));
 						mThisActivity.startActivity(intent);
 
@@ -190,7 +190,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 					// 搜索未显示的列表
 					if (mUnShowList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
-								ItemDetailList.class);
+								ItemDetailListActivity.class);
 						intent.putExtra("FeedItem", mUnShowList.get(i));
 						mThisActivity.startActivity(intent);
 

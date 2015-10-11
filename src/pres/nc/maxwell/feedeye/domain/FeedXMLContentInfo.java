@@ -9,8 +9,13 @@ import java.io.Serializable;
 public class FeedXMLContentInfo implements Serializable{
 
 	/**
-	 * 信息数量
+	 * 内容标题
 	 */
-	public int contentCount;
+	public String title;
+	
+	/**
+	 * 内容描述
+	 */
+	public String description;
 
 }
