@@ -507,10 +507,10 @@ public class FeedPager extends BasePager {
 		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
 				feedItem.picURL);
 
-		viewHolder.mItemTitle.setText(feedItem.title);
-		viewHolder.mItemPreview.setText(feedItem.previewContent);
+		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);
+		viewHolder.mItemPreview.setText(feedItem.baseInfo.summary);
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItem.lastTime, "a HH:mm", Locale.getDefault()));
+				feedItem.baseInfo.time, "a HH:mm", Locale.getDefault()));
 
 		return true;
 
@@ -530,9 +530,9 @@ public class FeedPager extends BasePager {
 				// 检查NaturePositionOnItemClickListener是否生效
 				// LogUtils.w("FeedPager", "item position:" + position);
 
-				Intent intent = new Intent(mActivity, ItemDetailListActivity.class);
-				intent.putExtra("FeedItem",
-						mItemInfoShowedList.get(position));
+				Intent intent = new Intent(mActivity,
+						ItemDetailListActivity.class);
+				intent.putExtra("FeedItem", mItemInfoShowedList.get(position));
 				mActivity.startActivity(intent);
 
 			}
@@ -817,7 +817,7 @@ public class FeedPager extends BasePager {
 								String deleteItemTitle = mItemInfoShowedList
 										.get(position
 												- mListView
-														.getHeaderViewsCount()).title;
+														.getHeaderViewsCount()).baseInfo.title;
 
 								((TextView) view
 										.findViewById(R.id.tv_delete_title))
@@ -855,7 +855,7 @@ public class FeedPager extends BasePager {
 
 		FeedItem feedItem = mItemInfoShowedList.get(dbPosition);
 
-		feedItem.title = newTitle;
+		feedItem.baseInfo.title = newTitle;
 
 		// 从数据库中更新
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
@@ -1043,10 +1043,10 @@ public class FeedPager extends BasePager {
 		FeedItem feedItem = new FeedItem();
 		feedItem.feedURL = "http://blog.csdn.net/maxwell_nc/rss/list";
 		feedItem.picURL = "https://avatars3.githubusercontent.com/u/14196813?v=3&s=1";
-		feedItem.title = "我的GitHub"
+		feedItem.baseInfo.title = "我的GitHub"
 				+ new Random().nextInt(Integer.MAX_VALUE);
-		feedItem.previewContent = "最近又提交了很多代码，欢迎浏览我的GitHub仓库";
-		feedItem.lastTime = new Timestamp(System.currentTimeMillis());
+		feedItem.baseInfo.summary = "最近又提交了很多代码，欢迎浏览我的GitHub仓库";
+		feedItem.baseInfo.time = new Timestamp(System.currentTimeMillis());
 		feedItem.encoding = "utf-8";
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.addItem(feedItem);

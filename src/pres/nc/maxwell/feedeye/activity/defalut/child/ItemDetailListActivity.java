@@ -96,7 +96,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				"FeedItem");
 
 		// 设置标题
-		mTitleView.setText(mFeedItem.title);
+		mTitleView.setText(mFeedItem.baseInfo.title);
 
 		// 设置显示加载中
 		mNothingFoundText.setVisibility(View.INVISIBLE);

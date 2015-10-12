@@ -11,6 +11,7 @@ import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLUtils.OnParseListener;
 import android.text.TextUtils;
@@ -192,43 +193,52 @@ public class FeedXMLParser {
 				// LogUtils.w("FeedXMLParser", name);
 
 				// 检查XML类型
-				if (TextUtils.isEmpty(mBaseInfo.feedType)) {
+				if (TextUtils.isEmpty(mBaseInfo.type)) {
 
 					if ("rss".equals(name)) {// rss类型
-						mBaseInfo.feedType = "RSS";
+						mBaseInfo.type = "RSS";
 					} else if ("feed".equals(name)) {// atom类型
-						mBaseInfo.feedType = "ATOM";
+						mBaseInfo.type = "ATOM";
 					}
 
 				}
 
 				// 检查XML标题
-				if (TextUtils.isEmpty(mBaseInfo.feedTitle)) {
+				if (TextUtils.isEmpty(mBaseInfo.title)) {
 
 					if ("title".equals(name)) {// 标题
-						mBaseInfo.feedTitle = parser.nextText();
+						mBaseInfo.title = parser.nextText();
 					}
 
 				}
 
 				// 检查XML时间
-				if (TextUtils.isEmpty(mBaseInfo.feedTime)) {
+				if (mBaseInfo.time == null) {
 
 					if ("updated".equals(name)) {// ATOM
-						mBaseInfo.feedTime = parser.nextText();
+
+						String timeString = TimeUtils.LoopToTransTime(parser
+								.nextText());
+
+						mBaseInfo.time = TimeUtils.string2Timestamp(timeString);
+
 					} else if ("pubDate".equals(name)) {// RSS
-						mBaseInfo.feedTime = parser.nextText();
+
+						String timeString = TimeUtils.LoopToTransTime(parser
+								.nextText());
+
+						mBaseInfo.time = TimeUtils.string2Timestamp(timeString);
 					}
 
 				}
 
 				// 检查XML概要
-				if (TextUtils.isEmpty(mBaseInfo.feedSummary)) {
+				if (TextUtils.isEmpty(mBaseInfo.summary)) {
 
 					if ("subtitle".equals(name)) {// ATOM
-						mBaseInfo.feedSummary = parser.nextText();
+						mBaseInfo.summary = parser.nextText();
 					} else if ("description".equals(name)) {// RSS
-						mBaseInfo.feedSummary = parser.nextText();
+						mBaseInfo.summary = parser.nextText();
 					}
 
 				}
@@ -308,30 +318,33 @@ public class FeedXMLParser {
 
 			boolean startRssItemFlag = false;
 			FeedXMLContentInfo contentInfo = null;
-			
+
 			@Override
 			public void onGetName(XmlPullParser parser, String name,
 					int eventType) throws XmlPullParserException, IOException {
 
-				//----------------RSS---------------
-				
+				// ----------------RSS---------------
+
 				if ("item".equals(parser.getName())
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容开始
 					contentInfo = new FeedXMLContentInfo();
 					startRssItemFlag = true;
 				}
-				
-				if (startRssItemFlag == true && "title".equals(parser.getName())
+
+				if (startRssItemFlag == true
+						&& "title".equals(parser.getName())
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容标题
 					contentInfo.title = parser.nextText();
 				}
-				
-				if (startRssItemFlag == true && "description".equals(parser.getName())
+
+				if (startRssItemFlag == true
+						&& "description".equals(parser.getName())
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
 					contentInfo.description = parser.nextText();
 				}
-				
-				if (startRssItemFlag == true && "pubDate".equals(parser.getName())
+
+				if (startRssItemFlag == true
+						&& "pubDate".equals(parser.getName())
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
 					contentInfo.pubDate = parser.nextText();
 				}
@@ -341,12 +354,11 @@ public class FeedXMLParser {
 					mContentInfoList.add(contentInfo);
 					startRssItemFlag = false;
 				}
-				
-				
-				//----------------ATOM---------------
-				
+
+				// ----------------ATOM---------------
+
 				if ("entry".equals(parser.getName())) {// ATOM
-					
+
 				}
 
 			}

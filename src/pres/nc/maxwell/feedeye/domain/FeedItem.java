@@ -1,7 +1,6 @@
 package pres.nc.maxwell.feedeye.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * 存储订阅信息的对象
@@ -23,16 +22,6 @@ public class FeedItem implements Serializable {
 	 * 图片URL
 	 */
 	public String picURL;
-
-	/**
-	 * 标题
-	 */
-	public String title;
-
-	/**
-	 * 预览内容
-	 */
-	public String previewContent;
 	
 	/**
 	 * 编码方式
@@ -40,9 +29,9 @@ public class FeedItem implements Serializable {
 	public String encoding;
 
 	/**
-	 * 上次更新时间
+	 * 基本信息，如标题、更新时间等
 	 */
-	public Timestamp lastTime;
+	public FeedXMLBaseInfo baseInfo = new FeedXMLBaseInfo();
 
 	/**
 	 * 删除标记,不要手动设置 用于同步：如果为"1"则表示本地已删除，但未同步，不要删除记录

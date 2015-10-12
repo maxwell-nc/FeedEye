@@ -51,10 +51,10 @@ public class FeedItemDAO {
 
 		map.put("pic_url", feedItem.picURL);
 		map.put("feed_url", feedItem.feedURL);
-		map.put("title", feedItem.title);
-		map.put("preview_content", feedItem.previewContent);
+		map.put("title", feedItem.baseInfo.title);
+		map.put("preview_content", feedItem.baseInfo.summary);
 		map.put("encoding", feedItem.encoding);
-		map.put("last_time", TimeUtils.timestamp2String(feedItem.lastTime,
+		map.put("last_time", TimeUtils.timestamp2String(feedItem.baseInfo.time,
 				"yyyy-MM-dd HH:mm:ss", Locale.getDefault()));
 		map.put("delete_flag", feedItem.deleteFlag);
 
@@ -213,13 +213,13 @@ public class FeedItemDAO {
 
 			FeedItem feedItem = new FeedItem();
 
-			feedItem.itemId=Integer.parseInt(cursor.getString(0));
-			feedItem.feedURL=cursor.getString(1);
-			feedItem.picURL=cursor.getString(2);
-			feedItem.title=cursor.getString(3);
-			feedItem.previewContent=cursor.getString(4);
-			feedItem.encoding=cursor.getString(5);
-			feedItem.lastTime=TimeUtils.string2Timestamp(cursor
+			feedItem.itemId = Integer.parseInt(cursor.getString(0));
+			feedItem.feedURL = cursor.getString(1);
+			feedItem.picURL = cursor.getString(2);
+			feedItem.baseInfo.title = cursor.getString(3);
+			feedItem.baseInfo.summary = cursor.getString(4);
+			feedItem.encoding = cursor.getString(5);
+			feedItem.baseInfo.time = TimeUtils.string2Timestamp(cursor
 					.getString(6));
 
 			retList.add(feedItem);

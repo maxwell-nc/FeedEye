@@ -10,7 +10,6 @@ import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
-import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.content.Intent;
 import android.net.Uri;
@@ -260,40 +259,37 @@ public class AddFeedActivity extends DefaultNewActivity {
 							// 设置标题
 							if (!TextUtils.isEmpty(titleString)) {// 用户自定义
 
-								feedItem.title = titleString;
+								feedItem.baseInfo.title = titleString;
 
 							} else {// 设置为空,自动获取
 
 								if (!TextUtils
-										.isEmpty(mFeedXMLParser.mBaseInfo.feedTitle)) {// 用户不写，有网络数据
-									feedItem.title = mFeedXMLParser.mBaseInfo.feedTitle;
+										.isEmpty(mFeedXMLParser.mBaseInfo.title)) {// 用户不写，有网络数据
+									feedItem.baseInfo.title = mFeedXMLParser.mBaseInfo.title;
 								} else {// 网络结果为空
-									feedItem.title = "无标题";
+									feedItem.baseInfo.title = "无标题";
 								}
 
 							}
 
 							// 设置预览内容
 							if (!TextUtils
-									.isEmpty(mFeedXMLParser.mBaseInfo.feedSummary)) {
-								feedItem.previewContent = mFeedXMLParser.mBaseInfo.feedSummary;
+									.isEmpty(mFeedXMLParser.mBaseInfo.summary)) {
+								feedItem.baseInfo.summary = mFeedXMLParser.mBaseInfo.summary;
 							} else {
-								feedItem.previewContent = "没有接收到数据";
+								feedItem.baseInfo.summary = "没有接收到数据";
 							}
 
 							// 设置时间
-							if (!TextUtils
-									.isEmpty(mFeedXMLParser.mBaseInfo.feedTime)) {
+							if (mFeedXMLParser.mBaseInfo.time != null) {
 
-								String timeString = TimeUtils
-										.LoopToTransTime(mFeedXMLParser.mBaseInfo.feedTime);
-								Timestamp timestamp = TimeUtils
-										.string2Timestamp(timeString);
-								feedItem.lastTime = timestamp;
+								feedItem.baseInfo.time = mFeedXMLParser.mBaseInfo.time;
 
 							} else {
-								feedItem.lastTime = new Timestamp(System
+
+								feedItem.baseInfo.time = new Timestamp(System
 										.currentTimeMillis());
+
 							}
 
 							// 设置图片

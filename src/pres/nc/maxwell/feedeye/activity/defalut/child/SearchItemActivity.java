@@ -267,14 +267,14 @@ public class SearchItemActivity extends DefaultNewActivity {
 		for (int i = 0; i < mShowedList.size(); i++) {
 
 			// 搜索已显示的列表
-			if (mShowedList.get(i).title.toLowerCase().contains(keyword)) {
+			if (mShowedList.get(i).baseInfo.title.toLowerCase().contains(keyword)) {
 				mResultList.add(mShowedList.get(i));
 			}
 		}
 		for (int i = 0; i < mUnShowList.size(); i++) {
 
 			// 搜索未显示的列表,大小写不明感
-			if (mUnShowList.get(i).title.toLowerCase().contains(keyword)) {
+			if (mUnShowList.get(i).baseInfo.title.toLowerCase().contains(keyword)) {
 				mResultList.add(mUnShowList.get(i));
 			}
 		}
@@ -317,7 +317,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
 					mResultList.get(position).picURL);
 
-			String title = mResultList.get(position).title;
+			String title = mResultList.get(position).baseInfo.title;
 
 			String keyword = mSearchText.getText().toString().toLowerCase();
 
