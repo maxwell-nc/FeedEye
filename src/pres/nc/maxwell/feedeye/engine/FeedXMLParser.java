@@ -12,8 +12,8 @@ import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
-import pres.nc.maxwell.feedeye.utils.xml.XMLUtils;
-import pres.nc.maxwell.feedeye.utils.xml.XMLUtils.OnParseListener;
+import pres.nc.maxwell.feedeye.utils.xml.XMLParseUtils;
+import pres.nc.maxwell.feedeye.utils.xml.XMLParseUtils.OnParseListener;
 import android.text.TextUtils;
 
 /**
@@ -182,7 +182,7 @@ public class FeedXMLParser {
 	 */
 	private void parseXMLBaseInfo(InputStream inputStream) {
 
-		XMLUtils xmlUtils = new XMLUtils();
+		XMLParseUtils xmlUtils = new XMLParseUtils();
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
 
@@ -196,9 +196,9 @@ public class FeedXMLParser {
 				if (TextUtils.isEmpty(mBaseInfo.type)) {
 
 					if ("rss".equals(name)) {// rss类型
-						mBaseInfo.type = "RSS";
+						mBaseInfo.type = FeedXMLBaseInfo.TYPE_RSS;
 					} else if ("feed".equals(name)) {// atom类型
-						mBaseInfo.type = "ATOM";
+						mBaseInfo.type = FeedXMLBaseInfo.TYPE_ATOM;
 					}
 
 				}
@@ -312,7 +312,7 @@ public class FeedXMLParser {
 		// 计数清零
 		mContentInfoList.clear();
 
-		XMLUtils xmlUtils = new XMLUtils();
+		XMLParseUtils xmlUtils = new XMLParseUtils();
 
 		xmlUtils.setOnParseListener(new OnParseListener() {
 

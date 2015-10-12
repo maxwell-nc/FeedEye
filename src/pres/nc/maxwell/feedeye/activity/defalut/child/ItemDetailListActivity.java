@@ -7,7 +7,6 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.utils.MD5Utils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
@@ -115,8 +114,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 						mContentInfoList = feedXMLParser.mContentInfoList;
 
-						XMLCacheUtils.SaveLocalCache(
-								MD5Utils.getMD5String(mFeedItem.feedURL),
+						XMLCacheUtils.SaveLocalCache(mFeedItem,
 								mContentInfoList);
 
 						Toast.makeText(mThisActivity,

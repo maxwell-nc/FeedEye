@@ -9,9 +9,9 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Xml;
 
 /**
- * XML的工具类
+ * XML解析的工具类
  */
-public class XMLUtils {
+public class XMLParseUtils {
 
 	/**
 	 * 解析监听器

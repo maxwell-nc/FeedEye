@@ -256,40 +256,32 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 						if (result) {// 成功读取
 
-							// 设置标题
+							// 设置基本信息
+							feedItem.baseInfo = mFeedXMLParser.mBaseInfo;
+
+							// 自定义设置标题
 							if (!TextUtils.isEmpty(titleString)) {// 用户自定义
 
 								feedItem.baseInfo.title = titleString;
 
-							} else {// 设置为空,自动获取
+							} else {// 自动获取
 
-								if (!TextUtils
-										.isEmpty(mFeedXMLParser.mBaseInfo.title)) {// 用户不写，有网络数据
-									feedItem.baseInfo.title = mFeedXMLParser.mBaseInfo.title;
-								} else {// 网络结果为空
+								if (TextUtils.isEmpty(feedItem.baseInfo.title)) {// 用户不写，无网络数据
+
 									feedItem.baseInfo.title = "无标题";
 								}
 
 							}
 
-							// 设置预览内容
-							if (!TextUtils
-									.isEmpty(mFeedXMLParser.mBaseInfo.summary)) {
-								feedItem.baseInfo.summary = mFeedXMLParser.mBaseInfo.summary;
-							} else {
+							// 无预览内容
+							if (TextUtils.isEmpty(feedItem.baseInfo.summary)) {
 								feedItem.baseInfo.summary = "没有接收到数据";
 							}
 
-							// 设置时间
-							if (mFeedXMLParser.mBaseInfo.time != null) {
-
-								feedItem.baseInfo.time = mFeedXMLParser.mBaseInfo.time;
-
-							} else {
-
+							// 无获取到时间，设置为当前时间
+							if (feedItem.baseInfo.time == null) {
 								feedItem.baseInfo.time = new Timestamp(System
 										.currentTimeMillis());
-
 							}
 
 							// 设置图片

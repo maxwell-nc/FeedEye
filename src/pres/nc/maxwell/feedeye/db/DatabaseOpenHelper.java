@@ -29,12 +29,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 		String sqlString = "CREATE TABLE feed_item ("
 				+ "id integer primary key autoincrement,"// id自增长
-				+ "feed_url text not null,"//订阅的地址
+				+ "feed_url text not null,"// 订阅的地址
 				+ "pic_url text not null,"// 图片URL
+				+ "encoding varchar(10) not null,"// 编码方式
+				+ "type varchar(10) not null,"// 类型
 				+ "title varchar(100) not null,"// 标题
-				+ "preview_content varchar(100),"// 预览内容
-				+ "encoding varchar(10),"// 编码方式
-				+ "last_time timeStamp not null DEFAULT (datetime('now','localtime')),"// 时间
+				+ "summary varchar(100),"// 概要内容
+				+ "pub_date timeStamp not null DEFAULT (datetime('now','localtime')),"// 时间
 				+ "delete_flag char(1) DEFAULT '0'"// 删除标记，用于同步
 				+ ");";
 
@@ -47,7 +48,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		//无需更新
+		// 无需更新
 	}
 
 }
