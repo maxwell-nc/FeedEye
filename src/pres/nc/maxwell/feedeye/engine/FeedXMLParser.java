@@ -11,8 +11,8 @@ import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
-import pres.nc.maxwell.feedeye.utils.XMLUtils;
-import pres.nc.maxwell.feedeye.utils.XMLUtils.OnParseListener;
+import pres.nc.maxwell.feedeye.utils.xml.XMLUtils;
+import pres.nc.maxwell.feedeye.utils.xml.XMLUtils.OnParseListener;
 import android.text.TextUtils;
 
 /**

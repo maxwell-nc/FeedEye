@@ -7,7 +7,9 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.utils.MD5Utils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import android.app.Activity;
 import android.text.Html;
@@ -112,6 +114,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					public void onFinishParseContent(boolean result) {
 
 						mContentInfoList = feedXMLParser.mContentInfoList;
+
+						XMLCacheUtils.SaveLocalCache(
+								MD5Utils.getMD5String(mFeedItem.feedURL),
+								mContentInfoList);
 
 						Toast.makeText(mThisActivity,
 								"加载了" + mContentInfoList.size() + "条数据",

@@ -1,4 +1,4 @@
-package pres.nc.maxwell.feedeye.utils;
+package pres.nc.maxwell.feedeye.utils.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
