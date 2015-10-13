@@ -14,6 +14,7 @@ import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLParseUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLParseUtils.OnParseListener;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 /**
@@ -29,17 +30,17 @@ public class FeedXMLParser {
 	/**
 	 * 编码方式
 	 */
-	public String mEncodingString;
+	private String mEncodingString;
 
 	/**
 	 * 基本信息集合
 	 */
-	public FeedXMLBaseInfo mBaseInfo;
+	private FeedXMLBaseInfo mBaseInfo;
 
 	/**
 	 * 内容信息集合
 	 */
-	public ArrayList<FeedXMLContentInfo> mContentInfoList;
+	private ArrayList<FeedXMLContentInfo> mContentInfoList;
 
 	/**
 	 * Http连接工具类对象
@@ -49,29 +50,16 @@ public class FeedXMLParser {
 	/**
 	 * 完成解析XML监听器
 	 */
-	private OnFinishParseListener mOnFinishParseListener;
+	private OnFinishParseXMLListener mOnFinishParseListener;
 
 	/**
 	 * 完成解析XML监听器
 	 */
-	public interface OnFinishParseListener {
-		public void onFinishParseBaseInfo(boolean result);
-		public void onFinishParseContent(boolean result);
-	}
-
-	/**
-	 * 默认的XML解析完成监听器，什么都不做
-	 */
-	public class OnFinishParseDefaultListener implements OnFinishParseListener {
-
-		@Override
-		public void onFinishParseBaseInfo(boolean result) {
-		}
-
-		@Override
-		public void onFinishParseContent(boolean result) {
-		}
-
+	public interface OnFinishParseXMLListener {
+		public void onFinishParseBaseInfo(boolean result,
+				FeedXMLBaseInfo baseInfo);
+		public void onFinishParseContent(boolean result,
+				ArrayList<FeedXMLContentInfo> contentInfos);
 	}
 
 	/**
@@ -81,7 +69,7 @@ public class FeedXMLParser {
 	 *            监听器
 	 */
 	public void setOnFinishedParseXMLListener(
-			OnFinishParseListener onFinishParseXMLListener) {
+			OnFinishParseXMLListener onFinishParseXMLListener) {
 		this.mOnFinishParseListener = onFinishParseXMLListener;
 	}
 
@@ -132,6 +120,34 @@ public class FeedXMLParser {
 	}
 
 	/**
+	 * 解析本地XML流
+	 * 
+	 * @param localStream
+	 *            本地XML流
+	 * @param encodingString
+	 *            编码方式
+	 * @param parseType
+	 *            解析类型 ，可选：{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}或者
+	 *            {@link FeedXMLParser#TYPE_PARSE_CONTENT}
+	 */
+	public void parse(InputStream localStream, String encodingString,
+			int parseType) {
+
+		this.mEncodingString = encodingString;
+
+		// 判断解析类型
+		if (parseType == TYPE_PARSE_BASE_INFO) {
+
+			// TODO：
+
+		} else {
+			this.mContentInfoList = new ArrayList<FeedXMLContentInfo>();
+			getXMLContentInfo(localStream);
+		}
+
+	}
+
+	/**
 	 * 取消解析XML
 	 */
 	public void cancelParse() {
@@ -157,7 +173,8 @@ public class FeedXMLParser {
 			@Override
 			public void onSuccess() {// 主线程
 				if (mOnFinishParseListener != null) {
-					mOnFinishParseListener.onFinishParseBaseInfo(true);
+					mOnFinishParseListener.onFinishParseBaseInfo(true,
+							mBaseInfo);
 				}
 
 			}
@@ -165,7 +182,8 @@ public class FeedXMLParser {
 			@Override
 			public void onFailure() {// 主线程
 				if (mOnFinishParseListener != null) {
-					mOnFinishParseListener.onFinishParseBaseInfo(false);
+					mOnFinishParseListener.onFinishParseBaseInfo(false,
+							mBaseInfo);
 				}
 			}
 
@@ -270,6 +288,38 @@ public class FeedXMLParser {
 	}
 
 	/**
+	 * 本地解析内容任务
+	 */
+	class getLocalContentInfoTask extends AsyncTask<InputStream, Void, Void> {
+
+		@Override
+		protected Void doInBackground(InputStream... params) {// 子线程
+			parseXMLContent(params[0]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {// 主线程
+
+			if (mOnFinishParseListener != null) {
+				mOnFinishParseListener.onFinishParseContent(true,
+						mContentInfoList);
+			}
+
+		}
+
+	}
+
+	/**
+	 * 从本地解析XML的内容并解析
+	 * 
+	 * @param localStream
+	 */
+	private void getXMLContentInfo(InputStream localStream) {
+		new getLocalContentInfoTask().execute(localStream);
+	}
+
+	/**
 	 * 从网络读取XML的内容并解析
 	 */
 	private void getXMLContentInfo() {
@@ -279,13 +329,13 @@ public class FeedXMLParser {
 			@Override
 			public void onConnect(InputStream inputStream) {// 子线程
 				parseXMLContent(inputStream);
-
 			}
 
 			@Override
 			public void onSuccess() {// 主线程
 				if (mOnFinishParseListener != null) {
-					mOnFinishParseListener.onFinishParseContent(true);
+					mOnFinishParseListener.onFinishParseContent(true,
+							mContentInfoList);
 				}
 
 			}
@@ -293,7 +343,8 @@ public class FeedXMLParser {
 			@Override
 			public void onFailure() {// 主线程
 				if (mOnFinishParseListener != null) {
-					mOnFinishParseListener.onFinishParseContent(false);
+					mOnFinishParseListener.onFinishParseContent(false,
+							mContentInfoList);
 				}
 			}
 		});
@@ -357,7 +408,7 @@ public class FeedXMLParser {
 
 				// ----------------ATOM---------------
 
-				if ("entry".equals(parser.getName())) {// ATOM
+				if ("entry".equals(parser.getName())) {// TODO:ATOM
 
 				}
 

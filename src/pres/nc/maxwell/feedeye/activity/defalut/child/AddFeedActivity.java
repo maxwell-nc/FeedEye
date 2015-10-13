@@ -1,6 +1,7 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +9,10 @@ import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
+import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
+import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.content.Intent;
@@ -249,15 +253,17 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mFeedXMLParser = new FeedXMLParser();
 
 		mFeedXMLParser
-				.setOnFinishedParseXMLListener(mFeedXMLParser.new OnFinishParseDefaultListener() {
+				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
 
 					@Override
-					public void onFinishParseBaseInfo(boolean result) {
+					public void onFinishParseBaseInfo(boolean result,
+							FeedXMLBaseInfo baseInfo) {
+
 
 						if (result) {// 成功读取
 
 							// 设置基本信息
-							feedItem.baseInfo = mFeedXMLParser.mBaseInfo;
+							feedItem.baseInfo = baseInfo;
 
 							// 自定义设置标题
 							if (!TextUtils.isEmpty(titleString)) {// 用户自定义
@@ -357,7 +363,16 @@ public class AddFeedActivity extends DefaultNewActivity {
 							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络",
 									Toast.LENGTH_LONG).show();
 						}
+						
 					}
+
+					@Override
+					public void onFinishParseContent(boolean result,
+							ArrayList<FeedXMLContentInfo> contentInfos) {
+						//不需要
+					}
+
+					
 
 				});
 

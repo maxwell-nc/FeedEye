@@ -1,6 +1,8 @@
 package pres.nc.maxwell.feedeye.utils.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import org.xmlpull.v1.XmlSerializer;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
+import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
@@ -22,11 +26,74 @@ import android.util.Xml;
 public class XMLCacheUtils {
 
 	/**
-	 * 保存本地缓存
-	 * @param feedItem 用于传递基本信息等信息
-	 * @param contentInfos 内容数据集合
+	 * 完成读取本地数据监听器
+	 * 
+	 * @author Forest
+	 * 
 	 */
-	public static void SaveLocalCache(FeedItem feedItem,
+	public interface OnFinishGetLocalCacheListener {
+
+		public void onFinishGetContentInfo(
+				ArrayList<FeedXMLContentInfo> contentInfos);
+
+	}
+
+	/**
+	 * 读取本地缓存-内容信息
+	 * 
+	 * @param feedItem
+	 *            传递需要读取的信息
+	 * @throws FileNotFoundException 缓存不存在
+	 */
+	public static void getLocalCacheContentInfo(FeedItem feedItem,
+			final OnFinishGetLocalCacheListener listener) throws FileNotFoundException {
+
+		File file = IOUtils.getFileInSdcard("/FeedEye/DetailCache",
+				MD5Utils.getMD5String(feedItem.feedURL));
+
+		final FileInputStream fileInputStream = new FileInputStream(file);
+
+		// 读取信息
+		FeedXMLParser feedXMLParser = new FeedXMLParser();
+
+		feedXMLParser
+				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
+
+					@Override
+					public void onFinishParseContent(boolean result,
+							ArrayList<FeedXMLContentInfo> contentInfos) {
+
+						if (listener != null) {
+							listener.onFinishGetContentInfo(contentInfos);
+						}
+
+						// 关闭流
+						IOUtils.closeQuietly(fileInputStream);
+
+					}
+
+					@Override
+					public void onFinishParseBaseInfo(boolean result,
+							FeedXMLBaseInfo baseInfo) {
+						// 不需要
+					}
+				});
+
+		// 解析数据
+		feedXMLParser.parse(fileInputStream, feedItem.encoding,
+				FeedXMLParser.TYPE_PARSE_CONTENT);
+
+	}
+
+	/**
+	 * 保存本地缓存
+	 * 
+	 * @param feedItem
+	 *            用于传递基本信息等信息
+	 * @param contentInfos
+	 *            内容数据集合
+	 */
+	public static void setLocalCache(FeedItem feedItem,
 			ArrayList<FeedXMLContentInfo> contentInfos) {
 
 		XmlSerializer xmlSerializer = Xml.newSerializer();
@@ -114,6 +181,5 @@ public class XMLCacheUtils {
 		IOUtils.closeQuietly(fileOutputStream);
 
 	}
-	
-	
+
 }

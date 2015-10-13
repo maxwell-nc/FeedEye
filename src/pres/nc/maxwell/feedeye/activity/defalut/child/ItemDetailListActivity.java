@@ -1,14 +1,18 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
+import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
+import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import android.app.Activity;
 import android.text.Html;
@@ -102,20 +106,33 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mLoadingPic.setVisibility(View.VISIBLE);
 		mListView.setVisibility(View.INVISIBLE);
 
-		// 读取信息
+		try {
+			XMLCacheUtils.getLocalCacheContentInfo(mFeedItem,
+					new GetLocalCacheListener());
+		} catch (FileNotFoundException e) {// 不存在则从网络获取
+			GetDetailFromNetwork();
+		}
 
-		final FeedXMLParser feedXMLParser = new FeedXMLParser();
+	}
+
+	/**
+	 * 从网络上加载数据
+	 */
+	private void GetDetailFromNetwork() {
+		// 读取网络信息
+		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
-				.setOnFinishedParseXMLListener(feedXMLParser.new OnFinishParseDefaultListener() {
+				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
 
 					@Override
-					public void onFinishParseContent(boolean result) {
+					public void onFinishParseContent(boolean result,
+							ArrayList<FeedXMLContentInfo> contentInfos) {
 
-						mContentInfoList = feedXMLParser.mContentInfoList;
+						mContentInfoList = contentInfos;
 
-						XMLCacheUtils.SaveLocalCache(mFeedItem,
-								mContentInfoList);
+						XMLCacheUtils
+								.setLocalCache(mFeedItem, mContentInfoList);
 
 						Toast.makeText(mThisActivity,
 								"加载了" + mContentInfoList.size() + "条数据",
@@ -126,11 +143,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 						mListView.setAdapter(mListViewAdapter);
 
 						// TODO：根据结果是否显示ListView
-						// 设置显示加载中
+						// 设置显示ListView
 						mNothingFoundText.setVisibility(View.INVISIBLE);
 						mLoadingPic.setVisibility(View.INVISIBLE);
 						mListView.setVisibility(View.VISIBLE);
 
+					}
+
+					@Override
+					public void onFinishParseBaseInfo(boolean result,
+							FeedXMLBaseInfo baseInfo) {
+						// 不需要
 					}
 
 				});
@@ -138,6 +161,39 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		// 解析数据
 		feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding,
 				FeedXMLParser.TYPE_PARSE_CONTENT);
+	}
+	/**
+	 * 获取本地缓存监听器
+	 */
+	class GetLocalCacheListener implements OnFinishGetLocalCacheListener {
+
+		@Override
+		public void onFinishGetContentInfo(
+				ArrayList<FeedXMLContentInfo> contentInfos) {
+
+			mContentInfoList = contentInfos;
+			// TODO:判断是否需要重新拉取数据
+			if (mContentInfoList != null) {// 读取本地信息
+
+				Toast.makeText(mThisActivity,
+						"本地加载了" + mContentInfoList.size() + "条数据",
+						Toast.LENGTH_SHORT).show();
+
+				// 设置数据适配器
+				mListViewAdapter = new ItemDetailListAdapter();
+				mListView.setAdapter(mListViewAdapter);
+
+				// 设置显示ListView
+				mNothingFoundText.setVisibility(View.INVISIBLE);
+				mLoadingPic.setVisibility(View.INVISIBLE);
+				mListView.setVisibility(View.VISIBLE);
+
+			} else {// 存在缓存却读取不了
+
+				GetDetailFromNetwork();
+
+			}
+		}
 
 	}
 
@@ -178,14 +234,29 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			// 处理逻辑
 			holder.title.setText(mContentInfoList.get(position).title);
-			holder.preview
-					.setText(Html.fromHtml(mContentInfoList.get(position).description));
+			
+			holder.preview.setText(getPreview(position));
 			holder.time
 					.setText("发表于："
 							+ TimeUtils.LoopToTransTime(mContentInfoList
 									.get(position).pubDate));
 
 			return itemView;
+		}
+
+		/**
+		 * 获取预览内容
+		 * @param position 条目位置
+		 * @return 预览内容文本
+		 */
+		private CharSequence getPreview(int position) {
+	
+			String tempString = mContentInfoList.get(position).description;
+			if (tempString.length() > 250) {
+				tempString = tempString.substring(0, 250);
+			}
+
+			return Html.fromHtml(tempString).toString();
 		}
 
 		@Override
