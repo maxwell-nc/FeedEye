@@ -2,6 +2,7 @@ package pres.nc.maxwell.feedeye.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -317,6 +318,28 @@ public class FeedXMLParser {
 				return false;
 			}
 
+			@Override
+			public void doWhenFinishedParse() {
+
+				// 无网络数据
+				if (TextUtils.isEmpty(mBaseInfo.title)) {
+
+					mBaseInfo.title = "无标题";
+				}
+				
+				// 无预览内容
+				if (TextUtils.isEmpty(mBaseInfo.summary)) {
+					mBaseInfo.summary = "没有接收到数据";
+				}
+				
+				// 无获取到时间，设置为当前时间
+				if (mBaseInfo.time == null) {
+					mBaseInfo.time = new Timestamp(System
+							.currentTimeMillis());
+				}
+				
+			}
+
 		});
 
 		xmlUtils.parseStream(inputStream, mEncodingString);
@@ -485,6 +508,11 @@ public class FeedXMLParser {
 			@Override
 			public boolean isInterruptParse(XmlPullParser parser) {
 				return false;
+			}
+
+			@Override
+			public void doWhenFinishedParse() {
+				
 			}
 
 		});

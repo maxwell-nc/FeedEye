@@ -45,6 +45,11 @@ public class XMLParseUtils {
 		 * @return 如果返回真表示不需要再解析，解析停止
 		 */
 		public boolean isInterruptParse(XmlPullParser parser);
+		
+		/**
+		 * 解析完成后处理
+		 */
+		public void doWhenFinishedParse();
 	}
 
 	/**
@@ -107,6 +112,12 @@ public class XMLParseUtils {
 				eventType = parser.next();
 			}
 
+			if (onParseListener != null) {
+				
+				onParseListener.doWhenFinishedParse();
+				
+			}
+			
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -1,6 +1,5 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -259,7 +258,6 @@ public class AddFeedActivity extends DefaultNewActivity {
 					public void onFinishParseBaseInfo(boolean result,
 							FeedXMLBaseInfo baseInfo) {
 
-
 						if (result) {// 成功读取
 
 							// 设置基本信息
@@ -270,24 +268,6 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 								feedItem.baseInfo.title = titleString;
 
-							} else {// 自动获取
-
-								if (TextUtils.isEmpty(feedItem.baseInfo.title)) {// 用户不写，无网络数据
-
-									feedItem.baseInfo.title = "无标题";
-								}
-
-							}
-
-							// 无预览内容
-							if (TextUtils.isEmpty(feedItem.baseInfo.summary)) {
-								feedItem.baseInfo.summary = "没有接收到数据";
-							}
-
-							// 无获取到时间，设置为当前时间
-							if (feedItem.baseInfo.time == null) {
-								feedItem.baseInfo.time = new Timestamp(System
-										.currentTimeMillis());
 							}
 
 							// 设置图片
@@ -363,16 +343,14 @@ public class AddFeedActivity extends DefaultNewActivity {
 							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络",
 									Toast.LENGTH_LONG).show();
 						}
-						
+
 					}
 
 					@Override
 					public void onFinishParseContent(boolean result,
 							ArrayList<FeedXMLContentInfo> contentInfos) {
-						//不需要
+						// 不需要
 					}
-
-					
 
 				});
 
