@@ -33,8 +33,67 @@ public class XMLCacheUtils {
 	 */
 	public interface OnFinishGetLocalCacheListener {
 
+		/**
+		 * 完成获取本地内容
+		 * @param contentInfos 本地内容缓存
+		 */
 		public void onFinishGetContentInfo(
 				ArrayList<FeedXMLContentInfo> contentInfos);
+		/**
+		 * 完成获取本地基本信息
+		 * @param baseInfo 本地基本信息缓存
+		 */
+		public void onFinishGetBaseInfo(FeedXMLBaseInfo baseInfo);
+
+	}
+
+	/**
+	 * 读取本地缓存-基本信息
+	 * 
+	 * @param feedItem
+	 *            传递需要读取的信息
+	 * @param listener
+	 *            完成获取的监听器
+	 * @throws FileNotFoundException
+	 *             缓存不存在
+	 */
+	public static void getLocalCacheBaseInfo(FeedItem feedItem,
+			final OnFinishGetLocalCacheListener listener)
+			throws FileNotFoundException {
+
+		File file = IOUtils.getFileInSdcard("/FeedEye/DetailCache",
+				MD5Utils.getMD5String(feedItem.feedURL));
+
+		final FileInputStream fileInputStream = new FileInputStream(file);
+
+		// 读取信息
+		FeedXMLParser feedXMLParser = new FeedXMLParser();
+
+		feedXMLParser
+				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
+
+					@Override
+					public void onFinishParseContent(boolean result,
+							ArrayList<FeedXMLContentInfo> contentInfos) {
+						// 不需要
+					}
+
+					@Override
+					public void onFinishParseBaseInfo(boolean result,
+							FeedXMLBaseInfo baseInfo) {
+
+						if (listener != null) {
+							listener.onFinishGetBaseInfo(baseInfo);
+						}
+
+						// 关闭流
+						IOUtils.closeQuietly(fileInputStream);
+					}
+				});
+
+		// 解析数据
+		feedXMLParser.parse(fileInputStream, feedItem.encoding,
+				FeedXMLParser.TYPE_PARSE_BASE_INFO);
 
 	}
 
@@ -43,10 +102,14 @@ public class XMLCacheUtils {
 	 * 
 	 * @param feedItem
 	 *            传递需要读取的信息
-	 * @throws FileNotFoundException 缓存不存在
+	 * @param listener
+	 *            完成获取的监听器
+	 * @throws FileNotFoundException
+	 *             缓存不存在
 	 */
 	public static void getLocalCacheContentInfo(FeedItem feedItem,
-			final OnFinishGetLocalCacheListener listener) throws FileNotFoundException {
+			final OnFinishGetLocalCacheListener listener)
+			throws FileNotFoundException {
 
 		File file = IOUtils.getFileInSdcard("/FeedEye/DetailCache",
 				MD5Utils.getMD5String(feedItem.feedURL));

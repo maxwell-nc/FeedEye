@@ -138,11 +138,14 @@ public class FeedXMLParser {
 		// 判断解析类型
 		if (parseType == TYPE_PARSE_BASE_INFO) {
 
-			// TODO：
-
+			this.mBaseInfo = new FeedXMLBaseInfo();
+			getXMLBaseInfo(localStream);
+			
 		} else {
+			
 			this.mContentInfoList = new ArrayList<FeedXMLContentInfo>();
 			getXMLContentInfo(localStream);
+			
 		}
 
 	}
@@ -158,6 +161,39 @@ public class FeedXMLParser {
 
 	}
 
+	/**
+	 * 本地解析基本信息任务
+	 */
+	class getLocalBaseInfoTask extends AsyncTask<InputStream, Void, Void> {
+
+		@Override
+		protected Void doInBackground(InputStream... params) {// 子线程
+			parseXMLBaseInfo(params[0]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {// 主线程
+
+			if (mOnFinishParseListener != null) {
+				mOnFinishParseListener.onFinishParseBaseInfo(true,
+						mBaseInfo);
+			}
+
+		}
+
+	}
+
+	/**
+	 * 从本地读取XML的内容并解析
+	 * 
+	 * @param localStream
+	 */
+	private void getXMLBaseInfo(InputStream localStream) {
+		new getLocalBaseInfoTask().execute(localStream);
+	}
+
+	
 	/**
 	 * 从网络读取XML的基本信息并解析
 	 */
@@ -240,7 +276,7 @@ public class FeedXMLParser {
 
 						mBaseInfo.time = TimeUtils.string2Timestamp(timeString);
 
-					} else if ("pubDate".equals(name)) {// RSS
+					} else if ("pubDate".equals(name) || "lastBuildDate".equals(name)) {// RSS
 
 						String timeString = TimeUtils.LoopToTransTime(parser
 								.nextText());
@@ -311,7 +347,7 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * 从本地解析XML的内容并解析
+	 * 从本地读取XML的内容并解析
 	 * 
 	 * @param localStream
 	 */

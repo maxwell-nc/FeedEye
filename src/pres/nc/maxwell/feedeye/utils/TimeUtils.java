@@ -125,6 +125,14 @@ public class TimeUtils {
 			if (resultTime != null) {
 				return resultTime;
 			}
+			
+			// 常用格式，如：2005-12-25 11:08:04
+			resultTime = formatTimeToLocal(orgTime, "yyyy-MM-dd HH:mm:ss",
+					Locale.US, TimeZone.getDefault(), pattern);
+			if (resultTime != null) {
+				return resultTime;
+			}
+			
 		}
 
 		/**
