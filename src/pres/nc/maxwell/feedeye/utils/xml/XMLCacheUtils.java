@@ -159,6 +159,10 @@ public class XMLCacheUtils {
 	public static void setLocalCache(FeedItem feedItem,
 			ArrayList<FeedXMLContentInfo> contentInfos) {
 
+		if (contentInfos.size()<=0) {//防止写入空数据
+			return;
+		}
+		
 		XmlSerializer xmlSerializer = Xml.newSerializer();
 
 		File file = IOUtils.getFileInSdcard("/FeedEye/DetailCache",
@@ -223,10 +227,48 @@ public class XMLCacheUtils {
 				xmlSerializer.endTag(null, "rss");// </rss>
 			}
 
-			if (baseInfo.type == FeedXMLBaseInfo.TYPE_ATOM) {// TODO:ATOM类型
+			if (baseInfo.type.equals(FeedXMLBaseInfo.TYPE_ATOM)) {// TODO:ATOM类型
+				
+				// <feed xmlns="http://www.w3.org/2005/Atom">
+				xmlSerializer.startTag(null, "feed");
+				xmlSerializer.attribute(null, "xmlns", "http://www.w3.org/2005/Atom");
+
 				// 写基本信息
+				xmlSerializer.startTag(null, "title");
+				xmlSerializer.text(baseInfo.title);
+				xmlSerializer.endTag(null, "title");
+
+				xmlSerializer.startTag(null, "subtitle");
+				xmlSerializer.cdsect(baseInfo.summary);// 生成CDATA
+				// xmlSerializer.text(contentInfo.description);
+				xmlSerializer.endTag(null, "subtitle");
+
+				xmlSerializer.startTag(null, "updated");
+				xmlSerializer.text(TimeUtils.timestamp2String(baseInfo.time,
+						TimeUtils.STANDARD_TIME_PATTERN, Locale.getDefault()));
+				xmlSerializer.endTag(null, "updated");
 
 				// 写内容
+				for (FeedXMLContentInfo contentInfo : contentInfos) {
+					xmlSerializer.startTag(null, "entry");// <entry>
+
+					xmlSerializer.startTag(null, "title");
+					xmlSerializer.text(contentInfo.title);
+					xmlSerializer.endTag(null, "title");
+
+					xmlSerializer.startTag(null, "summary");
+					xmlSerializer.cdsect(contentInfo.description);// 生成CDATA
+					// xmlSerializer.text(contentInfo.description);
+					xmlSerializer.endTag(null, "summary");
+
+					xmlSerializer.startTag(null, "updated");
+					xmlSerializer.text(contentInfo.pubDate);
+					xmlSerializer.endTag(null, "updated");
+
+					xmlSerializer.endTag(null, "entry");// </entry>
+				}
+
+				xmlSerializer.endTag(null, "feed");// </feed>
 
 			}
 

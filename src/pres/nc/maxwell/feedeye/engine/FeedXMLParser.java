@@ -404,6 +404,7 @@ public class FeedXMLParser {
 		xmlUtils.setOnParseListener(new OnParseListener() {
 
 			boolean startRssItemFlag = false;
+			boolean startAtomEntryFlag = false;
 			FeedXMLContentInfo contentInfo = null;
 
 			@Override
@@ -432,7 +433,7 @@ public class FeedXMLParser {
 
 				if (startRssItemFlag == true
 						&& "pubDate".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
+						&& eventType == XmlPullParser.START_TAG) {// RSS内容时间
 					contentInfo.pubDate = parser.nextText();
 				}
 
@@ -444,10 +445,36 @@ public class FeedXMLParser {
 
 				// ----------------ATOM---------------
 
-				if ("entry".equals(parser.getName())) {// TODO:ATOM
-
+				if ("entry".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM内容开始
+					contentInfo = new FeedXMLContentInfo();
+					startAtomEntryFlag = true;
 				}
 
+				if (startAtomEntryFlag == true
+						&& "title".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM内容标题
+					contentInfo.title = parser.nextText();
+				}
+
+				if (startAtomEntryFlag == true
+						&& "summary".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM内容描述
+					contentInfo.description = parser.nextText();
+				}
+
+				if (startAtomEntryFlag == true
+						&& "updated".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM内容时间
+					contentInfo.pubDate = parser.nextText();
+				}
+
+				if (startAtomEntryFlag == true && "entry".equals(parser.getName())
+						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
+					mContentInfoList.add(contentInfo);
+					startAtomEntryFlag = false;
+				}
+				
 			}
 
 			@Override
