@@ -67,6 +67,10 @@ public class DragRefreshListView extends ListView {
 
 	/**
 	 * 当前刷新状态
+	 * 
+	 * @see #STATE_DRAGING
+	 * @see #STATE_AREADY_REFRESH
+	 * @see #STATE_REFRESHING
 	 */
 	private int dragState = STATE_DRAGING;
 	/**
@@ -78,7 +82,7 @@ public class DragRefreshListView extends ListView {
 	 * 是否允许上拉加载更多
 	 */
 	private boolean isAllowLoadingMore = true;
-	
+
 	public boolean isAllowLoadingMore() {
 		return isAllowLoadingMore;
 	}
@@ -119,10 +123,10 @@ public class DragRefreshListView extends ListView {
 		initHeaderView();
 		initFooterView();
 
-		//设置selector为透明
+		// 设置selector为透明
 		this.setSelector(R.color.transparent);
-		//this.setCacheColorHint(R.color.transparent);
-		
+		// this.setCacheColorHint(R.color.transparent);
+
 		// 设置滚动监听监听
 		setOnScrollListener(new DefaultOnScrollListener());
 	}
@@ -190,30 +194,30 @@ public class DragRefreshListView extends ListView {
 
 		switch (dragState) {
 
-		case STATE_DRAGING:// 下拉状态
-			mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
-			mHeaderTipsText.setText("下拉刷新");
-			break;
+			case STATE_DRAGING :// 下拉状态
+				mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
+				mHeaderTipsText.setText("下拉刷新");
+				break;
 
-		case STATE_AREADY_REFRESH:// 松开就刷新状态
-			mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
-			mHeaderTipsText.setText("松开刷新");
-			break;
+			case STATE_AREADY_REFRESH :// 松开就刷新状态
+				mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
+				mHeaderTipsText.setText("松开刷新");
+				break;
 
-		case STATE_REFRESHING:// 刷新中状态
-			mHeaderArrowPic.clearAnimation();// 防止箭头不隐藏
-			mHeaderTipsText.setText("正在刷新...");
-			mHeaderArrowPic.setVisibility(View.INVISIBLE);
-			mHeaderRotatewPic.setVisibility(View.VISIBLE);
+			case STATE_REFRESHING :// 刷新中状态
+				mHeaderArrowPic.clearAnimation();// 防止箭头不隐藏
+				mHeaderTipsText.setText("正在刷新...");
+				mHeaderArrowPic.setVisibility(View.INVISIBLE);
+				mHeaderRotatewPic.setVisibility(View.VISIBLE);
 
-			/**
-			 * 调用外部写的方法
-			 */
-			if (refreshListener != null) {
-				refreshListener.onDragRefresh();
-			}
+				/**
+				 * 调用外部写的方法
+				 */
+				if (refreshListener != null) {
+					refreshListener.onDragRefresh();
+				}
 
-			break;
+				break;
 		}
 
 	}
@@ -235,10 +239,31 @@ public class DragRefreshListView extends ListView {
 			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
 
 			mHeaderTipsText.setText("下拉刷新");
-			mHeaderTimeText.setText("上次刷新："
-					+ SystemInfoUtils.getCurrentTime());
+			mHeaderTimeText.setText("上次刷新：" + SystemInfoUtils.getCurrentTime());
 
 		}
+
+	}
+
+	/**
+	 * 手动设置正在加载中
+	 * 
+	 * @see #completeRefresh()
+	 */
+	public void setOnRefreshing() {
+
+		// 判断是否正在加载
+		if (isLoadingMore) {
+			return;
+		}
+
+		// 判断是否正在刷新
+		if (dragState != STATE_DRAGING) {
+			return;
+		}
+
+		// TODO:
+		refresh();
 
 	}
 
@@ -250,80 +275,75 @@ public class DragRefreshListView extends ListView {
 
 		switch (ev.getAction()) {
 
-		case MotionEvent.ACTION_DOWN:// 触摸按下
+			case MotionEvent.ACTION_DOWN :// 触摸按下
 
-			downY = (int) ev.getY();
-			istoUp = false;// 重置
+				downY = (int) ev.getY();
+				istoUp = false;// 重置
 
-			break;
-
-		case MotionEvent.ACTION_MOVE:// 触摸按住移动
-
-			// 刷新时或加载更多时不允许再刷新
-			if (dragState == STATE_REFRESHING || isLoadingMore) {
 				break;
-			}
 
-			// 除以3为了减慢下拉速度
-			int deltaY = (int) (ev.getY() - downY) / 3;
+			case MotionEvent.ACTION_MOVE :// 触摸按住移动
 
-			// 第一个项目下拉才显示下拉刷新
-			if (deltaY < 0 || getFirstVisiblePosition() > 1) {
+				// 刷新时或加载更多时不允许再刷新
+				if (dragState == STATE_REFRESHING || isLoadingMore) {
+					break;
+				}
 
-				dragState = STATE_DRAGING;
-				changeHeaderView();
-				istoUp = true;
+				// 除以3为了减慢下拉速度
+				int deltaY = (int) (ev.getY() - downY) / 3;
 
-			}
+				// 第一个项目下拉才显示下拉刷新
+				if (deltaY < 0 || getFirstVisiblePosition() > 1) {
 
-			// 上拉后不再能下拉刷新
-			if (!istoUp) {
-				int paddingTop = -mHeaderViewHeight + deltaY;
-				// LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
+					dragState = STATE_DRAGING;
+					changeHeaderView();
+					istoUp = true;
 
-				if (paddingTop > -mHeaderViewHeight) {
+				}
 
-					mHeaderView.setPadding(0, paddingTop, 0, 0);
+				// 上拉后不再能下拉刷新
+				if (!istoUp) {
+					int paddingTop = -mHeaderViewHeight + deltaY;
+					// LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
 
-					if (paddingTop >= 10 && dragState == STATE_DRAGING) {
-						// 松开就刷新
-						dragState = STATE_AREADY_REFRESH;
-						changeHeaderView();
-					} else if (paddingTop < 10
-							&& dragState == STATE_AREADY_REFRESH) {
-						// 松开不刷新
-						dragState = STATE_DRAGING;
-						changeHeaderView();
+					if (paddingTop > -mHeaderViewHeight) {
+
+						mHeaderView.setPadding(0, paddingTop, 0, 0);
+
+						if (paddingTop >= 10 && dragState == STATE_DRAGING) {
+							// 松开就刷新
+							dragState = STATE_AREADY_REFRESH;
+							changeHeaderView();
+						} else if (paddingTop < 10
+								&& dragState == STATE_AREADY_REFRESH) {
+							// 松开不刷新
+							dragState = STATE_DRAGING;
+							changeHeaderView();
+						}
+
+						// 调用父类方法，防止下拉时误点item
+						super.onTouchEvent(ev);
+						return true;
+					}
+				}
+
+				break;
+
+			case MotionEvent.ACTION_UP :// 触摸松开
+
+				downY = -1;// 重置
+
+				if (dragState == STATE_DRAGING) {// 不刷新
+					mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
+					if (!istoUp) {
+						setSelection(getFirstVisiblePosition());
 					}
 
-					// 调用父类方法，防止下拉时误点item
-					super.onTouchEvent(ev);
-					return true;
-				}
-			}
-
-			break;
-
-		case MotionEvent.ACTION_UP:// 触摸松开
-
-			downY = -1;// 重置
-
-			if (dragState == STATE_DRAGING) {// 不刷新
-				mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
-				if (!istoUp) {
-					setSelection(getFirstVisiblePosition());
+				} else if (dragState == STATE_AREADY_REFRESH) {// 刷新
+					refresh();
 				}
 
-			} else if (dragState == STATE_AREADY_REFRESH) {// 刷新
-				mHeaderView.setPadding(0, 0, 0, 0);
-				dragState = STATE_REFRESHING;
-				changeHeaderView();
-				if (!istoUp) {
-					setSelection(0);
-				}
-			}
-
-			break;
+				break;
 
 		}
 
@@ -332,16 +352,32 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
+	 * 刷新逻辑
+	 */
+	private void refresh() {
+		mHeaderView.setPadding(0, 0, 0, 0);
+		dragState = STATE_REFRESHING;
+		changeHeaderView();
+		if (!istoUp) {
+			setSelection(0);
+		}
+	}
+
+	/**
 	 * 提供监听器给调用者填入刷新逻辑
 	 */
 	public interface OnRefreshListener {
 		/**
 		 * 下拉刷新时的操作，操作后需要调用completeRefresh()方法
+		 * 
+		 * @see #completeRefresh()
 		 */
 		void onDragRefresh();
 
 		/**
 		 * 加载更多时的操作，操作后需要调用completeRefresh()方法
+		 * 
+		 * @see #completeRefresh()
 		 */
 		void onLoadingMore();
 	}
@@ -367,8 +403,8 @@ public class DragRefreshListView extends ListView {
 			if (scrollState == OnScrollListener.SCROLL_STATE_FLING
 					|| scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
 
-				if (getLastVisiblePosition() == (getCount()-1) && !isLoadingMore
-						&& dragState != STATE_REFRESHING) {
+				if (getLastVisiblePosition() == (getCount() - 1)
+						&& !isLoadingMore && dragState != STATE_REFRESHING) {
 
 					if (isAllowLoadingMore) {
 						isLoadingMore = true;

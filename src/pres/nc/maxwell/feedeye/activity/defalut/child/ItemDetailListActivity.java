@@ -16,6 +16,7 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import android.app.Activity;
 import android.text.Html;
 import android.view.View;
@@ -119,6 +120,21 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mListView.setVisibility(View.INVISIBLE);
 
 		LoadData();
+		
+		mListView.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onLoadingMore() {
+				
+				mListView.completeRefresh();
+			}
+			
+			@Override
+			public void onDragRefresh() {
+				getLatestDataFromNetwork();
+			}
+		});
+		
 	}
 
 	/**
@@ -142,12 +158,18 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private void GetDetailFromNetwork() {
 		// TODO：判断是否已经有本地缓存
-
+		mListView.setOnRefreshing();
+		
 		// 设置显示加载中
-		mNothingFoundText.setVisibility(View.INVISIBLE);
+		/*mNothingFoundText.setVisibility(View.INVISIBLE);
 		mLoadingPic.setVisibility(View.VISIBLE);
-		mListView.setVisibility(View.INVISIBLE);
+		mListView.setVisibility(View.INVISIBLE);*/	
+	}
 
+	/**
+	 * 从网络中加载最新数据
+	 */
+	private void getLatestDataFromNetwork() {
 		// 读取网络信息
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
@@ -173,10 +195,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 						// TODO：根据结果是否显示ListView
 						// 设置显示ListView
-						mNothingFoundText.setVisibility(View.INVISIBLE);
+						/*mNothingFoundText.setVisibility(View.INVISIBLE);
 						mLoadingPic.setVisibility(View.INVISIBLE);
-						mListView.setVisibility(View.VISIBLE);
-
+						mListView.setVisibility(View.VISIBLE);*/
+						mListView.completeRefresh();
 					}
 
 					@Override
