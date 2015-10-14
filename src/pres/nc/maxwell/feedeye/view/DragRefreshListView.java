@@ -262,7 +262,6 @@ public class DragRefreshListView extends ListView {
 			return;
 		}
 
-		// TODO:
 		refresh();
 
 	}

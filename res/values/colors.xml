@@ -3,6 +3,7 @@
 
     <!-- 后期用于控制夜间模式 -->
     <color name="white">#ffffffff</color>
+    <color name="light_white">#fffafafa</color>
     <color name="black">#ff000000</color>
     <color name="red">#ffff0000</color>
     <color name="grey">#ff999999</color>

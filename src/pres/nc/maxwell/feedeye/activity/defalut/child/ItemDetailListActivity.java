@@ -23,9 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * 详细信息列表的页面的Activity
@@ -48,9 +47,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	private DragRefreshListView mListView;
 
 	/**
-	 * 加载中的图片
+	 * 加载中的布局
 	 */
-	private ProgressBar mLoadingPic;
+	private RelativeLayout mLoadingLayout;
 
 	/**
 	 * 加载不到的文本
@@ -82,6 +81,21 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private FeedXMLBaseInfo localCacheBaseInfo;
 
+	/**
+	 * 没有数据加载到的状态
+	 */
+	private static final int STATE_NOTHING = 1;
+
+	/**
+	 * 加载数据中的状态
+	 */
+	private static final int STATE_LOADING = 2;
+
+	/**
+	 * 显示数据中的状态
+	 */
+	private static final int STATE_SHOWING = 3;
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -97,8 +111,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mListView = (DragRefreshListView) mCustomContainerView
 				.findViewById(R.id.lv_detail);
 
-		mLoadingPic = (ProgressBar) mCustomContainerView
-				.findViewById(R.id.pb_loading);
+		mLoadingLayout = (RelativeLayout) mCustomContainerView
+				.findViewById(R.id.rl_loading);
 
 		mNothingFoundText = (TextView) mCustomContainerView
 				.findViewById(R.id.tv_nothing_found);
@@ -108,33 +122,73 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	protected void initData() {
 		super.initData();
 
+		// 设置显示加载中
+		changeDisplayState(STATE_LOADING);
+		
+		// 获取传递进来的数据
 		mFeedItem = (FeedItem) getIntent().getExtras().getSerializable(
 				"FeedItem");
 
 		// 设置标题
 		mTitleView.setText(mFeedItem.baseInfo.title);
 
-		// 设置显示加载中
-		mNothingFoundText.setVisibility(View.INVISIBLE);
-		mLoadingPic.setVisibility(View.VISIBLE);
-		mListView.setVisibility(View.INVISIBLE);
+		// 初始化内容信息列表
+		mContentInfoList = new ArrayList<FeedXMLContentInfo>();
 
-		LoadData();
-		
+		// 设置数据适配器
+		mListViewAdapter = new ItemDetailListAdapter();
+		mListView.setAdapter(mListViewAdapter);
+
+		// 不使用加载更多
+		mListView.setAllowLoadingMore(false);
+
+		// 设置刷新监听
 		mListView.setOnRefreshListener(new OnRefreshListener() {
-			
+
 			@Override
 			public void onLoadingMore() {
-				
-				mListView.completeRefresh();
+				// 不使用此功能
 			}
-			
+
 			@Override
 			public void onDragRefresh() {
 				getLatestDataFromNetwork();
 			}
+
 		});
-		
+
+		// 加载数据
+		LoadData();
+
+	}
+
+	/**
+	 * 改变显示状态
+	 * 
+	 * @see #STATE_NOTHING
+	 * @see #STATE_LOADING
+	 * @see #STATE_SHOWING
+	 */
+	private void changeDisplayState(int state) {
+
+		switch (state) {
+			case STATE_NOTHING :
+				mNothingFoundText.setVisibility(View.VISIBLE);
+				mLoadingLayout.setVisibility(View.INVISIBLE);
+				mListView.setVisibility(View.INVISIBLE);
+				break;
+			case STATE_LOADING :
+				mNothingFoundText.setVisibility(View.INVISIBLE);
+				mLoadingLayout.setVisibility(View.VISIBLE);
+				mListView.setVisibility(View.INVISIBLE);
+				break;
+			case STATE_SHOWING :
+				mNothingFoundText.setVisibility(View.INVISIBLE);
+				mLoadingLayout.setVisibility(View.INVISIBLE);
+				mListView.setVisibility(View.VISIBLE);
+				break;
+		}
+
 	}
 
 	/**
@@ -142,13 +196,16 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private void LoadData() {
 
+		// 设置显示加载中
+		changeDisplayState(STATE_LOADING);
+		
 		mLocalCacheListener = new OnGetLocalCacheListener();
 
 		try {// 尝试获取本地缓存
 			XMLCacheUtils.getLocalCacheContentInfo(mFeedItem,
 					mLocalCacheListener);
 		} catch (FileNotFoundException e) {// 不存在则从网络获取
-			GetDetailFromNetwork();
+			GetInfosFromNetwork();
 		}
 
 	}
@@ -156,14 +213,19 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	/**
 	 * 从网络上加载数据
 	 */
-	private void GetDetailFromNetwork() {
-		// TODO：判断是否已经有本地缓存
-		mListView.setOnRefreshing();
-		
-		// 设置显示加载中
-		/*mNothingFoundText.setVisibility(View.INVISIBLE);
-		mLoadingPic.setVisibility(View.VISIBLE);
-		mListView.setVisibility(View.INVISIBLE);*/	
+	private void GetInfosFromNetwork() {
+
+		if (mContentInfoList.size() != 0) {// 已有显示数据
+
+			mListView.setOnRefreshing();// 设置强制刷新
+
+		} else {// 无显示数据
+
+			changeDisplayState(STATE_LOADING);
+			getLatestDataFromNetwork();
+
+		}
+
 	}
 
 	/**
@@ -180,24 +242,34 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					public void onFinishParseContent(boolean result,
 							ArrayList<FeedXMLContentInfo> contentInfos) {
 
-						mContentInfoList = contentInfos;
+						LogUtils.w("ItemDetailListActivity", "从网络获取了"
+								+ contentInfos.size() + "条数据");
 
-						XMLCacheUtils
-								.setLocalCache(mFeedItem, mContentInfoList);
+						if (!contentInfos.isEmpty()) {
 
-						Toast.makeText(mThisActivity,
-								"加载了" + mContentInfoList.size() + "条数据",
-								Toast.LENGTH_SHORT).show();
+							// 插入到首部
+							mContentInfoList.addAll(0, contentInfos);
 
-						// 设置数据适配器
-						mListViewAdapter = new ItemDetailListAdapter();
-						mListView.setAdapter(mListViewAdapter);
+							// 更新
+							mListViewAdapter.notifyDataSetChanged();
 
-						// TODO：根据结果是否显示ListView
-						// 设置显示ListView
-						/*mNothingFoundText.setVisibility(View.INVISIBLE);
-						mLoadingPic.setVisibility(View.INVISIBLE);
-						mListView.setVisibility(View.VISIBLE);*/
+							// 设置本地缓存,最新的部分（旧的舍弃）
+							XMLCacheUtils
+									.setLocalCache(mFeedItem, contentInfos);
+
+						}
+
+						// 改变显示状态
+						if (mContentInfoList.size() != 0) {
+
+							changeDisplayState(STATE_SHOWING);
+
+						} else {
+
+							changeDisplayState(STATE_NOTHING);
+
+						}
+
 						mListView.completeRefresh();
 					}
 
@@ -223,22 +295,22 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public void onFinishGetContentInfo(
 				ArrayList<FeedXMLContentInfo> contentInfos) {
 
-			mContentInfoList = contentInfos;
-			// TODO:判断是否需要重新拉取数据
-			if (mContentInfoList != null) {// 读取本地信息
+			if (contentInfos != null) {// 读取本地信息
 
-				Toast.makeText(mThisActivity,
-						"本地加载了" + mContentInfoList.size() + "条数据",
-						Toast.LENGTH_SHORT).show();
+				mContentInfoList = contentInfos;
 
-				// 设置数据适配器
-				mListViewAdapter = new ItemDetailListAdapter();
-				mListView.setAdapter(mListViewAdapter);
+				LogUtils.w("ItemDetailListActivity",
+						"本地加载了" + mContentInfoList.size() + "条数据");
 
-				// 设置显示ListView
-				mNothingFoundText.setVisibility(View.INVISIBLE);
-				mLoadingPic.setVisibility(View.INVISIBLE);
-				mListView.setVisibility(View.VISIBLE);
+				if (mContentInfoList.size() != 0) {// 本地缓存数据不为空
+
+					// 更新
+					mListViewAdapter.notifyDataSetChanged();
+
+					// 设置显示ListView
+					changeDisplayState(STATE_SHOWING);
+
+				}
 
 				try {// 获取本地缓存时间
 					XMLCacheUtils.getLocalCacheBaseInfo(mFeedItem,
@@ -247,9 +319,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					e.printStackTrace();
 				}
 
-			} else {// 存在缓存却读取不了
+			} else {// 缓存读取出错或缓存有问题
 
-				GetDetailFromNetwork();
+				GetInfosFromNetwork();
 
 			}
 
@@ -305,7 +377,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 									new FeedItemDAO(mThisActivity)
 											.updateItem(mFeedItem);
 
-									GetDetailFromNetwork();
+									GetInfosFromNetwork();
 
 								} else {// 无需更新
 
@@ -338,7 +410,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		@Override
 		public int getCount() {
-			return mContentInfoList.size();
+
+			int count = mContentInfoList.size();
+
+			return count;
 		}
 
 		@Override
@@ -391,8 +466,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			if (tempString.length() > 250) {
 				tempString = tempString.substring(0, 250);
 			}
-
+			
 			return Html.fromHtml(tempString).toString();
+			
 		}
 
 		@Override
