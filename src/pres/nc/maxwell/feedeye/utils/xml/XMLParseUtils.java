@@ -6,6 +6,8 @@ import java.io.InputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import pres.nc.maxwell.feedeye.utils.IOUtils;
+
 import android.util.Xml;
 
 /**
@@ -124,6 +126,7 @@ public class XMLParseUtils {
 
 			}
 
+			IOUtils.closeQuietly(inputStream);
 		}
 
 	}

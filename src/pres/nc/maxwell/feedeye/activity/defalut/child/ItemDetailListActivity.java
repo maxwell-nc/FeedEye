@@ -17,6 +17,7 @@ import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheList
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private static final int STATE_SHOWING = 3;
 
+	/**
+	 * 是否自动加载最新信息
+	 */
+	private boolean isAutoRefresh = false;
+
 	@Override
 	protected void initView() {
 		super.initView();
@@ -123,7 +129,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		// 设置显示加载中
 		changeDisplayState(STATE_LOADING);
-		
+
 		// 获取传递进来的数据
 		mFeedItem = (FeedItem) getIntent().getExtras().getSerializable(
 				"FeedItem");
@@ -195,9 +201,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private void LoadData() {
 
-		// 设置显示加载中
-		changeDisplayState(STATE_LOADING);
-		
 		mLocalCacheListener = new OnGetLocalCacheListener();
 
 		try {// 尝试获取本地缓存
@@ -305,11 +308,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				}
 
-				try {// 获取本地缓存时间
-					XMLCacheUtils.getLocalCacheBaseInfo(mFeedItem,
-							mLocalCacheListener);
-				} catch (FileNotFoundException e) {// 缓存被删除
-					e.printStackTrace();
+				if (isAutoRefresh) {
+					try {// 获取本地缓存时间
+						XMLCacheUtils.getLocalCacheBaseInfo(mFeedItem,
+								mLocalCacheListener);
+					} catch (FileNotFoundException e) {// 缓存被删除
+						e.printStackTrace();
+					}
 				}
 
 			} else {// 缓存读取出错或缓存有问题
@@ -399,7 +404,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public int getCount() {
 
 			int count = mContentInfoList.size();
-
+			
 			return count;
 		}
 
@@ -431,31 +436,16 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			// 处理逻辑
 			holder.title.setText(mContentInfoList.get(position).title);
 
-			holder.preview.setText(getPreview(position));
+			holder.preview.setText("加载中...");
+			// 异步加载文本信息
+			new showHtmlText().execute(position, holder.preview);
+
 			holder.time
 					.setText("发表于："
 							+ TimeUtils.LoopToTransTime(mContentInfoList
 									.get(position).pubDate));
 
 			return itemView;
-		}
-
-		/**
-		 * 获取预览内容
-		 * 
-		 * @param position
-		 *            条目位置
-		 * @return 预览内容文本
-		 */
-		private CharSequence getPreview(int position) {
-
-			String tempString = mContentInfoList.get(position).description;
-			if (tempString.length() > 250) {
-				tempString = tempString.substring(0, 250);
-			}
-			
-			return Html.fromHtml(tempString).toString();
-			
 		}
 
 		@Override
@@ -468,6 +458,54 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			return null;
 		}
 
+	}
+
+	/**
+	 * 获取预览内容
+	 * 
+	 * @param position
+	 *            条目位置
+	 * @return 预览内容文本
+	 */
+	private CharSequence getPreviewText(int position) {
+
+		String tempString = mContentInfoList.get(position).description;
+		if (tempString.length() > 250) {
+			tempString = tempString.substring(0, 250);
+		}
+
+		return Html.fromHtml(tempString).toString().trim();
+	}
+
+	/**
+	 * 异步转换Html为文本，第一个参数为条目位置，第二参数为要显示的TextView
+	 */
+	private class showHtmlText extends AsyncTask<Object, Void, String> {
+
+		int position;
+		TextView textView;
+
+		@Override
+		protected String doInBackground(Object... params) {// 子线程
+
+			position = (Integer) params[0];
+			textView = (TextView) params[1];
+
+			String textString = (String) getPreviewText(position);
+			return textString;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {// 主线程
+
+			position = position + mListView.getHeaderViewsCount();
+			
+			if (position >= mListView.getFirstVisiblePosition()
+					&& position <= mListView.getLastVisiblePosition()) {// 判断是否还在显示中
+				textView.setText((String) result);
+			}
+
+		}
 	}
 
 	/**
