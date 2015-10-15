@@ -55,6 +55,7 @@ public class FeedXMLParser {
 
 	/**
 	 * 完成解析XML监听器
+	 * 
 	 * @see SimpleOnFinishParseXMLListener
 	 */
 	public interface OnFinishParseXMLListener {
@@ -66,24 +67,27 @@ public class FeedXMLParser {
 
 	/**
 	 * 提供给只需要解析基本信息或者详细的默认实现
+	 * 
 	 * @see OnFinishParseXMLListener
 	 */
-	public static class SimpleOnFinishParseXMLListener implements OnFinishParseXMLListener{
+	public static class SimpleOnFinishParseXMLListener
+			implements
+				OnFinishParseXMLListener {
 
 		@Override
 		public void onFinishParseBaseInfo(boolean result,
 				FeedXMLBaseInfo baseInfo) {
-			
+
 		}
 
 		@Override
 		public void onFinishParseContent(boolean result,
 				ArrayList<FeedXMLContentInfo> contentInfos) {
-			
+
 		}
 
 	}
-	
+
 	/**
 	 * 设置完成解析XML的监听器
 	 * 
@@ -162,12 +166,12 @@ public class FeedXMLParser {
 
 			this.mBaseInfo = new FeedXMLBaseInfo();
 			getXMLBaseInfo(localStream);
-			
+
 		} else {
-			
+
 			this.mContentInfoList = new ArrayList<FeedXMLContentInfo>();
 			getXMLContentInfo(localStream);
-			
+
 		}
 
 	}
@@ -198,8 +202,7 @@ public class FeedXMLParser {
 		protected void onPostExecute(Void result) {// 主线程
 
 			if (mOnFinishParseListener != null) {
-				mOnFinishParseListener.onFinishParseBaseInfo(true,
-						mBaseInfo);
+				mOnFinishParseListener.onFinishParseBaseInfo(true, mBaseInfo);
 			}
 
 		}
@@ -215,7 +218,6 @@ public class FeedXMLParser {
 		new getLocalBaseInfoTask().execute(localStream);
 	}
 
-	
 	/**
 	 * 从网络读取XML的基本信息并解析
 	 */
@@ -298,7 +300,8 @@ public class FeedXMLParser {
 
 						mBaseInfo.time = TimeUtils.string2Timestamp(timeString);
 
-					} else if ("pubDate".equals(name) || "lastBuildDate".equals(name)) {// RSS
+					} else if ("pubDate".equals(name)
+							|| "lastBuildDate".equals(name)) {// RSS
 
 						String timeString = TimeUtils.LoopToTransTime(parser
 								.nextText());
@@ -347,18 +350,17 @@ public class FeedXMLParser {
 
 					mBaseInfo.title = "无标题";
 				}
-				
+
 				// 无预览内容
 				if (TextUtils.isEmpty(mBaseInfo.summary)) {
 					mBaseInfo.summary = "没有接收到数据";
 				}
-				
+
 				// 无获取到时间，设置为当前时间
 				if (mBaseInfo.time == null) {
-					mBaseInfo.time = new Timestamp(System
-							.currentTimeMillis());
+					mBaseInfo.time = new Timestamp(System.currentTimeMillis());
 				}
-				
+
 			}
 
 		});
@@ -481,6 +483,11 @@ public class FeedXMLParser {
 					contentInfo.pubDate = parser.nextText();
 				}
 
+				if (startRssItemFlag == true && "link".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// RSS连接
+					contentInfo.link = parser.nextText();
+				}
+
 				if (startRssItemFlag == true && "item".equals(parser.getName())
 						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
 					mContentInfoList.add(contentInfo);
@@ -513,12 +520,34 @@ public class FeedXMLParser {
 					contentInfo.pubDate = parser.nextText();
 				}
 
-				if (startAtomEntryFlag == true && "entry".equals(parser.getName())
+				if (startAtomEntryFlag == true
+						&& "link".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM连接
+
+					if (TextUtils.isEmpty(contentInfo.link)
+							|| "alternate".equals(parser.getAttributeValue(
+									null, "rel"))) {
+						contentInfo.link = parser.getAttributeValue(null,
+								"href");
+					}
+
+				}
+
+				if (startAtomEntryFlag == true
+						&& "content".equals(parser.getName())
+						&& eventType == XmlPullParser.START_TAG) {// ATOM内容
+					contentInfo.contentType = parser.getAttributeValue(null,
+							"type");
+					contentInfo.content = parser.nextText();
+				}
+
+				if (startAtomEntryFlag == true
+						&& "entry".equals(parser.getName())
 						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
 					mContentInfoList.add(contentInfo);
 					startAtomEntryFlag = false;
 				}
-				
+
 			}
 
 			@Override
@@ -533,7 +562,7 @@ public class FeedXMLParser {
 
 			@Override
 			public void doWhenFinishedParse() {
-				
+				// TODO：为空时处理
 			}
 
 		});

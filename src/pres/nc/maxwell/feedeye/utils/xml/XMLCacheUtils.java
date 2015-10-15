@@ -208,6 +208,10 @@ public class XMLCacheUtils {
 					xmlSerializer.text(contentInfo.pubDate);
 					xmlSerializer.endTag(null, "pubDate");
 
+					xmlSerializer.startTag(null, "link");
+					xmlSerializer.text(contentInfo.link);
+					xmlSerializer.endTag(null, "link");
+					
 					xmlSerializer.endTag(null, "item");// </item>
 				}
 
@@ -253,6 +257,16 @@ public class XMLCacheUtils {
 					xmlSerializer.text(contentInfo.pubDate);
 					xmlSerializer.endTag(null, "updated");
 
+					xmlSerializer.startTag(null, "link");
+					xmlSerializer.attribute(null, "rel", "alternate");
+					xmlSerializer.attribute(null, "href", contentInfo.link);
+					xmlSerializer.endTag(null, "link");
+					
+					xmlSerializer.startTag(null, "content");
+					xmlSerializer.attribute(null, "type", contentInfo.contentType);
+					xmlSerializer.text(contentInfo.content);
+					xmlSerializer.endTag(null, "content");
+					
 					xmlSerializer.endTag(null, "entry");// </entry>
 				}
 

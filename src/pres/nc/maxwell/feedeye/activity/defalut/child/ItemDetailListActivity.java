@@ -27,77 +27,77 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
- * ÏêÏ¸ĞÅÏ¢ÁĞ±íµÄÒ³ÃæµÄActivity
+ * è¯¦ç»†ä¿¡æ¯åˆ—è¡¨çš„é¡µé¢çš„Activity
  */
 public class ItemDetailListActivity extends DefaultNewActivity {
 
 	/**
-	 * ´ËActivity£¬·½±ãÄäÃûÄÚ²¿Ààµ÷ÓÃ
+	 * æ­¤Activityï¼Œæ–¹ä¾¿åŒ¿åå†…éƒ¨ç±»è°ƒç”¨
 	 */
 	private Activity mThisActivity;
 
 	/**
-	 * ±êÌâÎÄ±¾
+	 * æ ‡é¢˜æ–‡æœ¬
 	 */
 	private TextView mTitleView;
 
 	/**
-	 * Êı¾İÁĞ±í
+	 * æ•°æ®åˆ—è¡¨
 	 */
 	private DragRefreshListView mListView;
 
 	/**
-	 * ¼ÓÔØÖĞµÄ²¼¾Ö
+	 * åŠ è½½ä¸­çš„å¸ƒå±€
 	 */
 	private RelativeLayout mLoadingLayout;
 
 	/**
-	 * ¼ÓÔØ²»µ½µÄÎÄ±¾
+	 * åŠ è½½ä¸åˆ°çš„æ–‡æœ¬
 	 */
 	private TextView mNothingFoundText;
 
 	/**
-	 * Êı¾İÊÊÅäÆ÷
+	 * æ•°æ®é€‚é…å™¨
 	 */
 	private ItemDetailListAdapter mListViewAdapter;
 
 	/**
-	 * µ±Ç°Ò³ÃæµÄ¶©ÔÄÌõÄ¿ĞÅÏ¢
+	 * å½“å‰é¡µé¢çš„è®¢é˜…æ¡ç›®ä¿¡æ¯
 	 */
 	private FeedItem mFeedItem;
 
 	/**
-	 * ÄÚÈİĞÅÏ¢¼¯ºÏ
+	 * å†…å®¹ä¿¡æ¯é›†åˆ
 	 */
 	public ArrayList<FeedXMLContentInfo> mContentInfoList;
 
 	/**
-	 * »ñÈ¡±¾µØ»º´æ¼àÌıÆ÷
+	 * è·å–æœ¬åœ°ç¼“å­˜ç›‘å¬å™¨
 	 */
 	private OnGetLocalCacheListener mLocalCacheListener;
 
 	/**
-	 * ±¾µØ»º´æµÄ»ù±¾ĞÅÏ¢
+	 * æœ¬åœ°ç¼“å­˜çš„åŸºæœ¬ä¿¡æ¯
 	 */
 	private FeedXMLBaseInfo localCacheBaseInfo;
 
 	/**
-	 * Ã»ÓĞÊı¾İ¼ÓÔØµ½µÄ×´Ì¬
+	 * æ²¡æœ‰æ•°æ®åŠ è½½åˆ°çš„çŠ¶æ€
 	 */
 	private static final int STATE_NOTHING = 1;
 
 	/**
-	 * ¼ÓÔØÊı¾İÖĞµÄ×´Ì¬
+	 * åŠ è½½æ•°æ®ä¸­çš„çŠ¶æ€
 	 */
 	private static final int STATE_LOADING = 2;
 
 	/**
-	 * ÏÔÊ¾Êı¾İÖĞµÄ×´Ì¬
+	 * æ˜¾ç¤ºæ•°æ®ä¸­çš„çŠ¶æ€
 	 */
 	private static final int STATE_SHOWING = 3;
 
 	/**
-	 * ÊÇ·ñ×Ô¶¯¼ÓÔØ×îĞÂĞÅÏ¢
+	 * æ˜¯å¦è‡ªåŠ¨åŠ è½½æœ€æ–°ä¿¡æ¯
 	 */
 	private boolean isAutoRefresh = false;
 
@@ -110,7 +110,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		addView(R.layout.activity_item_detail_list_bar,
 				R.layout.activity_item_detail_list_container);
 
-		// ±êÌâ
+		// æ ‡é¢˜
 		mTitleView = (TextView) mCustomBarView.findViewById(R.id.tv_title);
 
 		mListView = (DragRefreshListView) mCustomContainerView
@@ -127,32 +127,32 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	protected void initData() {
 		super.initData();
 
-		// ÉèÖÃÏÔÊ¾¼ÓÔØÖĞ
+		// è®¾ç½®æ˜¾ç¤ºåŠ è½½ä¸­
 		changeDisplayState(STATE_LOADING);
 
-		// »ñÈ¡´«µİ½øÀ´µÄÊı¾İ
+		// è·å–ä¼ é€’è¿›æ¥çš„æ•°æ®
 		mFeedItem = (FeedItem) getIntent().getExtras().getSerializable(
 				"FeedItem");
 
-		// ÉèÖÃ±êÌâ
+		// è®¾ç½®æ ‡é¢˜
 		mTitleView.setText(mFeedItem.baseInfo.title);
 
-		// ³õÊ¼»¯ÄÚÈİĞÅÏ¢ÁĞ±í
+		// åˆå§‹åŒ–å†…å®¹ä¿¡æ¯åˆ—è¡¨
 		mContentInfoList = new ArrayList<FeedXMLContentInfo>();
 
-		// ÉèÖÃÊı¾İÊÊÅäÆ÷
+		// è®¾ç½®æ•°æ®é€‚é…å™¨
 		mListViewAdapter = new ItemDetailListAdapter();
 		mListView.setAdapter(mListViewAdapter);
 
-		// ²»Ê¹ÓÃ¼ÓÔØ¸ü¶à
+		// ä¸ä½¿ç”¨åŠ è½½æ›´å¤š
 		mListView.setAllowLoadingMore(false);
 
-		// ÉèÖÃË¢ĞÂ¼àÌı
+		// è®¾ç½®åˆ·æ–°ç›‘å¬
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
 			public void onLoadingMore() {
-				// ²»Ê¹ÓÃ´Ë¹¦ÄÜ
+				// ä¸ä½¿ç”¨æ­¤åŠŸèƒ½
 			}
 
 			@Override
@@ -162,13 +162,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		});
 
-		// ¼ÓÔØÊı¾İ
+		// åŠ è½½æ•°æ®
 		LoadData();
 
 	}
 
 	/**
-	 * ¸Ä±äÏÔÊ¾×´Ì¬
+	 * æ”¹å˜æ˜¾ç¤ºçŠ¶æ€
 	 * 
 	 * @see #STATE_NOTHING
 	 * @see #STATE_LOADING
@@ -197,31 +197,31 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ÏÈ³¢ÊÔ¼ÓÔØ±¾µØ»º´æÊı¾İ£¬ÅĞ¶Ï±¾µØ»º´æÊÇ·ñÓĞĞ§
+	 * å…ˆå°è¯•åŠ è½½æœ¬åœ°ç¼“å­˜æ•°æ®ï¼Œåˆ¤æ–­æœ¬åœ°ç¼“å­˜æ˜¯å¦æœ‰æ•ˆ
 	 */
 	private void LoadData() {
 
 		mLocalCacheListener = new OnGetLocalCacheListener();
 
-		try {// ³¢ÊÔ»ñÈ¡±¾µØ»º´æ
+		try {// å°è¯•è·å–æœ¬åœ°ç¼“å­˜
 			XMLCacheUtils.getLocalCacheContentInfo(mFeedItem,
 					mLocalCacheListener);
-		} catch (FileNotFoundException e) {// ²»´æÔÚÔò´ÓÍøÂç»ñÈ¡
+		} catch (FileNotFoundException e) {// ä¸å­˜åœ¨åˆ™ä»ç½‘ç»œè·å–
 			GetInfosFromNetwork();
 		}
 
 	}
 
 	/**
-	 * ´ÓÍøÂçÉÏ¼ÓÔØÊı¾İ
+	 * ä»ç½‘ç»œä¸ŠåŠ è½½æ•°æ®
 	 */
 	private void GetInfosFromNetwork() {
 
-		if (mContentInfoList.size() != 0) {// ÒÑÓĞÏÔÊ¾Êı¾İ
+		if (mContentInfoList.size() != 0) {// å·²æœ‰æ˜¾ç¤ºæ•°æ®
 
-			mListView.setOnRefreshing();// ÉèÖÃÇ¿ÖÆË¢ĞÂ
+			mListView.setOnRefreshing();// è®¾ç½®å¼ºåˆ¶åˆ·æ–°
 
-		} else {// ÎŞÏÔÊ¾Êı¾İ
+		} else {// æ— æ˜¾ç¤ºæ•°æ®
 
 			changeDisplayState(STATE_LOADING);
 			getLatestDataFromNetwork();
@@ -231,10 +231,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ´ÓÍøÂçÖĞ¼ÓÔØ×îĞÂÊı¾İ
+	 * ä»ç½‘ç»œä¸­åŠ è½½æœ€æ–°æ•°æ®
 	 */
 	private void getLatestDataFromNetwork() {
-		// ¶ÁÈ¡ÍøÂçĞÅÏ¢
+		// è¯»å–ç½‘ç»œä¿¡æ¯
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
@@ -244,24 +244,24 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					public void onFinishParseContent(boolean result,
 							ArrayList<FeedXMLContentInfo> contentInfos) {
 
-						LogUtils.w("ItemDetailListActivity", "´ÓÍøÂç»ñÈ¡ÁË"
-								+ contentInfos.size() + "ÌõÊı¾İ");
+						LogUtils.w("ItemDetailListActivity", "ä»ç½‘ç»œè·å–äº†"
+								+ contentInfos.size() + "æ¡æ•°æ®");
 
 						if (!contentInfos.isEmpty()) {
 
-							// ²åÈëµ½Ê×²¿
+							// æ’å…¥åˆ°é¦–éƒ¨
 							mContentInfoList.addAll(0, contentInfos);
 
-							// ¸üĞÂ
+							// æ›´æ–°
 							mListViewAdapter.notifyDataSetChanged();
 
-							// ÉèÖÃ±¾µØ»º´æ,×îĞÂµÄ²¿·Ö£¨¾ÉµÄÉáÆú£©
+							// è®¾ç½®æœ¬åœ°ç¼“å­˜,æœ€æ–°çš„éƒ¨åˆ†ï¼ˆæ—§çš„èˆå¼ƒï¼‰
 							XMLCacheUtils
 									.setLocalCache(mFeedItem, contentInfos);
 
 						}
 
-						// ¸Ä±äÏÔÊ¾×´Ì¬
+						// æ”¹å˜æ˜¾ç¤ºçŠ¶æ€
 						if (mContentInfoList.size() != 0) {
 
 							changeDisplayState(STATE_SHOWING);
@@ -277,13 +277,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				});
 
-		// ½âÎöÊı¾İ
+		// è§£ææ•°æ®
 		feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding,
 				FeedXMLParser.TYPE_PARSE_CONTENT);
 	}
 
 	/**
-	 * »ñÈ¡±¾µØ»º´æ¼àÌıÆ÷
+	 * è·å–æœ¬åœ°ç¼“å­˜ç›‘å¬å™¨
 	 */
 	class OnGetLocalCacheListener implements OnFinishGetLocalCacheListener {
 
@@ -291,33 +291,36 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public void onFinishGetContentInfo(
 				ArrayList<FeedXMLContentInfo> contentInfos) {
 
-			if (contentInfos != null) {// ¶ÁÈ¡±¾µØĞÅÏ¢
+			if (contentInfos != null) {// è¯»å–æœ¬åœ°ä¿¡æ¯
 
 				mContentInfoList = contentInfos;
 
 				LogUtils.w("ItemDetailListActivity",
-						"±¾µØ¼ÓÔØÁË" + mContentInfoList.size() + "ÌõÊı¾İ");
+						"æœ¬åœ°åŠ è½½äº†" + mContentInfoList.size() + "æ¡æ•°æ®");
 
-				if (mContentInfoList.size() != 0) {// ±¾µØ»º´æÊı¾İ²»Îª¿Õ
+				if (mContentInfoList.size() != 0) {// æœ¬åœ°ç¼“å­˜æ•°æ®ä¸ä¸ºç©º
 
-					// ¸üĞÂ
+					// æ›´æ–°
 					mListViewAdapter.notifyDataSetChanged();
 
-					// ÉèÖÃÏÔÊ¾ListView
+					// è®¾ç½®æ˜¾ç¤ºListView
 					changeDisplayState(STATE_SHOWING);
 
+				}else {
+					// è®¾ç½®æ˜¾ç¤ºæ²¡æœ‰æ•°æ®
+					changeDisplayState(STATE_NOTHING);
 				}
 
 				if (isAutoRefresh) {
-					try {// »ñÈ¡±¾µØ»º´æÊ±¼ä
+					try {// è·å–æœ¬åœ°ç¼“å­˜æ—¶é—´
 						XMLCacheUtils.getLocalCacheBaseInfo(mFeedItem,
 								mLocalCacheListener);
-					} catch (FileNotFoundException e) {// »º´æ±»É¾³ı
+					} catch (FileNotFoundException e) {// ç¼“å­˜è¢«åˆ é™¤
 						e.printStackTrace();
 					}
 				}
 
-			} else {// »º´æ¶ÁÈ¡³ö´í»ò»º´æÓĞÎÊÌâ
+			} else {// ç¼“å­˜è¯»å–å‡ºé”™æˆ–ç¼“å­˜æœ‰é—®é¢˜
 
 				GetInfosFromNetwork();
 
@@ -328,20 +331,20 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		@Override
 		public void onFinishGetBaseInfo(FeedXMLBaseInfo baseInfo) {
 
-			LogUtils.w("ItemDetailListActivity", "½âÎöÁË±¾µØ»º´æ»ù±¾ĞÅÏ¢");
+			LogUtils.w("ItemDetailListActivity", "è§£æäº†æœ¬åœ°ç¼“å­˜åŸºæœ¬ä¿¡æ¯");
 
 			localCacheBaseInfo = baseInfo;
 
-			// ¼ì²éÊÇ·ñĞèÒª¸üĞÂÊı¾İ
+			// æ£€æŸ¥æ˜¯å¦éœ€è¦æ›´æ–°æ•°æ®
 			checkIfUpdate();
 
 		}
 
 		/**
-		 * ¼ì²éÍøÂç×îºó¸üĞÂÊ±¼äÊÇ·ñ´óÓÚ±¾µØ»º´æÊ±¼ä£¬ÊÇÔò¸üĞÂ»º´æ
+		 * æ£€æŸ¥ç½‘ç»œæœ€åæ›´æ–°æ—¶é—´æ˜¯å¦å¤§äºæœ¬åœ°ç¼“å­˜æ—¶é—´ï¼Œæ˜¯åˆ™æ›´æ–°ç¼“å­˜
 		 */
 		private void checkIfUpdate() {
-			// ¶ÁÈ¡ĞÅÏ¢
+			// è¯»å–ä¿¡æ¯
 			FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 			feedXMLParser
@@ -351,44 +354,44 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 						public void onFinishParseBaseInfo(boolean result,
 								FeedXMLBaseInfo baseInfo) {
 
-							if (result && baseInfo != null) {// ÓĞÍøÂç²¢»ñÈ¡³É¹¦
+							if (result && baseInfo != null) {// æœ‰ç½‘ç»œå¹¶è·å–æˆåŠŸ
 
-								LogUtils.w("ItemDetailListActivity", "ÍøÂç¸üĞÂÊ±¼ä£º"
+								LogUtils.w("ItemDetailListActivity", "ç½‘ç»œæ›´æ–°æ—¶é—´ï¼š"
 										+ baseInfo.time.toString());
-								LogUtils.w("ItemDetailListActivity", "±¾µØ»º´æÊ±¼ä£º"
+								LogUtils.w("ItemDetailListActivity", "æœ¬åœ°ç¼“å­˜æ—¶é—´ï¼š"
 										+ localCacheBaseInfo.time.toString());
 
 								if (baseInfo.time.getTime() > localCacheBaseInfo.time
-										.getTime()) {// ĞèÒª¸üĞÂ
+										.getTime()) {// éœ€è¦æ›´æ–°
 
 									LogUtils.w("ItemDetailListActivity",
-											"±¾µØ»º´æĞèÒª¸üĞÂ");
+											"æœ¬åœ°ç¼“å­˜éœ€è¦æ›´æ–°");
 
-									// ¸üĞÂfeedItemµÄÊ±¼ä
+									// æ›´æ–°feedItemçš„æ—¶é—´
 									mFeedItem.baseInfo = baseInfo;
 									new FeedItemDAO(mThisActivity)
 											.updateItem(mFeedItem);
 
 									GetInfosFromNetwork();
 
-								} else {// ÎŞĞè¸üĞÂ
+								} else {// æ— éœ€æ›´æ–°
 
 									LogUtils.w("ItemDetailListActivity",
-											"±¾µØ»º´æÎŞĞè¸üĞÂ");
+											"æœ¬åœ°ç¼“å­˜æ— éœ€æ›´æ–°");
 
 								}
 
-							} else {// ÎŞÍøÂç£¬ÏÔÊ¾±¾µØÊı¾İ
+							} else {// æ— ç½‘ç»œï¼Œæ˜¾ç¤ºæœ¬åœ°æ•°æ®
 
 								LogUtils.w("ItemDetailListActivity",
-										"ÎŞÍøÂç£¬ÏÔÊ¾±¾µØÊı¾İ");
+										"æ— ç½‘ç»œï¼Œæ˜¾ç¤ºæœ¬åœ°æ•°æ®");
 
 							}
 
 						}
 					});
 
-			// ½âÎöÊı¾İ
+			// è§£ææ•°æ®
 			feedXMLParser.parse(mFeedItem.feedURL, mFeedItem.encoding,
 					FeedXMLParser.TYPE_PARSE_BASE_INFO);
 		}
@@ -396,7 +399,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ÏêÏ¸ĞÅÏ¢µÄÊı¾İÊÊÅäÆ÷
+	 * è¯¦ç»†ä¿¡æ¯çš„æ•°æ®é€‚é…å™¨
 	 */
 	class ItemDetailListAdapter extends BaseAdapter {
 
@@ -414,12 +417,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			ViewHolder holder;
 			FrameLayout itemView;
 
-			if (convertView != null && convertView instanceof FrameLayout) {// ¸´ÓÃ
+			if (convertView != null && convertView instanceof FrameLayout) {// å¤ç”¨
 
 				itemView = (FrameLayout) convertView;
 				holder = (ViewHolder) itemView.getTag();
 
-			} else {// ĞèÒªĞÂ´´½¨
+			} else {// éœ€è¦æ–°åˆ›å»º
 				itemView = (FrameLayout) View.inflate(mThisActivity,
 						R.layout.view_lv_item_detail, null);
 
@@ -433,15 +436,15 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				itemView.setTag(holder);
 			}
 
-			// ´¦ÀíÂß¼­
+			// å¤„ç†é€»è¾‘
 			holder.title.setText(mContentInfoList.get(position).title);
 
-			holder.preview.setText("¼ÓÔØÖĞ...");
-			// Òì²½¼ÓÔØÎÄ±¾ĞÅÏ¢
+			holder.preview.setText("åŠ è½½ä¸­...");
+			// å¼‚æ­¥åŠ è½½æ–‡æœ¬ä¿¡æ¯
 			new showHtmlText().execute(position, holder.preview);
 
 			holder.time
-					.setText("·¢±íÓÚ£º"
+					.setText("å‘è¡¨äºï¼š"
 							+ TimeUtils.LoopToTransTime(mContentInfoList
 									.get(position).pubDate));
 
@@ -461,11 +464,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * »ñÈ¡Ô¤ÀÀÄÚÈİ
+	 * è·å–é¢„è§ˆå†…å®¹
 	 * 
 	 * @param position
-	 *            ÌõÄ¿Î»ÖÃ
-	 * @return Ô¤ÀÀÄÚÈİÎÄ±¾
+	 *            æ¡ç›®ä½ç½®
+	 * @return é¢„è§ˆå†…å®¹æ–‡æœ¬
 	 */
 	private CharSequence getPreviewText(int position) {
 
@@ -478,7 +481,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * Òì²½×ª»»HtmlÎªÎÄ±¾£¬µÚÒ»¸ö²ÎÊıÎªÌõÄ¿Î»ÖÃ£¬µÚ¶ş²ÎÊıÎªÒªÏÔÊ¾µÄTextView
+	 * å¼‚æ­¥è½¬æ¢Htmlä¸ºæ–‡æœ¬ï¼Œç¬¬ä¸€ä¸ªå‚æ•°ä¸ºæ¡ç›®ä½ç½®ï¼Œç¬¬äºŒå‚æ•°ä¸ºè¦æ˜¾ç¤ºçš„TextView
 	 */
 	private class showHtmlText extends AsyncTask<Object, Void, String> {
 
@@ -486,7 +489,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		TextView textView;
 
 		@Override
-		protected String doInBackground(Object... params) {// ×ÓÏß³Ì
+		protected String doInBackground(Object... params) {// å­çº¿ç¨‹
 
 			position = (Integer) params[0];
 			textView = (TextView) params[1];
@@ -496,13 +499,14 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		}
 
 		@Override
-		protected void onPostExecute(String result) {// Ö÷Ïß³Ì
+		protected void onPostExecute(String result) {// ä¸»çº¿ç¨‹
 
 			position = position + mListView.getHeaderViewsCount();
 			
 			if (position >= mListView.getFirstVisiblePosition()
-					&& position <= mListView.getLastVisiblePosition()) {// ÅĞ¶ÏÊÇ·ñ»¹ÔÚÏÔÊ¾ÖĞ
-				textView.setText((String) result);
+					&& position <= mListView.getLastVisiblePosition()) {// åˆ¤æ–­æ˜¯å¦è¿˜åœ¨æ˜¾ç¤ºä¸­
+				result = result.replace("ï¿¼", "[å›¾ç‰‡]");
+				textView.setText(result);
 			}
 
 		}

@@ -23,4 +23,18 @@ public class FeedXMLContentInfo implements Serializable{
 	 */
 	public String pubDate;
 
+	/**
+	 * 全文连接
+	 */
+	public String link;
+
+	/**
+	 * ATOM的内容类型
+	 */
+	public String contentType;
+	
+	/**
+	 * ATOM的内容
+	 */
+	public String content;
 }
