@@ -10,7 +10,6 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
@@ -236,7 +235,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
+				.setOnFinishedParseXMLListener(new FeedXMLParser.SimpleOnFinishParseXMLListener() {
 
 					@Override
 					public void onFinishParseContent(boolean result,
@@ -271,12 +270,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 						}
 
 						mListView.completeRefresh();
-					}
-
-					@Override
-					public void onFinishParseBaseInfo(boolean result,
-							FeedXMLBaseInfo baseInfo) {
-						// 不需要
 					}
 
 				});
@@ -347,13 +340,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 			feedXMLParser
-					.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
-
-						@Override
-						public void onFinishParseContent(boolean result,
-								ArrayList<FeedXMLContentInfo> contentInfos) {
-							// 不需要
-						}
+					.setOnFinishedParseXMLListener(new FeedXMLParser.SimpleOnFinishParseXMLListener() {
 
 						@Override
 						public void onFinishParseBaseInfo(boolean result,

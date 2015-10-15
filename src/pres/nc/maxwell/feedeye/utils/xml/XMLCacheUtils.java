@@ -14,7 +14,6 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
@@ -70,13 +69,7 @@ public class XMLCacheUtils {
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
-
-					@Override
-					public void onFinishParseContent(boolean result,
-							ArrayList<FeedXMLContentInfo> contentInfos) {
-						// 不需要
-					}
+				.setOnFinishedParseXMLListener(new FeedXMLParser.SimpleOnFinishParseXMLListener() {
 
 					@Override
 					public void onFinishParseBaseInfo(boolean result,
@@ -120,7 +113,7 @@ public class XMLCacheUtils {
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
+				.setOnFinishedParseXMLListener(new FeedXMLParser.SimpleOnFinishParseXMLListener() {
 
 					@Override
 					public void onFinishParseContent(boolean result,
@@ -135,11 +128,6 @@ public class XMLCacheUtils {
 
 					}
 
-					@Override
-					public void onFinishParseBaseInfo(boolean result,
-							FeedXMLBaseInfo baseInfo) {
-						// 不需要
-					}
 				});
 
 		// 解析数据

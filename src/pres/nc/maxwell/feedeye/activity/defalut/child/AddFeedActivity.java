@@ -1,6 +1,5 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,9 +8,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
-import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
-import pres.nc.maxwell.feedeye.engine.FeedXMLParser.OnFinishParseXMLListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import android.content.Intent;
@@ -252,7 +249,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mFeedXMLParser = new FeedXMLParser();
 
 		mFeedXMLParser
-				.setOnFinishedParseXMLListener(new OnFinishParseXMLListener() {
+				.setOnFinishedParseXMLListener(new FeedXMLParser.SimpleOnFinishParseXMLListener() {
 
 					@Override
 					public void onFinishParseBaseInfo(boolean result,
@@ -344,12 +341,6 @@ public class AddFeedActivity extends DefaultNewActivity {
 									Toast.LENGTH_LONG).show();
 						}
 
-					}
-
-					@Override
-					public void onFinishParseContent(boolean result,
-							ArrayList<FeedXMLContentInfo> contentInfos) {
-						// ²»ÐèÒª
 					}
 
 				});

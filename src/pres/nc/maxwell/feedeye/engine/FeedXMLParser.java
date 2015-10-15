@@ -55,6 +55,7 @@ public class FeedXMLParser {
 
 	/**
 	 * 完成解析XML监听器
+	 * @see SimpleOnFinishParseXMLListener
 	 */
 	public interface OnFinishParseXMLListener {
 		public void onFinishParseBaseInfo(boolean result,
@@ -63,6 +64,26 @@ public class FeedXMLParser {
 				ArrayList<FeedXMLContentInfo> contentInfos);
 	}
 
+	/**
+	 * 提供给只需要解析基本信息或者详细的默认实现
+	 * @see OnFinishParseXMLListener
+	 */
+	public static class SimpleOnFinishParseXMLListener implements OnFinishParseXMLListener{
+
+		@Override
+		public void onFinishParseBaseInfo(boolean result,
+				FeedXMLBaseInfo baseInfo) {
+			
+		}
+
+		@Override
+		public void onFinishParseContent(boolean result,
+				ArrayList<FeedXMLContentInfo> contentInfos) {
+			
+		}
+
+	}
+	
 	/**
 	 * 设置完成解析XML的监听器
 	 * 
