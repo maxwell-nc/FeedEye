@@ -249,6 +249,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 						if (!contentInfos.isEmpty()) {
 
+							// TODO:考虑是否判断时间
 							// 插入到首部
 							mContentInfoList.addAll(0, contentInfos);
 
@@ -306,7 +307,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					// 设置显示ListView
 					changeDisplayState(STATE_SHOWING);
 
-				}else {
+				} else {
 					// 设置显示没有数据
 					changeDisplayState(STATE_NOTHING);
 				}
@@ -407,7 +408,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public int getCount() {
 
 			int count = mContentInfoList.size();
-			
+
 			return count;
 		}
 
@@ -476,8 +477,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		if (tempString.length() > 250) {
 			tempString = tempString.substring(0, 250);
 		}
-
-		return Html.fromHtml(tempString).toString().trim();
+		
+		tempString = Html.fromHtml(tempString).toString().trim();
+		
+		tempString = tempString.replace("￼", "[图片]").replace("\n", "");
+		
+		return tempString;
 	}
 
 	/**
@@ -502,10 +507,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		protected void onPostExecute(String result) {// 主线程
 
 			position = position + mListView.getHeaderViewsCount();
-			
+
 			if (position >= mListView.getFirstVisiblePosition()
 					&& position <= mListView.getLastVisiblePosition()) {// 判断是否还在显示中
-				result = result.replace("￼", "[图片]");
 				textView.setText(result);
 			}
 

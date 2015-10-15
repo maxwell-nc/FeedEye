@@ -264,7 +264,7 @@ public class XMLCacheUtils {
 					
 					xmlSerializer.startTag(null, "content");
 					xmlSerializer.attribute(null, "type", contentInfo.contentType);
-					xmlSerializer.text(contentInfo.content);
+					xmlSerializer.cdsect(contentInfo.content);// Éú³ÉCDATA
 					xmlSerializer.endTag(null, "content");
 					
 					xmlSerializer.endTag(null, "entry");// </entry>

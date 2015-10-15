@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -345,6 +346,13 @@ public class FeedXMLParser {
 			@Override
 			public void doWhenFinishedParse() {
 
+				// 处理数据为空的情况
+
+				// 解析不到类型
+				if (TextUtils.isEmpty(mBaseInfo.type)) {
+					mBaseInfo.type = FeedXMLBaseInfo.TYPE_UNKNOWN;
+				}
+
 				// 无网络数据
 				if (TextUtils.isEmpty(mBaseInfo.title)) {
 
@@ -562,7 +570,53 @@ public class FeedXMLParser {
 
 			@Override
 			public void doWhenFinishedParse() {
-				// TODO：为空时处理
+
+				// 处理数据为空的情况
+				for (FeedXMLContentInfo info : mContentInfoList) {
+
+					// 无标题
+					if (TextUtils.isEmpty(info.title)) {
+						info.title = "无标题";
+					}
+
+					// 无描述
+					if (TextUtils.isEmpty(info.description)) {
+
+						if (info.content != null) {//利用content代替
+							info.description = info.content;
+						} else {
+							info.description = "没有接收到数据";
+						}
+						
+					}
+
+					// 无获取到时间，设置为当前时间
+					if (info.pubDate == null) {
+						
+						info.pubDate = TimeUtils.timestamp2String(
+								new Timestamp(System.currentTimeMillis()),
+								TimeUtils.STANDARD_TIME_PATTERN,
+								Locale.getDefault());
+						
+					}
+
+					// 无全文链接
+					if (info.link == null) {
+						info.link = "";
+					}
+
+					// 无ATOM内容类型
+					if (info.contentType == null) {
+						info.contentType = "";
+					}
+
+					// 无ATOM内容
+					if (info.content == null) {
+						info.content = "";
+					}
+
+				}
+
 			}
 
 		});

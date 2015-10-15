@@ -256,7 +256,15 @@ public class AddFeedActivity extends DefaultNewActivity {
 							FeedXMLBaseInfo baseInfo) {
 
 						if (result) {// 成功读取
+							
+							// 判断是否类型合法
+							if (baseInfo.type == FeedXMLBaseInfo.TYPE_UNKNOWN) {
 
+								failedToGet("不支持的订阅类型");
+								return;
+
+							}
+							
 							// 设置基本信息
 							feedItem.baseInfo = baseInfo;
 
@@ -333,14 +341,24 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 						} else {// 读取失败
 
-							// 恢复
-							mLoadingFrame.setVisibility(View.GONE);
-							mFinishButtonView.setVisibility(View.VISIBLE);
-
-							Toast.makeText(mThisActivity, "获取失败，请检查地址和网络",
-									Toast.LENGTH_LONG).show();
+							failedToGet("获取失败，请检查地址和网络");
 						}
 
+					}
+
+					/**
+					 * 获取失败
+					 * 
+					 * @param errMsg
+					 *            提示错误信息
+					 */
+					private void failedToGet(String errMsg) {
+						// 恢复
+						mLoadingFrame.setVisibility(View.GONE);
+						mFinishButtonView.setVisibility(View.VISIBLE);
+
+						Toast.makeText(mThisActivity, errMsg,
+								Toast.LENGTH_SHORT).show();
 					}
 
 				});

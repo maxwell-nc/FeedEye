@@ -20,6 +20,11 @@ public class FeedXMLBaseInfo implements Serializable {
 	public static final String TYPE_RSS = "RSS";
 
 	/**
+	 * @see #type 位置类型
+	 */
+	public  static final String TYPE_UNKNOWN = "UNKNOWN";
+	
+	/**
 	 * 订阅类型
 	 */
 	public String type;
