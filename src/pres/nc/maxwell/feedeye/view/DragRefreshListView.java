@@ -1,16 +1,20 @@
 package pres.nc.maxwell.feedeye.view;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -101,10 +105,21 @@ public class DragRefreshListView extends ListView {
 	private OnItemClickListener OriginOnItemClickListener;
 
 	/**
-	 * 动画集
+	 * 刷新动画
 	 */
 	private RotateAnimation mArrowToRefreshAnimation;
+
+	/**
+	 * 正常动画
+	 */
 	private RotateAnimation mArrowToNormalAnimation;
+
+	/**
+	 * 是否允许点击条目
+	 * 
+	 * @see DecoratorBaseAdapter
+	 */
+	private boolean isEnabledItemClick;
 
 	public DragRefreshListView(Context context) {
 		super(context);
@@ -279,6 +294,9 @@ public class DragRefreshListView extends ListView {
 				downY = (int) ev.getY();
 				istoUp = false;// 重置
 
+				// 禁止点击
+				isEnabledItemClick = false;
+
 				break;
 
 			case MotionEvent.ACTION_MOVE :// 触摸按住移动
@@ -288,8 +306,10 @@ public class DragRefreshListView extends ListView {
 					break;
 				}
 
-				// 除以3为了减慢下拉速度
-				int deltaY = (int) (ev.getY() - downY) / 3;
+				int currentY = (int) ev.getY();
+
+				// TODO:除以3为了减慢下拉速度
+				int deltaY = (currentY - downY) / 3;
 
 				// 第一个项目下拉才显示下拉刷新
 				if (deltaY < 0 || getFirstVisiblePosition() > 1) {
@@ -298,32 +318,45 @@ public class DragRefreshListView extends ListView {
 					changeHeaderView();
 					istoUp = true;
 
+					break;
 				}
 
 				// 上拉后不再能下拉刷新
 				if (!istoUp) {
+
 					int paddingTop = -mHeaderViewHeight + deltaY;
-					// LogUtils.i("FeedPager", "paddingTop:" + paddingTop);
 
-					if (paddingTop > -mHeaderViewHeight) {
+					LogUtils.i("FeedPager", "mHeaderViewHeight:"
+							+ mHeaderViewHeight + "\npaddingTop:" + paddingTop
+							+ "\ndeltaY:" + deltaY);
 
-						mHeaderView.setPadding(0, paddingTop, 0, 0);
+					// 限制下拉高度
+					if (paddingTop >= -mHeaderViewHeight
+							&& getFirstVisiblePosition() < 1) {
 
-						if (paddingTop >= 10 && dragState == STATE_DRAGING) {
-							// 松开就刷新
-							dragState = STATE_AREADY_REFRESH;
-							changeHeaderView();
-						} else if (paddingTop < 10
-								&& dragState == STATE_AREADY_REFRESH) {
-							// 松开不刷新
-							dragState = STATE_DRAGING;
-							changeHeaderView();
+						if (paddingTop <= mHeaderViewHeight) {// 防止拉太多
+							mHeaderView.setPadding(0, paddingTop, 0, 0);
+
+							if (deltaY >= mHeaderViewHeight
+									&& dragState == STATE_DRAGING) {
+
+								// 松开就刷新
+								dragState = STATE_AREADY_REFRESH;
+								changeHeaderView();
+
+							} else if (deltaY < mHeaderViewHeight
+									&& dragState == STATE_AREADY_REFRESH) {
+								// 松开不刷新
+								dragState = STATE_DRAGING;
+								changeHeaderView();
+
+							}
 						}
 
-						// 调用父类方法，防止下拉时误点item
-						super.onTouchEvent(ev);
 						return true;
+
 					}
+
 				}
 
 				break;
@@ -342,11 +375,66 @@ public class DragRefreshListView extends ListView {
 					refresh();
 				}
 
+				// 允许点击
+				isEnabledItemClick = true;
+
 				break;
 
 		}
 
 		return super.onTouchEvent(ev);
+
+	}
+
+	@Override
+	public void setAdapter(ListAdapter adapter) {
+		// 装饰适配器，增加禁止点击功能
+		ListAdapter newAdapter = new DecoratorBaseAdapter(adapter);
+
+		super.setAdapter(newAdapter);
+	}
+
+	/**
+	 * BaseAdapter的装饰类 增加禁止点击功能
+	 * 
+	 * @see #isEnabledItemClick
+	 */
+	class DecoratorBaseAdapter extends BaseAdapter {
+
+		/**
+		 * 原来的适配器
+		 */
+		private ListAdapter orgAdapter;
+
+		public DecoratorBaseAdapter(ListAdapter adapter) {
+			this.orgAdapter = adapter;
+		}
+
+		@Override
+		public boolean isEnabled(int position) {
+			// 优先判断是否允许点击
+			return isEnabledItemClick && orgAdapter.isEnabled(position);
+		}
+
+		@Override
+		public int getCount() {
+			return orgAdapter.getCount();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return orgAdapter.getItem(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return orgAdapter.getItemId(position);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			return orgAdapter.getView(position, convertView, parent);
+		}
 
 	}
 
