@@ -169,6 +169,10 @@ public class SearchItemActivity extends DefaultNewActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				
+				//转换为从0开始的位置
+				position = position- mResultListView.getHeaderViewsCount();
+				
 				int clickItem = mResultList.get(position).itemId;
 
 				for (int i = 0; i < mShowedList.size(); i++) {
@@ -202,7 +206,6 @@ public class SearchItemActivity extends DefaultNewActivity {
 		});
 
 	}
-
 	/**
 	 * 异步搜索任务
 	 */
@@ -267,14 +270,16 @@ public class SearchItemActivity extends DefaultNewActivity {
 		for (int i = 0; i < mShowedList.size(); i++) {
 
 			// 搜索已显示的列表
-			if (mShowedList.get(i).baseInfo.title.toLowerCase().contains(keyword)) {
+			if (mShowedList.get(i).baseInfo.title.toLowerCase().contains(
+					keyword)) {
 				mResultList.add(mShowedList.get(i));
 			}
 		}
 		for (int i = 0; i < mUnShowList.size(); i++) {
 
 			// 搜索未显示的列表,大小写不明感
-			if (mUnShowList.get(i).baseInfo.title.toLowerCase().contains(keyword)) {
+			if (mUnShowList.get(i).baseInfo.title.toLowerCase().contains(
+					keyword)) {
 				mResultList.add(mUnShowList.get(i));
 			}
 		}

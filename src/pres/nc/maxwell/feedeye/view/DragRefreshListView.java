@@ -1,7 +1,6 @@
 package pres.nc.maxwell.feedeye.view;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -116,11 +114,6 @@ public class DragRefreshListView extends ListView {
 	private OnRefreshListener refreshListener;
 
 	/**
-	 * 默认的ListView的OnItemClickListener
-	 */
-	private OnItemClickListener OriginOnItemClickListener;
-
-	/**
 	 * 刷新动画
 	 */
 	private RotateAnimation mArrowToRefreshAnimation;
@@ -151,8 +144,8 @@ public class DragRefreshListView extends ListView {
 		this.setSelector(R.color.transparent);
 		// this.setCacheColorHint(R.color.transparent);
 
-		// 设置滚动监听监听
-		setOnScrollListener(new DefaultOnScrollListener());
+		// 初始化默认的监听器
+		setOnScrollListener(new EmptyScrollListener());
 	}
 
 	/**
@@ -307,13 +300,13 @@ public class DragRefreshListView extends ListView {
 
 			case MotionEvent.ACTION_MOVE :// 触摸按住移动
 
-				//不允许刷新不处理
+				// 不允许刷新不处理
 				if (!isAllowRefresh) {
 					break;
 				}
-				
+
 				// 刷新时、加载更多时不处理
-				if (dragState == STATE_REFRESHING || isLoadingMore ) {
+				if (dragState == STATE_REFRESHING || isLoadingMore) {
 					break;
 				}
 
@@ -337,9 +330,9 @@ public class DragRefreshListView extends ListView {
 
 					int paddingTop = -mHeaderViewHeight + deltaY;
 
-					LogUtils.i("FeedPager", "mHeaderViewHeight:"
-							+ mHeaderViewHeight + "\npaddingTop:" + paddingTop
-							+ "\ndeltaY:" + deltaY);
+					// LogUtils.i("FeedPager", "mHeaderViewHeight:"+
+					// mHeaderViewHeight + "\npaddingTop:" + paddingTop+
+					// "\ndeltaY:" + deltaY);
 
 					// 限制下拉高度
 					if (paddingTop >= -mHeaderViewHeight
@@ -375,11 +368,11 @@ public class DragRefreshListView extends ListView {
 
 			case MotionEvent.ACTION_UP :// 触摸松开
 
-				//不允许刷新不处理
+				// 不允许刷新不处理
 				if (!isAllowRefresh) {
 					break;
 				}
-				
+
 				downY = -1;// 重置
 
 				if (dragState == STATE_DRAGING) {// 不刷新
@@ -440,9 +433,53 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
+	 * 装饰用户的滚动监听器
+	 */
+	@Override
+	public void setOnScrollListener(OnScrollListener l) {
+		// 设置滚动监听
+		super.setOnScrollListener(new LoadingMoreScrollListener(l));
+
+	}
+
+	/**
+	 * 什么都不处理的EmptyScrollListener 上拉加载更多需要滚动监听器， 用于用户不设置监听器时，会使用此作为用户的监听器
+	 * 
+	 * @see LoadingMoreScrollListener
+	 */
+	public class EmptyScrollListener implements OnScrollListener {
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+		}
+
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+		}
+	}
+
+	/**
 	 * 用于监听滚动事件，上拉加载更多
 	 */
-	class DefaultOnScrollListener implements OnScrollListener {
+	class LoadingMoreScrollListener implements OnScrollListener {
+
+		/**
+		 * 用户设置的滚动监听器
+		 */
+		OnScrollListener userListener;
+
+		/**
+		 * 获取 用户设置的滚动监听器
+		 * 
+		 * @param orginListener
+		 *            滚动监听器
+		 * @see EmptyScrollListener
+		 */
+		public LoadingMoreScrollListener(OnScrollListener userListener) {
+			this.userListener = userListener;
+		}
+
 		/**
 		 * 滚动状态改变，用于上拉加载更多
 		 */
@@ -472,6 +509,9 @@ public class DragRefreshListView extends ListView {
 					}
 				}
 			}
+
+			// 用户的操作
+			userListener.onScrollStateChanged(view, scrollState);
 		}
 
 		/**
@@ -480,44 +520,11 @@ public class DragRefreshListView extends ListView {
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			// Not Use
+
+			// 用户的操作
+			userListener.onScroll(view, firstVisibleItem, visibleItemCount,
+					totalItemCount);
 		}
-	}
-
-	/**
-	 * 重写OnItemClickListener，让listener的position为第一个非headerView的item开始计算
-	 */
-	@Override
-	public void setOnItemClickListener(
-			android.widget.AdapterView.OnItemClickListener listener) {
-		this.OriginOnItemClickListener = listener;
-		super.setOnItemClickListener(new NaturePositionOnItemClickListener());
-
-	}
-
-	/**
-	 * 重写onItemClick方法，修改传入的position为position-headerView数量
-	 */
-	class NaturePositionOnItemClickListener implements OnItemClickListener {
-
-		/**
-		 * 修改传入的position为position-headerView数量
-		 */
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-
-			// TODO：考虑是否拦截刷新时点击事件
-			// 防止加载更多时或者下拉时误点item
-			if (!isLoadingMore && dragState == STATE_DRAGING) {
-
-				OriginOnItemClickListener.onItemClick(parent, view, position
-						- getHeaderViewsCount(), id);
-
-			}
-
-		}
-
 	}
 
 }

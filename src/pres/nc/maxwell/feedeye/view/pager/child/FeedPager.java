@@ -527,11 +527,11 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-
-				// 检查NaturePositionOnItemClickListener是否生效
-				// LogUtils.w("FeedPager", "item position:" + position);
-
+					int position, long id) 
+			{
+				//转换为从0开始的位置
+				position = position- mListView.getHeaderViewsCount();
+				
 				Intent intent = new Intent(mActivity,
 						ItemDetailListActivity.class);
 				intent.putExtra("FeedItem", mItemInfoShowedList.get(position));
