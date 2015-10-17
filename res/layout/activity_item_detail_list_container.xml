@@ -9,8 +9,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
-        android:fastScrollEnabled="true"
         android:divider="@null"
+        android:fastScrollEnabled="true"
         android:visibility="invisible" />
 
     <RelativeLayout
@@ -38,15 +38,31 @@
             android:textSize="18sp" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_nothing_found"
+    <RelativeLayout
+        android:id="@+id/rl_nothing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:layout_marginTop="15dp"
-        android:text="无任何接收到的数据"
-        android:textColor="@color/grey"
-        android:textSize="18sp"
-        android:visibility="invisible" />
+        android:visibility="invisible" >
+
+        <ImageView
+            android:id="@+id/iv_refresh_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/listview_refresh_rotate_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_refresh_pic"
+            android:layout_alignTop="@id/iv_refresh_pic"
+            android:layout_toRightOf="@id/iv_refresh_pic"
+            android:gravity="center_vertical"
+            android:text="点此重新加载"
+            android:textColor="@drawable/selector_press_text_color_theme"
+            android:textSize="22sp" >
+        </TextView>
+    </RelativeLayout>
 
 </FrameLayout>

@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -52,9 +53,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	private RelativeLayout mLoadingLayout;
 
 	/**
-	 * 加载不到的文本
+	 * 加载不到的布局
 	 */
-	private TextView mNothingFoundText;
+	private RelativeLayout mNothingFoundLayout;
 
 	/**
 	 * 数据适配器
@@ -119,8 +120,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mLoadingLayout = (RelativeLayout) mCustomContainerView
 				.findViewById(R.id.rl_loading);
 
-		mNothingFoundText = (TextView) mCustomContainerView
-				.findViewById(R.id.tv_nothing_found);
+		mNothingFoundLayout = (RelativeLayout) mCustomContainerView
+				.findViewById(R.id.rl_nothing);
+
 	}
 
 	@Override
@@ -158,6 +160,37 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				});
 
+		// 失败时重新加载
+		mNothingFoundLayout.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				// 设置显示加载中
+				changeDisplayState(STATE_LOADING);
+
+				//延迟加载
+				new Thread(){
+					
+					@Override
+					public void run() {
+						
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						
+						//重新加载
+						LoadData();
+					};
+					
+				}.start();
+				
+			}
+
+		});
+
 		// 加载数据
 		LoadData();
 
@@ -174,17 +207,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		switch (state) {
 			case STATE_NOTHING :
-				mNothingFoundText.setVisibility(View.VISIBLE);
+				mNothingFoundLayout.setVisibility(View.VISIBLE);
 				mLoadingLayout.setVisibility(View.INVISIBLE);
 				mListView.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_LOADING :
-				mNothingFoundText.setVisibility(View.INVISIBLE);
+				mNothingFoundLayout.setVisibility(View.INVISIBLE);
 				mLoadingLayout.setVisibility(View.VISIBLE);
 				mListView.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_SHOWING :
-				mNothingFoundText.setVisibility(View.INVISIBLE);
+				mNothingFoundLayout.setVisibility(View.INVISIBLE);
 				mLoadingLayout.setVisibility(View.INVISIBLE);
 				mListView.setVisibility(View.VISIBLE);
 				break;
@@ -248,8 +281,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 							Toast.makeText(mThisActivity,
 									"更新了" + contentInfos.size() + "条数据",
 									Toast.LENGTH_SHORT).show();
-							//TODO：判断是否需要刷新adapter？
-							
+							// TODO：判断是否需要刷新adapter？
+
 							// 插入到首部
 							mContentInfoList.clear();
 							mContentInfoList = contentInfos;
