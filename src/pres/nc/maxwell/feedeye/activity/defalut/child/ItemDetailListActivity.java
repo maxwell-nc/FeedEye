@@ -144,8 +144,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mListViewAdapter = new ItemDetailListAdapter();
 		mListView.setAdapter(mListViewAdapter);
 		
+		mListView.isAllowRefresh =false;
+		
 		// 不使用加载更多
-		mListView.setAllowLoadingMore(false);
+		mListView.isAllowLoadingMore = false;
 
 		// 设置刷新监听
 		mListView.setOnRefreshListener(new OnRefreshListener() {

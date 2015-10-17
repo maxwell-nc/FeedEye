@@ -295,7 +295,9 @@ public class FeedPager extends BasePager {
 			addCount = SHOW_ITEM_COUNT;
 		} else {// 剩下数据全部加载
 			addCount = mItemInfoUnshowList.size();
-			mListView.setAllowLoadingMore(false);// 没有更多数据，禁止上拉加载更多
+			
+			// 没有更多数据，禁止上拉加载更多
+			mListView.isAllowLoadingMore = false;
 		}
 
 		// 添加到显示列表
@@ -429,7 +431,7 @@ public class FeedPager extends BasePager {
 
 							if (mItemInfoUnshowList.size() > 0) {
 								// 允许再加载更多
-								mListView.setAllowLoadingMore(true);
+								mListView.isAllowLoadingMore = true;
 							}
 
 							Toast.makeText(mActivity, "刷新成功",
@@ -475,7 +477,7 @@ public class FeedPager extends BasePager {
 							}
 							if (mItemInfoUnshowList.size() <= 0) {
 								// 禁止再加载更多
-								mListView.setAllowLoadingMore(false);
+								mListView.isAllowLoadingMore = false;
 							}
 							mListView.completeRefresh();
 

@@ -7,14 +7,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,24 +21,41 @@ import android.widget.TextView;
  */
 public class DragRefreshListView extends ListView {
 
+	/**
+	 * 下拉刷新的控件
+	 */
 	private View mHeaderView;
+
+	/**
+	 * 下拉刷新的控件的高度
+	 */
 	private int mHeaderViewHeight;
 
+	/**
+	 * 上拉加载更多的控件
+	 */
 	private View mFooterView;
+
+	/**
+	 * 上拉加载更多的高度
+	 */
 	private int mFooterViewHeight;
 
 	/**
 	 * HeaderView中的时间文本
 	 */
 	private TextView mHeaderTimeText;
+
 	/**
 	 * HeaderView中的提示文本
 	 */
 	private TextView mHeaderTipsText;
+
 	/**
 	 * HeaderView中的旋转图片
 	 */
 	private ProgressBar mHeaderRotatewPic;
+
 	/**
 	 * HeaderView中的箭头图片
 	 */
@@ -50,7 +64,8 @@ public class DragRefreshListView extends ListView {
 	/**
 	 * 触摸时Y坐标
 	 */
-	private int downY; //
+	private int downY;
+
 	/**
 	 * 是否上拉，如果为真则代表不能显示下拉刷新
 	 */
@@ -60,10 +75,12 @@ public class DragRefreshListView extends ListView {
 	 * 下拉状态
 	 */
 	private final int STATE_DRAGING = 1;
+
 	/**
 	 * 到达松开即可刷新状态
 	 */
 	private final int STATE_AREADY_REFRESH = 2;
+
 	/**
 	 * 刷新中
 	 */
@@ -77,6 +94,7 @@ public class DragRefreshListView extends ListView {
 	 * @see #STATE_REFRESHING
 	 */
 	private int dragState = STATE_DRAGING;
+
 	/**
 	 * 是否正在加载更多
 	 */
@@ -85,20 +103,18 @@ public class DragRefreshListView extends ListView {
 	/**
 	 * 是否允许上拉加载更多
 	 */
-	private boolean isAllowLoadingMore = true;
+	public boolean isAllowLoadingMore = true;
 
-	public boolean isAllowLoadingMore() {
-		return isAllowLoadingMore;
-	}
-
-	public void setAllowLoadingMore(boolean isAllowLoadingMore) {
-		this.isAllowLoadingMore = isAllowLoadingMore;
-	}
+	/**
+	 * 是否允许下拉刷新
+	 */
+	public boolean isAllowRefresh = true;
 
 	/**
 	 * 下拉刷新和加载更多监听器
 	 */
 	private OnRefreshListener refreshListener;
+
 	/**
 	 * 默认的ListView的OnItemClickListener
 	 */
@@ -113,13 +129,6 @@ public class DragRefreshListView extends ListView {
 	 * 正常动画
 	 */
 	private RotateAnimation mArrowToNormalAnimation;
-
-	/**
-	 * 是否允许点击条目
-	 * 
-	 * @see DecoratorBaseAdapter
-	 */
-	private boolean isEnabledItemClick;
 
 	public DragRefreshListView(Context context) {
 		super(context);
@@ -294,21 +303,23 @@ public class DragRefreshListView extends ListView {
 				downY = (int) ev.getY();
 				istoUp = false;// 重置
 
-				// 禁止点击
-				isEnabledItemClick = false;
-
 				break;
 
 			case MotionEvent.ACTION_MOVE :// 触摸按住移动
 
-				// 刷新时或加载更多时不允许再刷新
-				if (dragState == STATE_REFRESHING || isLoadingMore) {
+				//不允许刷新不处理
+				if (!isAllowRefresh) {
+					break;
+				}
+				
+				// 刷新时、加载更多时不处理
+				if (dragState == STATE_REFRESHING || isLoadingMore ) {
 					break;
 				}
 
 				int currentY = (int) ev.getY();
 
-				// TODO:除以3为了减慢下拉速度
+				// 除以3为了减慢下拉速度
 				int deltaY = (currentY - downY) / 3;
 
 				// 第一个项目下拉才显示下拉刷新
@@ -334,27 +345,28 @@ public class DragRefreshListView extends ListView {
 					if (paddingTop >= -mHeaderViewHeight
 							&& getFirstVisiblePosition() < 1) {
 
-						if (paddingTop <= mHeaderViewHeight) {// 防止拉太多
-							mHeaderView.setPadding(0, paddingTop, 0, 0);
+						setSelection(0);// 确保向下滚动不影响
+						mHeaderView.setPadding(0, paddingTop, 0, 0);
 
-							if (deltaY >= mHeaderViewHeight
-									&& dragState == STATE_DRAGING) {
+						if (deltaY >= mHeaderViewHeight
+								&& dragState == STATE_DRAGING) {
 
-								// 松开就刷新
-								dragState = STATE_AREADY_REFRESH;
-								changeHeaderView();
+							// 松开就刷新
+							dragState = STATE_AREADY_REFRESH;
+							changeHeaderView();
 
-							} else if (deltaY < mHeaderViewHeight
-									&& dragState == STATE_AREADY_REFRESH) {
-								// 松开不刷新
-								dragState = STATE_DRAGING;
-								changeHeaderView();
+						} else if (deltaY < mHeaderViewHeight
+								&& dragState == STATE_AREADY_REFRESH) {
+							// 松开不刷新
+							dragState = STATE_DRAGING;
+							changeHeaderView();
 
-							}
 						}
 
-						return true;
+						// super.onTouchEvent(ev);
+						// return true;
 
+						break;
 					}
 
 				}
@@ -363,6 +375,11 @@ public class DragRefreshListView extends ListView {
 
 			case MotionEvent.ACTION_UP :// 触摸松开
 
+				//不允许刷新不处理
+				if (!isAllowRefresh) {
+					break;
+				}
+				
 				downY = -1;// 重置
 
 				if (dragState == STATE_DRAGING) {// 不刷新
@@ -375,66 +392,12 @@ public class DragRefreshListView extends ListView {
 					refresh();
 				}
 
-				// 允许点击
-				isEnabledItemClick = true;
-
 				break;
 
 		}
 
+		// 父类中有禁止滑动时点击的逻辑
 		return super.onTouchEvent(ev);
-
-	}
-
-	@Override
-	public void setAdapter(ListAdapter adapter) {
-		// 装饰适配器，增加禁止点击功能
-		ListAdapter newAdapter = new DecoratorBaseAdapter(adapter);
-
-		super.setAdapter(newAdapter);
-	}
-
-	/**
-	 * BaseAdapter的装饰类 增加禁止点击功能
-	 * 
-	 * @see #isEnabledItemClick
-	 */
-	class DecoratorBaseAdapter extends BaseAdapter {
-
-		/**
-		 * 原来的适配器
-		 */
-		private ListAdapter orgAdapter;
-
-		public DecoratorBaseAdapter(ListAdapter adapter) {
-			this.orgAdapter = adapter;
-		}
-
-		@Override
-		public boolean isEnabled(int position) {
-			// 优先判断是否允许点击
-			return isEnabledItemClick && orgAdapter.isEnabled(position);
-		}
-
-		@Override
-		public int getCount() {
-			return orgAdapter.getCount();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return orgAdapter.getItem(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return orgAdapter.getItemId(position);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			return orgAdapter.getView(position, convertView, parent);
-		}
 
 	}
 
