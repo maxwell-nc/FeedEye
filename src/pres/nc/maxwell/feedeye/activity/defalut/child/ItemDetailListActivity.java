@@ -15,12 +15,20 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.text.ClipboardManager;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -30,6 +38,7 @@ import android.widget.Toast;
 /**
  * 详细信息列表的页面的Activity
  */
+@SuppressWarnings("deprecation")
 public class ItemDetailListActivity extends DefaultNewActivity {
 
 	/**
@@ -161,35 +170,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				});
 
 		// 失败时重新加载
-		mNothingFoundLayout.setOnClickListener(new OnClickListener() {
+		mNothingFoundLayout.setOnClickListener(new ReloadClickListener());
 
-			@Override
-			public void onClick(View v) {
-				
-				// 设置显示加载中
-				changeDisplayState(STATE_LOADING);
-
-				//延迟加载
-				new Thread(){
-					
-					@Override
-					public void run() {
-						
-						try {
-							Thread.sleep(2000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						
-						//重新加载
-						LoadData();
-					};
-					
-				}.start();
-				
-			}
-
-		});
+		// 设置长按条目事件
+		mListView.setOnItemLongClickListener(new ItemLongClickListener());
 
 		// 加载数据
 		LoadData();
@@ -439,6 +423,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
+	 * ViewHolder
+	 * 
+	 * @see ItemDetailListAdapter
+	 */
+	static class ViewHolder {
+		TextView title;
+		TextView preview;
+		TextView time;
+	}
+
+	/**
 	 * 详细信息的数据适配器
 	 */
 	class ItemDetailListAdapter extends BaseAdapter {
@@ -556,14 +551,162 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ViewHolder
-	 * 
-	 * @see ItemDetailListAdapter
+	 * "点击重新加载"按钮的监听器
 	 */
-	static class ViewHolder {
-		TextView title;
-		TextView preview;
-		TextView time;
+	private class ReloadClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+
+			// 设置显示加载中
+			changeDisplayState(STATE_LOADING);
+
+			// 延迟加载
+			new Thread() {
+
+				@Override
+				public void run() {
+
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					// 重新加载
+					LoadData();
+				};
+
+			}.start();
+
+		}
+	}
+
+	/**
+	 * 设置长按条目事件
+	 */
+	private class ItemLongClickListener implements OnItemLongClickListener {
+
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view,
+				final int position, long id) {
+
+			new MainThemeLongClickDialog(mThisActivity,
+					new DialogDataAdapter() {
+
+						@Override
+						public int getLayoutViewId() {
+							return R.layout.view_long_click_lv_detail;
+						}
+
+						@Override
+						public int[] getTextViewResIds() {
+							int[] ids = {R.id.tv_favor, R.id.tv_share,
+									R.id.tv_copy};
+							return ids;
+						}
+
+						@Override
+						public OnClickListener[] getItemOnClickListener(
+								final AlertDialog alertDialog) {
+
+							OnClickListener[] listeners = {
+									new FavorOnClickListener(position,
+											alertDialog),// 收藏
+									new ShareOnClickListener(position,
+											alertDialog),// 分享
+									new CopyLinkOnClickListener(position,
+											alertDialog)// 复制
+							};
+
+							return listeners;
+						}
+					}).show();
+
+			return true;
+		}
+
+		/**
+		 * 收藏的点击事件
+		 */
+		class FavorOnClickListener extends AlertDialogOnClickListener {
+
+			public FavorOnClickListener(int position, AlertDialog alertDialog) {
+				super(position, alertDialog);
+			}
+
+			@Override
+			public void onClick(View v) {
+
+				// TODO：添加收藏的逻辑
+
+				alertDialog.dismiss();// 对话框关闭
+			}
+
+		}
+
+		/**
+		 * 复制链接的点击事件
+		 */
+		class CopyLinkOnClickListener extends AlertDialogOnClickListener {
+
+			public CopyLinkOnClickListener(int position, AlertDialog alertDialog) {
+				super(position, alertDialog);
+			}
+
+			@Override
+			public void onClick(View v) {
+
+				int realPosition = position - mListView.getHeaderViewsCount();
+
+				// 获取链接
+				String link = mContentInfoList.get(realPosition).link;
+
+				ClipboardManager clipManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+				clipManager.setText(link);
+
+				Toast.makeText(mThisActivity, "复制成功", Toast.LENGTH_SHORT)
+						.show();
+
+				alertDialog.dismiss();// 对话框关闭
+			}
+		}
+
+		/**
+		 * 分享的点击事件
+		 */
+		class ShareOnClickListener extends AlertDialogOnClickListener {
+
+			public ShareOnClickListener(int position, AlertDialog alertDialog) {
+				super(position, alertDialog);
+			}
+
+			@Override
+			public void onClick(View v) {
+
+				int realPosition = position - mListView.getHeaderViewsCount();
+
+				// 获取标题
+				String msgTitle = mContentInfoList.get(realPosition).title;
+				// 获取摘要
+				String msgSummary = mContentInfoList.get(realPosition).description
+						.substring(0, 120);
+
+				msgSummary = Html.fromHtml(msgSummary).toString();
+				// 获取链接
+				String link = mContentInfoList.get(realPosition).link;
+
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.SEND");
+				intent.addCategory(Intent.CATEGORY_DEFAULT);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, msgTitle + ":\n"
+						+ msgSummary + "...\n" + link);
+				mThisActivity.startActivity(intent);
+
+				alertDialog.dismiss();// 对话框关闭
+			}
+
+		}
 	}
 
 }

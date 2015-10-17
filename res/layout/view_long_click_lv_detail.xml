@@ -5,22 +5,22 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/tv_modify"
+        android:id="@+id/tv_favor"
         style="@style/item_long_click"
-        android:text="@string/modify_title" />
+        android:text="@string/favor" />
 
     <View style="@style/hr_line" />
 
     <TextView
-        android:id="@+id/tv_delete"
+        android:id="@+id/tv_share"
         style="@style/item_long_click"
-        android:text="@string/delete_feed" />
+        android:text="@string/share_to_friends" />
 
     <View style="@style/hr_line" />
 
     <TextView
-        android:id="@+id/tv_cancel"
+        android:id="@+id/tv_copy"
         style="@style/item_long_click"
-        android:text="@string/cancel" />
+        android:text="@string/copy_link" />
 
 </LinearLayout>

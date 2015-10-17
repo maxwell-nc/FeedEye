@@ -12,13 +12,16 @@ import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
-import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
-import pres.nc.maxwell.feedeye.view.ThemeAlertDialog;
-import pres.nc.maxwell.feedeye.view.ThemeAlertDialog.ThemeAlertDialogAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog.MainThemeAlertDialogAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -509,24 +512,10 @@ public class FeedPager extends BasePager {
 
 	}
 
+	/**
+	 * 长按点击监听器
+	 */
 	class ItemLongClickListener implements OnItemLongClickListener {
-
-		/**
-		 * 初始化各个按钮对象
-		 * 
-		 * @param alertView
-		 *            View父对象
-		 * @param resIds
-		 *            资源id（任意个）
-		 * @return 返回顺序的TextView对象数据
-		 */
-		public TextView[] initTextButtonView(View alertView, int... resIds) {
-			TextView[] textViews = new TextView[resIds.length];
-			for (int i = 0; i < resIds.length; i++) {
-				textViews[i] = (TextView) alertView.findViewById(resIds[i]);
-			}
-			return textViews;
-		}
 
 		/**
 		 * 点击事件
@@ -535,65 +524,53 @@ public class FeedPager extends BasePager {
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				final int position, long id) {
 
-			View alertView = View.inflate(mActivity,
-					R.layout.view_long_click_lv_feed, null);
+			new MainThemeLongClickDialog(mActivity,
+					new DialogDataAdapter() {
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+						@Override
+						public int getLayoutViewId() {
+							return R.layout.view_long_click_lv_feed;
+						}
 
-			builder.setView(alertView);
+						@Override
+						public int[] getTextViewResIds() {
+							int[] ids = {R.id.tv_modify, R.id.tv_delete,
+									R.id.tv_cancel};
+							return ids;
+						}
 
-			final AlertDialog alertDialog = builder.show();
+						@Override
+						public OnClickListener[] getItemOnClickListener(
+								final AlertDialog alertDialog) {
 
-			TextView[] textViews = initTextButtonView(alertView,
-					R.id.tv_modify, R.id.tv_delete, R.id.tv_cancel);
+							OnClickListener[] listeners = {
+									new ModifyClickListener(position,
+											alertDialog),// 修改标题
+									new DeleteClickListener(position,
+											alertDialog), // 删除
+									new OnClickListener() {// 取消
 
-			// 点击修改标题
-			textViews[0].setOnClickListener(new ModifyClickListener(position,
-					alertDialog));
+										@Override
+										public void onClick(View v) {
+											alertDialog.dismiss();// 对话框关闭
+										}
 
-			// 点击删除条目
-			textViews[1].setOnClickListener(new DeleteClickListener(
-					alertDialog, position));
+									}};
 
-			// 点击取消
-			textViews[2].setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					alertDialog.dismiss();// 对话框关闭
-				}
-
-			});
+							return listeners;
+						}
+					}).show();
 
 			return true;
 		}
-
+		
 		/**
 		 * 修改标题点击监听器
 		 */
-		class ModifyClickListener implements OnClickListener {
+		class ModifyClickListener extends AlertDialogOnClickListener {
 
-			/**
-			 * 显示的对话框
-			 */
-			private AlertDialog alertDialog;
-
-			/**
-			 * 条目索引
-			 */
-			private int position;
-
-			/**
-			 * 传入当前显示的对话框和选中条目索引
-			 * 
-			 * @param alertDialog
-			 *            显示的对话框
-			 * @param position
-			 *            条目索引
-			 */
-			private ModifyClickListener(int position, AlertDialog alertDialog) {
-				this.position = position;
-				this.alertDialog = alertDialog;
+			public ModifyClickListener(int position, AlertDialog alertDialog) {
+				super(position, alertDialog);
 			}
 
 			@Override
@@ -602,8 +579,8 @@ public class FeedPager extends BasePager {
 				alertDialog.dismiss();// 对话框关闭
 
 				// 显示修改的对话框
-				new ThemeAlertDialog(mActivity)
-						.setAdapter(new ThemeAlertDialogAdapter() {
+				new MainThemeAlertDialog(mActivity)
+						.setAdapter(new MainThemeAlertDialogAdapter() {
 
 							/**
 							 * 输入框
@@ -675,10 +652,15 @@ public class FeedPager extends BasePager {
 									FrameLayout container,
 									TextView confirmButtom,
 									TextView cancelButtom) {
+								
 								// 获取原来的标题
 								String orgTitle = ((ViewHolder) mListView
-										.getChildAt(position).getTag()).mItemTitle
-										.getText().toString();
+										.getChildAt(
+												position
+														- mListView
+																.getFirstVisiblePosition())
+										.getTag()).mItemTitle.getText()
+										.toString();
 
 								mTitleView.setText(orgTitle);
 							}
@@ -691,29 +673,10 @@ public class FeedPager extends BasePager {
 		/**
 		 * 删除点击监听器
 		 */
-		class DeleteClickListener implements OnClickListener {
+		class DeleteClickListener  extends AlertDialogOnClickListener {
 
-			/**
-			 * 显示的对话框
-			 */
-			private AlertDialog alertDialog;
-
-			/**
-			 * 条目索引
-			 */
-			private int position;
-
-			/**
-			 * 传入当前显示的对话框和选中条目索引
-			 * 
-			 * @param alertDialog
-			 *            显示的对话框
-			 * @param position
-			 *            条目索引
-			 */
-			public DeleteClickListener(AlertDialog alertDialog, int position) {
-				this.alertDialog = alertDialog;
-				this.position = position;
+			public DeleteClickListener(int position, AlertDialog alertDialog) {
+				super(position, alertDialog);
 			}
 
 			@Override
@@ -722,8 +685,8 @@ public class FeedPager extends BasePager {
 				alertDialog.dismiss();// 对话框关闭
 
 				// 再次确认删除
-				new ThemeAlertDialog(mActivity)
-						.setAdapter(new ThemeAlertDialogAdapter() {
+				new MainThemeAlertDialog(mActivity)
+						.setAdapter(new MainThemeAlertDialogAdapter() {
 
 							@Override
 							public String getTitle() {
@@ -825,7 +788,8 @@ public class FeedPager extends BasePager {
 		// 不完全更新界面
 		if (mListView.getFirstVisiblePosition() <= position
 				&& position <= mListView.getLastVisiblePosition()) {
-			((ViewHolder) mListView.getChildAt(position).getTag()).mItemTitle
+			((ViewHolder) mListView.getChildAt(
+					position - mListView.getFirstVisiblePosition()).getTag()).mItemTitle
 					.setText(newTitle);
 		}
 

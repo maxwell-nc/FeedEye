@@ -10,9 +10,9 @@
         android:id="@+id/iv_item_pic"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
         android:scaleType="centerCrop"
         android:src="@color/grey" />
 
@@ -31,10 +31,8 @@
         android:textSize="18sp" />
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
+        style="@style/hr_line"
         android:layout_below="@id/iv_item_pic"
-        android:layout_marginTop="6dp"
-        android:background="@color/hr_line" />
+        android:layout_marginTop="6dp" />
 
 </RelativeLayout>

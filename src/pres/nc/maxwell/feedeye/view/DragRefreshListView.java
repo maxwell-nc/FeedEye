@@ -134,6 +134,8 @@ public class DragRefreshListView extends ListView {
 	 */
 	private RotateAnimation mArrowToNormalAnimation;
 
+	private int deltaY;
+
 	public DragRefreshListView(Context context) {
 		super(context);
 		initView();
@@ -331,8 +333,7 @@ public class DragRefreshListView extends ListView {
 
 				int currentY = (int) ev.getY();
 
-				// 除以3为了减慢下拉速度
-				int deltaY = (currentY - downY) / 3;
+				deltaY = (currentY - downY) / 3;
 
 				// 第一个项目下拉才显示下拉刷新
 				if (deltaY < 0 || getFirstVisiblePosition() > 1) {
@@ -391,15 +392,11 @@ public class DragRefreshListView extends ListView {
 				if (!isAllowRefresh) {
 					break;
 				}
-
+				
 				downY = -1;// 重置
 
 				if (dragState == STATE_DRAGING) {// 不刷新
 					mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
-					if (!istoUp) {
-						setSelection(getFirstVisiblePosition());
-					}
-
 				} else if (dragState == STATE_AREADY_REFRESH) {// 刷新
 					refresh();
 				}

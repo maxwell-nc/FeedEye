@@ -16,7 +16,7 @@ public class BitmapCacheUtils {
 	/**
 	 * 默认的加载中的资源图片id
 	 */
-	private static final int LOAD_RESOURCE_ID = R.drawable.listview_refresh_rotate;
+	private static final int LOAD_RESOURCE_ID = R.drawable.listview_refresh_rotate_arrow;
 
 	/**
 	 * 默认的加载错误的资源图片id

@@ -6,7 +6,7 @@
     <string name="unknown_version">未知版本</string>
     <string name="navi_feed">订阅</string>
     <string name="navi_discover">发现</string>
-    <string name="navi_favor">收藏</string>
+    <string name="favor">收藏</string>
     <string name="navi_setting">设置</string>
     <string name="load_more">加载更多内容</string>
     <string name="delete_feed">删除这条订阅</string>
@@ -15,5 +15,7 @@
     <string name="add_feed">添加订阅</string>
     <string name="modify_title">修改标题</string>
     <string name="cancel">取消</string>
-
+    <string name="share_to_friends">分享给朋友</string>
+    <string name="copy_link">复制链接</string>
+    
 </resources>

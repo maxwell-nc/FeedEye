@@ -27,11 +27,9 @@
 
         <View
             android:id="@+id/v_line"
-            android:layout_width="match_parent"
-            android:layout_height="0.1dp"
+            style="@style/hr_line"
             android:layout_below="@id/tv_title"
-            android:layout_margin="2dp"
-            android:background="@color/hr_line" />
+            android:layout_margin="2dp" />
 
         <TextView
             android:id="@+id/tv_preview"

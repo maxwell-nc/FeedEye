@@ -4,10 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:background="@color/hr_line" />
+    <View style="@style/hr_line" />
 
     <RadioGroup
         android:id="@+id/rg_navi"
@@ -41,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:drawableTop="@drawable/btn_navigation_favor"
-            android:text="@string/navi_favor" />
+            android:text="@string/favor" />
 
         <RadioButton
             android:id="@+id/rb_setting"

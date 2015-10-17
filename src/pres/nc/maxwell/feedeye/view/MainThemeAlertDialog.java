@@ -12,21 +12,21 @@ import android.widget.TextView;
 /**
  * 主题风格的警告框
  */
-public class ThemeAlertDialog {
+public class MainThemeAlertDialog {
 
 	/**
 	 * 依赖显示的Activity
 	 */
 	private Activity mActivity;
 
-	public ThemeAlertDialog(Activity activity) {
+	public MainThemeAlertDialog(Activity activity) {
 		this.mActivity = activity;
 	}
 
 	/**
 	 * 主题风格的警告框数据适配器
 	 */
-	public interface ThemeAlertDialogAdapter {
+	public interface MainThemeAlertDialogAdapter {
 
 		/**
 		 * 设置标题
@@ -69,7 +69,7 @@ public class ThemeAlertDialog {
 	 * 设置适配器并显示
 	 * @param adapter 数据适配器
 	 */
-	public void setAdapter(ThemeAlertDialogAdapter adapter) {
+	public void setAdapter(MainThemeAlertDialogAdapter adapter) {
 
 		// 获得基础的View
 		View baseView = View.inflate(mActivity,

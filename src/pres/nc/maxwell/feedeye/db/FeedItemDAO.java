@@ -207,7 +207,7 @@ public class FeedItemDAO {
 		while (cursor.moveToNext()) {// 查询所有结果
 
 			if (!isReturnDeletedData) {// 不显示已经删除的数据
-				if ("-1".equals(cursor.getString(6))) {// 数据已经被删除，待同步
+				if ("-1".equals(cursor.getString(8))) {// 数据已经被删除，待同步
 					continue;
 				}
 			}
