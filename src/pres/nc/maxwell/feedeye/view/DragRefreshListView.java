@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 /**
  * 封装下拉刷新和加载更多的ListView
+ * TODO:考虑是否屏蔽加载中和刷新中的点击事件
  */
 public class DragRefreshListView extends ListView {
 
@@ -108,6 +109,16 @@ public class DragRefreshListView extends ListView {
 	 */
 	public boolean isAllowRefresh = true;
 
+	/**
+	 * 最小刷新时间
+	 */
+	public int MinRefreshMills = 1000;
+
+	/**
+	 * 最小刷新时间
+	 */
+	public int MinLoadingMoreMills = 500;
+	
 	/**
 	 * 下拉刷新和加载更多监听器
 	 */
@@ -227,12 +238,20 @@ public class DragRefreshListView extends ListView {
 				mHeaderArrowPic.setVisibility(View.INVISIBLE);
 				mHeaderRotatewPic.setVisibility(View.VISIBLE);
 
-				/**
-				 * 调用外部写的方法
-				 */
-				if (refreshListener != null) {
-					refreshListener.onDragRefresh();
-				}
+				// 延迟执行
+				postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						/**
+						 * 调用外部写的方法
+						 */
+						if (refreshListener != null) {
+							refreshListener.onDragRefresh();
+						}
+					}
+					
+				}, MinRefreshMills);
 
 				break;
 		}
@@ -408,6 +427,7 @@ public class DragRefreshListView extends ListView {
 
 	/**
 	 * 提供监听器给调用者填入刷新逻辑
+	 * @see SimpleOnRefreshListener
 	 */
 	public interface OnRefreshListener {
 		/**
@@ -425,6 +445,22 @@ public class DragRefreshListView extends ListView {
 		void onLoadingMore();
 	}
 
+	/**
+	 * 空实现，给只需要上拉加载更多或者只需要下拉刷新时设置的监听器
+	 * @see OnRefreshListener
+	 */
+	public static class SimpleOnRefreshListener implements OnRefreshListener{
+
+		@Override
+		public void onDragRefresh() {
+		}
+
+		@Override
+		public void onLoadingMore() {
+		}
+
+	}
+	
 	/**
 	 * 监听方法，给外部监听刷新时间
 	 */
@@ -500,12 +536,23 @@ public class DragRefreshListView extends ListView {
 						mFooterView.setPadding(0, 0, 0, 0);
 						setSelection(getCount());
 
-						/**
-						 * 调用外部写的方法
-						 */
-						if (refreshListener != null) {
-							refreshListener.onLoadingMore();
-						}
+						// 延迟执行
+						postDelayed(new Runnable() {
+							
+							@Override
+							public void run() {
+								
+								/**
+								 * 调用外部写的方法
+								 */
+								if (refreshListener != null) {
+									refreshListener.onLoadingMore();
+								}
+								
+							}
+							
+						}, MinLoadingMoreMills);
+						
 					}
 				}
 			}

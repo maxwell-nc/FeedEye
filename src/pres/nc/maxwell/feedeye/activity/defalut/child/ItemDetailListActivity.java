@@ -15,7 +15,6 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
-import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.Html;
@@ -25,6 +24,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 详细信息列表的页面的Activity
@@ -143,26 +143,20 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		// 设置数据适配器
 		mListViewAdapter = new ItemDetailListAdapter();
 		mListView.setAdapter(mListViewAdapter);
-		
-		mListView.isAllowRefresh =false;
-		
+
 		// 不使用加载更多
 		mListView.isAllowLoadingMore = false;
 
 		// 设置刷新监听
-		mListView.setOnRefreshListener(new OnRefreshListener() {
+		mListView
+				.setOnRefreshListener(new DragRefreshListView.SimpleOnRefreshListener() {
 
-			@Override
-			public void onLoadingMore() {
-				// 不使用此功能
-			}
+					@Override
+					public void onDragRefresh() {
+						getLatestDataFromNetwork();
+					}
 
-			@Override
-			public void onDragRefresh() {
-				getLatestDataFromNetwork();
-			}
-
-		});
+				});
 
 		// 加载数据
 		LoadData();
@@ -251,9 +245,14 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 						if (!contentInfos.isEmpty()) {
 
-							// TODO:考虑是否判断时间
+							Toast.makeText(mThisActivity,
+									"更新了" + contentInfos.size() + "条数据",
+									Toast.LENGTH_SHORT).show();
+							//TODO：判断是否需要刷新adapter？
+							
 							// 插入到首部
-							mContentInfoList.addAll(0, contentInfos);
+							mContentInfoList.clear();
+							mContentInfoList = contentInfos;
 
 							// 更新
 							mListViewAdapter.notifyDataSetChanged();
@@ -261,6 +260,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 							// 设置本地缓存,最新的部分（旧的舍弃）
 							XMLCacheUtils
 									.setLocalCache(mFeedItem, contentInfos);
+
+						} else {// 获取失败
+
+							Toast.makeText(mThisActivity, "加载不到任何数据",
+									Toast.LENGTH_SHORT).show();
 
 						}
 
@@ -479,11 +483,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		if (tempString.length() > 250) {
 			tempString = tempString.substring(0, 250);
 		}
-		
+
 		tempString = Html.fromHtml(tempString).toString().trim();
-		
+
 		tempString = tempString.replace("￼", "[图片]").replace("\n", "");
-		
+
 		return tempString;
 	}
 

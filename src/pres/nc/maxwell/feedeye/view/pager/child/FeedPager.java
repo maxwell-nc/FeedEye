@@ -295,7 +295,7 @@ public class FeedPager extends BasePager {
 			addCount = SHOW_ITEM_COUNT;
 		} else {// 剩下数据全部加载
 			addCount = mItemInfoUnshowList.size();
-			
+
 			// 没有更多数据，禁止上拉加载更多
 			mListView.isAllowLoadingMore = false;
 		}
@@ -404,89 +404,49 @@ public class FeedPager extends BasePager {
 		@Override
 		public void onDragRefresh() {
 
-			new Thread() {
-				public void run() {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+			mItemInfoShowedList.clear();
+			mItemInfoUnshowList.clear();
 
-					mItemInfoShowedList.clear();
-					mItemInfoUnshowList.clear();
+			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
+			mItemInfoUnshowList = feedItemDAO.queryAllItems();
 
-					FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
-					mItemInfoUnshowList = feedItemDAO.queryAllItems();
+			// 插入要加载的Item
+			insertMoreItem();
 
-					// 插入要加载的Item
-					insertMoreItem();
+			// 修改UI必须在主线程执行
+			mListViewAdapter.notifyDataSetChanged();
 
-					// 修改UI必须在主线程执行
-					mActivity.runOnUiThread(new Runnable() {
+			if (mItemInfoUnshowList.size() > 0) {
+				// 允许再加载更多
+				mListView.isAllowLoadingMore = true;
+			}
 
-						@Override
-						public void run() {
+			Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT).show();
 
-							mListViewAdapter.notifyDataSetChanged();
+			mListView.completeRefresh();
 
-							if (mItemInfoUnshowList.size() > 0) {
-								// 允许再加载更多
-								mListView.isAllowLoadingMore = true;
-							}
-
-							Toast.makeText(mActivity, "刷新成功",
-									Toast.LENGTH_SHORT).show();
-
-							mListView.completeRefresh();
-						}
-					});
-
-				};
-			}.start();
 		}
 
 		@Override
 		public void onLoadingMore() {
 
-			new Thread() {
-				public void run() {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+			// 成功插入的数据条数
+			final int addCount = insertMoreItem();
 
-					// 成功插入的数据条数
-					final int addCount = insertMoreItem();
+			// 修改UI必须在主线程执行
+			mListViewAdapter.notifyDataSetChanged();
 
-					// 修改UI必须在主线程执行
-					mActivity.runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-
-							mListViewAdapter.notifyDataSetChanged();
-
-							if (addCount == 0) {
-								Toast.makeText(mActivity, "没有更多数据了",
-										Toast.LENGTH_SHORT).show();
-							} else {
-								Toast.makeText(mActivity,
-										"成功加载了" + addCount + "条数据",
-										Toast.LENGTH_SHORT).show();
-							}
-							if (mItemInfoUnshowList.size() <= 0) {
-								// 禁止再加载更多
-								mListView.isAllowLoadingMore = false;
-							}
-							mListView.completeRefresh();
-
-						}
-					});
-
-				}
-
-			}.start();
+			if (addCount == 0) {
+				Toast.makeText(mActivity, "没有更多数据了", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(mActivity, "成功加载了" + addCount + "条数据",
+						Toast.LENGTH_SHORT).show();
+			}
+			if (mItemInfoUnshowList.size() <= 0) {
+				// 禁止再加载更多
+				mListView.isAllowLoadingMore = false;
+			}
+			mListView.completeRefresh();
 		}
 	}
 
@@ -527,11 +487,10 @@ public class FeedPager extends BasePager {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) 
-			{
-				//转换为从0开始的位置
-				position = position- mListView.getHeaderViewsCount();
-				
+					int position, long id) {
+				// 转换为从0开始的位置
+				position = position - mListView.getHeaderViewsCount();
+
 				Intent intent = new Intent(mActivity,
 						ItemDetailListActivity.class);
 				intent.putExtra("FeedItem", mItemInfoShowedList.get(position));
