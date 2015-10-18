@@ -28,6 +28,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.ClipboardManager;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -484,9 +485,16 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 */
 		private ExecutorService showTextThreadPool;
 
+		/**
+		 * 数据缓存，key是位置
+		 */
+		private SparseArray<ListItemCache> listItemCaches;
+
 		public ItemDetailListAdapter() {
 			// 初始化线程池
 			showTextThreadPool = Executors.newCachedThreadPool();
+
+			listItemCaches = new SparseArray<ListItemCache>();
 		}
 
 		/**
@@ -539,15 +547,39 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			// 处理逻辑
 			holder.title.setText(mContentInfoList.get(position).title);
 
+			ListItemCache itemCache = listItemCaches.get(position);
+
 			holder.preview.setText("加载中...");
 
 			holder.previewPic1.setVisibility(View.GONE);
 			holder.previewPic2.setVisibility(View.GONE);
 			holder.previewPic3.setVisibility(View.GONE);
 
-			// 异步加载文本信息
-			new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
-					position, holder);
+			if (itemCache != null) {// 使用缓存
+
+				holder.preview.setText(itemCache.previewString);
+				holder.previewPic1.setVisibility(itemCache.pic1Visibility);
+				holder.previewPic2.setVisibility(itemCache.pic2Visibility);
+				holder.previewPic3.setVisibility(itemCache.pic3Visibility);
+				if (itemCache.link1 != null) {
+					BitmapCacheUtils.displayBitmap(mThisActivity,
+							holder.previewPic1, itemCache.link1, null);
+				}
+				if (itemCache.link2 != null) {
+					BitmapCacheUtils.displayBitmap(mThisActivity,
+							holder.previewPic2, itemCache.link2, null);
+				}
+				if (itemCache.link3 != null) {
+					BitmapCacheUtils.displayBitmap(mThisActivity,
+							holder.previewPic3, itemCache.link3, null);
+				}
+
+			} else {
+
+				// 异步加载文本信息
+				new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
+						position, holder, listItemCaches);
+			}
 
 			holder.time
 					.setText("发表于："
@@ -569,20 +601,35 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 	}
 
+	class ListItemCache {
+
+		int pic1Visibility;
+		String link1;
+		int pic2Visibility;
+		String link2;
+		int pic3Visibility;
+		String link3;
+		String previewString;
+
+	}
+
 	/**
-	 * 异步转换Html为文本，第一个参数为条目位置，第二参数为要显示的TextView,第三个参数是用于加载图片的线程池
+	 * 异步转换Html为文本，第一个参数为条目位置，第二参数为要显示的TextView,第三个参数是用于记录加载了的数据
 	 */
 	private class showHtmlTextTask extends AsyncTask<Object, Void, String> {
 
 		int position;
 		ViewHolder holder;
 		ArrayList<String> imgLinks;
+		SparseArray<ListItemCache> listItemCaches;
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected String doInBackground(Object... params) {// 子线程
 
-			position = (Integer) params[0];
+			position = ((Integer) params[0]).intValue();
 			holder = (ViewHolder) params[1];
+			listItemCaches = (SparseArray<ListItemCache>) params[2];
 
 			String textString = (String) getPreviewText(position);
 			return textString;
@@ -599,12 +646,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				holder.preview.setText(result);
 
 				int size = imgLinks.size();
-				
+
 				// 统计有效图片地址
 				int availableImgCount = size;
 
 				for (int i = size; i < 0; i--) {
-					
+
 					if ("无法识别的图片地址".equals(imgLinks.get(i))) {
 						imgLinks.remove(i);
 						availableImgCount--;
@@ -633,10 +680,32 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				}
 
+				// 设置缓存
+				ListItemCache itemCache = new ListItemCache();
+
+				itemCache.pic1Visibility = holder.previewPic1.getVisibility();
+				itemCache.pic2Visibility = holder.previewPic2.getVisibility();
+				itemCache.pic3Visibility = holder.previewPic3.getVisibility();
+
+				if (availableImgCount >= 1) {
+					itemCache.link1 = imgLinks.get(0);
+					if (availableImgCount >= 2) {
+						itemCache.link2 = imgLinks.get(1);
+						if (availableImgCount >= 3) {
+							itemCache.link3 = imgLinks.get(2);
+						}
+					}
+				}
+
+				itemCache.previewString = result;
+
+				listItemCaches.put(position - mListView.getHeaderViewsCount(),
+						itemCache);
+
+				LogUtils.w(this, position + "");
 			}
 
 		}
-
 		/**
 		 * 获取预览内容
 		 * 

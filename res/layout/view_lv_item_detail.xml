@@ -44,8 +44,7 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:visibility="gone" />
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/iv_preview2"
@@ -54,8 +53,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:visibility="gone" />
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/iv_preview3"
@@ -64,8 +62,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:visibility="gone" />
+                android:scaleType="fitCenter" />
         </LinearLayout>
 
         <TextView
