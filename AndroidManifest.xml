@@ -37,6 +37,8 @@
         </activity>
         <activity android:name="pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity" >
         </activity>
+        <activity android:name="pres.nc.maxwell.feedeye.activity.SummaryBodyActivity" >
+        </activity>
     </application>
 
 </manifest>

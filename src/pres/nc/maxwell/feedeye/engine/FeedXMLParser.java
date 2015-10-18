@@ -183,7 +183,7 @@ public class FeedXMLParser {
 	public void cancelParse() {
 
 		if (mHttpUtils != null) {
-			mHttpUtils.Disconnet();
+			mHttpUtils.disconnet();
 		}
 
 	}
@@ -250,7 +250,7 @@ public class FeedXMLParser {
 
 		});
 
-		mHttpUtils.Connect(mFeedUrl, 10000, 10000);
+		mHttpUtils.connect(mFeedUrl, 10000, 10000);
 	}
 
 	/**
@@ -439,7 +439,7 @@ public class FeedXMLParser {
 			}
 		});
 
-		mHttpUtils.Connect(mFeedUrl, 15000, 15000);
+		mHttpUtils.connect(mFeedUrl, 15000, 15000);
 	}
 
 	/**

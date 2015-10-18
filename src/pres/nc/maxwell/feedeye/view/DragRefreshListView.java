@@ -61,11 +61,6 @@ public class DragRefreshListView extends ListView {
 	private ImageView mHeaderArrowPic;
 
 	/**
-	 * 触摸时Y坐标
-	 */
-	private int downY;
-
-	/**
 	 * 是否上拉，如果为真则代表不能显示下拉刷新
 	 */
 	private boolean istoUp = false;
@@ -94,6 +89,16 @@ public class DragRefreshListView extends ListView {
 	 */
 	private int dragState = STATE_DRAGING;
 
+	/**
+	 * 触摸时Y坐标
+	 */
+	private int downY;
+	
+	/**
+	 * 移动距离
+	 */
+	private int deltaY;
+	
 	/**
 	 * 是否正在加载更多
 	 */
@@ -133,8 +138,6 @@ public class DragRefreshListView extends ListView {
 	 * 正常动画
 	 */
 	private RotateAnimation mArrowToNormalAnimation;
-
-	private int deltaY;
 
 	public DragRefreshListView(Context context) {
 		super(context);
@@ -392,8 +395,6 @@ public class DragRefreshListView extends ListView {
 				if (!isAllowRefresh) {
 					break;
 				}
-				
-				downY = -1;// 重置
 
 				if (dragState == STATE_DRAGING) {// 不刷新
 					mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);

@@ -277,7 +277,7 @@ public class BitmapThreeLevelsCache {
 
 		});
 
-		httpUtils.Connect(mURL, 10000, 10000);
+		httpUtils.connect(mURL, 10000, 10000);
 
 	}
 

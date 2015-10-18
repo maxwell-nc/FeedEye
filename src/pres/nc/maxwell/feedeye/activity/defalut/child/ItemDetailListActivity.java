@@ -4,12 +4,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.SummaryBodyActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
@@ -23,11 +25,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.ClipboardManager;
-import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -174,6 +176,30 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		// 设置长按条目事件
 		mListView.setOnItemLongClickListener(new ItemLongClickListener());
+
+		// 设置点击条目事件
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				// TODO:
+
+				Intent intent = new Intent(mThisActivity,
+						SummaryBodyActivity.class);
+				// 传递数据
+				intent.putExtra(
+						"FeedXMLContentInfo",
+						mContentInfoList.get(position
+								- mListView.getHeaderViewsCount()));
+				intent.putExtra("FeedItem", mFeedItem);
+
+				mThisActivity.startActivity(intent);
+
+			}
+
+		});
 
 		// 加载数据
 		LoadData();
@@ -507,14 +533,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private CharSequence getPreviewText(int position) {
 
-		String tempString = mContentInfoList.get(position).description;
-		if (tempString.length() > 250) {
-			tempString = tempString.substring(0, 250);
+		String orgString = mContentInfoList.get(position).description;
+		String tempString = null;
+
+		if (orgString.length() > 250) {
+			tempString = orgString.substring(0, 250);
+		} else {
+			tempString = orgString;
 		}
 
-		tempString = Html.fromHtml(tempString).toString().trim();
-
-		tempString = tempString.replace("￼", "[图片]").replace("\n", "");
+		tempString = HTTPUtils.html2Text(tempString, true, null).replace("\n",
+				"");
 
 		return tempString;
 	}
@@ -691,7 +720,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				String msgSummary = mContentInfoList.get(realPosition).description
 						.substring(0, 120);
 
-				msgSummary = Html.fromHtml(msgSummary).toString();
+				msgSummary = HTTPUtils.html2Text(msgSummary, true, null);
 				// 获取链接
 				String link = mContentInfoList.get(realPosition).link;
 

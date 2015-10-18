@@ -5,73 +5,78 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.Html.ImageGetter;
+import android.text.TextUtils;
 
 /**
- * HTTPÁ¬½Ó¹¤¾ßÀà£¬½¨ÒéÒ»¸öÁ¬½ÓÊ¹ÓÃµ¥¶ÀµÄ¶ÔÏó
+ * HTTPè¿æ¥å·¥å…·ç±»ï¼Œå»ºè®®ä¸€ä¸ªè¿æ¥ä½¿ç”¨å•ç‹¬çš„å¯¹è±¡
  */
 public class HTTPUtils {
 
 	/**
-	 * Á¬½Ó¼àÌı
+	 * è¿æ¥ç›‘å¬
 	 */
 	private OnConnectListener onConnectListener;
-	
+
 	/**
-	 * Á¬½ÓµÄÏß³Ì
+	 * è¿æ¥çš„çº¿ç¨‹
 	 */
 	private ConnectTask mCurrentTask;
 
 	/**
-	 * Á¬½Ó¼àÌıÆ÷£¬·â×°ÁËHandler£¬ÔËĞĞÔÚÖ÷Ïß³Ì
+	 * è¿æ¥ç›‘å¬å™¨ï¼Œå°è£…äº†Handlerï¼Œè¿è¡Œåœ¨ä¸»çº¿ç¨‹
 	 */
 	public interface OnConnectListener {
 
 		/**
-		 * £¨·µ»Ø´úÂë200Ê±£©µ÷ÓÃµÄ·½·¨£¬ÔËĞĞÔÚ×ÓÏß³Ì
+		 * ï¼ˆè¿”å›ä»£ç 200æ—¶ï¼‰è°ƒç”¨çš„æ–¹æ³•ï¼Œè¿è¡Œåœ¨å­çº¿ç¨‹
 		 * 
-		 * @param inputStream·µ»ØµÄÊäÈëÁ÷
+		 * @param inputStreamè¿”å›çš„è¾“å…¥æµ
 		 */
 		public void onConnect(InputStream inputStream);
 
 		/**
-		 * ÔÚonConnect·½·¨Ö®ºó£¬´¦Àí³É¹¦£¬ÔËĞĞÔÚÖ÷Ïß³Ì
+		 * åœ¨onConnectæ–¹æ³•ä¹‹åï¼Œå¤„ç†æˆåŠŸï¼Œè¿è¡Œåœ¨ä¸»çº¿ç¨‹
 		 */
 		public void onSuccess();
 
 		/**
-		 * ÔÚonConnect·½·¨Ö®ºó£¬´¦ÀíÊ§°Ü£¬ÔËĞĞÔÚÖ÷Ïß³Ì
+		 * åœ¨onConnectæ–¹æ³•ä¹‹åï¼Œå¤„ç†å¤±è´¥ï¼Œè¿è¡Œåœ¨ä¸»çº¿ç¨‹
 		 */
 		public void onFailure();
 	}
 
 	/**
-	 * ÉèÖÃÁ¬½Ó¼àÌıÆ÷
+	 * è®¾ç½®è¿æ¥ç›‘å¬å™¨
 	 * 
 	 * @param onConnectListener
-	 *            Á¬½Ó¼àÌıÆ÷
+	 *            è¿æ¥ç›‘å¬å™¨
 	 */
 	public void setOnConnectListener(OnConnectListener onConnectListener) {
 		this.onConnectListener = onConnectListener;
 	}
 
 	/**
-	 * ¹¹Ôìº¯Êı£¬´«ÈëÁ¬½Ó¼àÌıÆ÷
+	 * æ„é€ å‡½æ•°ï¼Œä¼ å…¥è¿æ¥ç›‘å¬å™¨
 	 * 
 	 * @param onConnectListener
-	 *            Á¬½Ó¼àÌıÆ÷
+	 *            è¿æ¥ç›‘å¬å™¨
 	 */
 	public HTTPUtils(OnConnectListener onConnectListener) {
 		this.onConnectListener = onConnectListener;
 	}
 
 	/**
-	 * ´æ´¢Á¬½ÓĞÅÏ¢
+	 * å­˜å‚¨è¿æ¥ä¿¡æ¯
 	 */
 	public class ConnectInfo {
 
@@ -84,49 +89,48 @@ public class HTTPUtils {
 		public String url;
 		public int connectTimeout;
 		public int readTimeout;
-		
-	}
-	
-	/**
-	 * Á¬½ÓHTTPºÍHTTPS
-	 * 
-	 * @param url
-	 *            µØÖ·
-	 * @param ConnectTimeout
-	 *            Á¬½Ó³¬Ê±ºÁÃëÊı
-	 * @param ReadTimeout
-	 *            ¶ÁÈ¡³¬Ê±ºÁÃëÊı
-	 */
-	public void Connect(String url, int connectTimeout, int readTimeout) {
-		mCurrentTask = new ConnectTask();
-		mCurrentTask.execute(new ConnectInfo(url, connectTimeout,
-				readTimeout));
-	}
-	
-	/**
-	 * È¡ÏûÁ¬½Ó
-	 */
-	public void Disconnet(){
-		
-		if (mCurrentTask!=null) {
-			mCurrentTask.cancel(true);
-		}
-		
+
 	}
 
 	/**
-	 * Òì²½Á¬½ÓÈÎÎñ
+	 * è¿æ¥HTTPå’ŒHTTPS
+	 * 
+	 * @param url
+	 *            åœ°å€
+	 * @param ConnectTimeout
+	 *            è¿æ¥è¶…æ—¶æ¯«ç§’æ•°
+	 * @param ReadTimeout
+	 *            è¯»å–è¶…æ—¶æ¯«ç§’æ•°
+	 */
+	public void connect(String url, int connectTimeout, int readTimeout) {
+		mCurrentTask = new ConnectTask();
+		mCurrentTask.execute(new ConnectInfo(url, connectTimeout, readTimeout));
+	}
+
+	/**
+	 * å–æ¶ˆè¿æ¥
+	 */
+	public void disconnet() {
+
+		if (mCurrentTask != null) {
+			mCurrentTask.cancel(true);
+		}
+
+	}
+
+	/**
+	 * å¼‚æ­¥è¿æ¥ä»»åŠ¡
 	 */
 	class ConnectTask extends AsyncTask<ConnectInfo, Void, Boolean> {
 
 		@Override
-		protected Boolean doInBackground(ConnectInfo... params) {// ×ÓÏß³Ì
+		protected Boolean doInBackground(ConnectInfo... params) {// å­çº¿ç¨‹
 
 			HttpURLConnection connection = null;
 			try {
 
 				if (params[0].url.startsWith("https://")) {
-					// ĞÅÈÎËùÓĞHTTPSÁ¬½Ó
+					// ä¿¡ä»»æ‰€æœ‰HTTPSè¿æ¥
 					HttpsURLConnection
 							.setDefaultHostnameVerifier(new HostnameVerifier() {
 								public boolean verify(String string,
@@ -137,16 +141,17 @@ public class HTTPUtils {
 					connection = null;
 					connection = (HttpsURLConnection) new URL(params[0].url)
 							.openConnection();
-				} else {//·ÇHTTPS
+				} else {// éHTTPS
 					connection = null;
 					connection = (HttpURLConnection) new URL(params[0].url)
 							.openConnection();
-				} 
+				}
 
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
-				
-				connection.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.1)");
+
+				connection.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.1)");
 				connection.setRequestMethod("GET");
 				connection.connect();
 
@@ -154,15 +159,15 @@ public class HTTPUtils {
 						"ResponseCode:" + connection.getResponseCode());
 				LogUtils.i("HTTPUtils",
 						"ResponseCode:" + connection.getResponseMessage());
-				
+
 				if (connection.getResponseCode() == 200) {
 
-					// µ÷ÓÃ¼àÌıÆ÷
+					// è°ƒç”¨ç›‘å¬å™¨
 					if (onConnectListener != null) {
 						onConnectListener
 								.onConnect(connection.getInputStream());
 					}
-					
+
 					return true;
 				}
 
@@ -173,7 +178,7 @@ public class HTTPUtils {
 			} finally {
 
 				if (connection != null) {
-					connection.disconnect();// ²»ÒªÍü¼Ç¶Ï¿ª
+					connection.disconnect();// ä¸è¦å¿˜è®°æ–­å¼€
 				}
 			}
 
@@ -181,21 +186,74 @@ public class HTTPUtils {
 
 		}
 		@Override
-		protected void onPostExecute(Boolean result) {//Ö÷Ïß³Ì
+		protected void onPostExecute(Boolean result) {// ä¸»çº¿ç¨‹
 
 			if (onConnectListener != null) {
 
-				if (result.booleanValue()) {// ³É¹¦½ÓÊÕ
+				if (result.booleanValue()) {// æˆåŠŸæ¥æ”¶
 					onConnectListener.onSuccess();
-				} else {//½ÓÊÕÊ§°Ü
+				} else {// æ¥æ”¶å¤±è´¥
 					onConnectListener.onFailure();
 				}
 
 			}
 		}
 
-		
 	}
-	
 
+	/**
+	 * æŠŠHTMLæ ¼å¼æ–‡æœ¬è½¬æˆæ— æ ‡ç­¾æ–‡æœ¬ï¼Œå›¾ç‰‡æ ‡ç­¾è½¬æ¢ä¸º"[å›¾ç‰‡]")
+	 * 
+	 * @param html
+	 *            HTMLæ ¼å¼æ–‡æœ¬ï¼Œä¸ä¿®æ”¹åŸæ¥çš„Stringå¯¹è±¡
+	 * @param isTrim
+	 *            æ˜¯å¦å»é™¤ç©ºæ ¼
+	 * @param imgLinks
+	 *            è·å¾—çš„å›¾ç‰‡é“¾æ¥é›†åˆï¼Œä¸éœ€è¦å¯ä»¥ä¼ å…¥null
+	 * @return æ— æ ‡ç­¾æ–‡æœ¬ï¼Œæ–°çš„Stringå¯¹è±¡
+	 */
+	public static String html2Text(String html, boolean isTrim,
+			final ArrayList<String> imgLinks) {
+
+		String text = null;
+
+		if (imgLinks != null) {
+
+			text = Html.fromHtml(html, new ImageGetter() {
+
+				public Drawable getDrawable(String source) {
+					imgLinks.add(source);
+					return null;
+				}
+
+			}, null).toString();
+
+		} else {
+			text = Html.fromHtml(html).toString();
+		}
+
+		// åˆ¤æ–­æ˜¯å¦å»é™¤ç©ºæ ¼
+		if (isTrim) {
+			text = text.trim();
+		}
+
+		// ä¸éœ€è¦å›¾ç‰‡é“¾æ¥
+		if (imgLinks == null) {
+			text = text.replace("\ufffc", "[å›¾ç‰‡]");
+			return text;
+		}
+
+		// æ›¿æ¢å›¾ç‰‡obj
+		for (String link : imgLinks) {
+
+			if (TextUtils.isEmpty(link)) {
+				text = text.replace("\ufffc", "[å›¾ç‰‡]");
+			} else {
+				text = text.replace("\ufffc", "[å›¾ç‰‡ï¼š" + link + "]");
+			}
+			
+		}
+
+		return text;
+	}
 }
