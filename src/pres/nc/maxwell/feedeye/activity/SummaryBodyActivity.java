@@ -1,5 +1,7 @@
 package pres.nc.maxwell.feedeye.activity;
 
+import java.util.ArrayList;
+
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
@@ -64,12 +66,12 @@ public class SummaryBodyActivity extends Activity {
 		if (TextUtils.isEmpty(feedXMLContentInfo.content)) {
 
 			mContentText.setText(HTTPUtils.html2Text(
-					feedXMLContentInfo.description, false, null));
+					feedXMLContentInfo.description, false, new ArrayList<String>()));
 
 		} else {
 
 			mContentText.setText(HTTPUtils.html2Text(
-					feedXMLContentInfo.content, false, null));
+					feedXMLContentInfo.content, false, new ArrayList<String>()));
 		}
 
 	}

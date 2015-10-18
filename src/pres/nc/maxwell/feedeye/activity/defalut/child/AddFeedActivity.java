@@ -190,7 +190,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				mCustomImagePath.setText(customImagePath);
 				// 显示出来
 				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage,
-						customImagePath);
+						customImagePath, null);
 			}
 
 		}
@@ -256,7 +256,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 							FeedXMLBaseInfo baseInfo) {
 
 						if (result) {// 成功读取
-							
+
 							// 判断是否类型合法
 							if (baseInfo.type == FeedXMLBaseInfo.TYPE_UNKNOWN) {
 
@@ -264,7 +264,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 								return;
 
 							}
-							
+
 							// 设置基本信息
 							feedItem.baseInfo = baseInfo;
 

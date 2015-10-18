@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,6 +32,11 @@ public class HTTPUtils {
 	 * 连接的线程
 	 */
 	private ConnectTask mCurrentTask;
+
+	/**
+	 * 任务线程池
+	 */
+	private ExecutorService mThreadPool;
 
 	/**
 	 * 连接监听器，封装了Handler，运行在主线程
@@ -97,14 +103,22 @@ public class HTTPUtils {
 	 * 
 	 * @param url
 	 *            地址
-	 * @param ConnectTimeout
+	 * @param connectTimeout
 	 *            连接超时毫秒数
-	 * @param ReadTimeout
+	 * @param readTimeout
 	 *            读取超时毫秒数
+	 * @param threadPool
+	 *            自定义线程池
 	 */
-	public void connect(String url, int connectTimeout, int readTimeout) {
+	public void connect(String url, int connectTimeout, int readTimeout,
+			ExecutorService threadPool) {
+		
+		LogUtils.i("HTTPUtils", "Link:" + url);
+		
+		mThreadPool = threadPool;
 		mCurrentTask = new ConnectTask();
-		mCurrentTask.execute(new ConnectInfo(url, connectTimeout, readTimeout));
+		mCurrentTask.executeOnExecutor(threadPool, new ConnectInfo(url,
+				connectTimeout, readTimeout));
 	}
 
 	/**
@@ -114,6 +128,10 @@ public class HTTPUtils {
 
 		if (mCurrentTask != null) {
 			mCurrentTask.cancel(true);
+		}
+
+		if (mThreadPool != null) {
+			mThreadPool.shutdownNow();
 		}
 
 	}
@@ -222,7 +240,13 @@ public class HTTPUtils {
 			text = Html.fromHtml(html, new ImageGetter() {
 
 				public Drawable getDrawable(String source) {
-					imgLinks.add(source);
+
+					if ("src".equals(source) || TextUtils.isEmpty(source)) {
+						imgLinks.add("无法识别的图片地址");
+					} else {
+						imgLinks.add(source);
+					}
+
 					return null;
 				}
 
@@ -251,7 +275,7 @@ public class HTTPUtils {
 			} else {
 				text = text.replace("\ufffc", "[图片：" + link + "]");
 			}
-			
+
 		}
 
 		return text;

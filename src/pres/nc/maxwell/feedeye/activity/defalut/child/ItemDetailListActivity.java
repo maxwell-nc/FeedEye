@@ -2,6 +2,8 @@ package pres.nc.maxwell.feedeye.activity.defalut.child;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.SummaryBodyActivity;
@@ -14,6 +16,7 @@ import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
@@ -33,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,6 +116,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 * 是否自动加载最新信息
 	 */
 	private boolean isAutoRefresh = false;
+
+	@Override
+	protected void onDestroy() {
+		mListViewAdapter.shutdownThreadPool();
+		super.onDestroy();
+	}
 
 	@Override
 	protected void initView() {
@@ -455,6 +465,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	static class ViewHolder {
 		TextView title;
+		ImageView previewPic1;
+		ImageView previewPic2;
+		ImageView previewPic3;
 		TextView preview;
 		TextView time;
 	}
@@ -463,6 +476,26 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 * 详细信息的数据适配器
 	 */
 	class ItemDetailListAdapter extends BaseAdapter {
+
+		/**
+		 * 用于加载文本
+		 * 
+		 * @see showHtmlTextTask
+		 */
+		private ExecutorService showTextThreadPool;
+
+		public ItemDetailListAdapter() {
+			// 初始化线程池
+			showTextThreadPool = Executors.newCachedThreadPool();
+		}
+
+		/**
+		 * 关闭线程池
+		 */
+		public void shutdownThreadPool() {
+			showTextThreadPool.shutdownNow();
+			BitmapCacheUtils.shutdownDefalutThreadPool();
+		}
 
 		@Override
 		public int getCount() {
@@ -492,6 +525,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				holder.title = (TextView) itemView.findViewById(R.id.tv_title);
 				holder.preview = (TextView) itemView
 						.findViewById(R.id.tv_preview);
+				holder.previewPic1 = (ImageView) itemView
+						.findViewById(R.id.iv_preview1);
+				holder.previewPic2 = (ImageView) itemView
+						.findViewById(R.id.iv_preview2);
+				holder.previewPic3 = (ImageView) itemView
+						.findViewById(R.id.iv_preview3);
 				holder.time = (TextView) itemView.findViewById(R.id.tv_time);
 
 				itemView.setTag(holder);
@@ -501,8 +540,14 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			holder.title.setText(mContentInfoList.get(position).title);
 
 			holder.preview.setText("加载中...");
+
+			holder.previewPic1.setVisibility(View.GONE);
+			holder.previewPic2.setVisibility(View.GONE);
+			holder.previewPic3.setVisibility(View.GONE);
+
 			// 异步加载文本信息
-			new showHtmlText().execute(position, holder.preview);
+			new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
+					position, holder);
 
 			holder.time
 					.setText("发表于："
@@ -525,42 +570,19 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * 获取预览内容
-	 * 
-	 * @param position
-	 *            条目位置
-	 * @return 预览内容文本
+	 * 异步转换Html为文本，第一个参数为条目位置，第二参数为要显示的TextView,第三个参数是用于加载图片的线程池
 	 */
-	private CharSequence getPreviewText(int position) {
-
-		String orgString = mContentInfoList.get(position).description;
-		String tempString = null;
-
-		if (orgString.length() > 250) {
-			tempString = orgString.substring(0, 250);
-		} else {
-			tempString = orgString;
-		}
-
-		tempString = HTTPUtils.html2Text(tempString, true, null).replace("\n",
-				"");
-
-		return tempString;
-	}
-
-	/**
-	 * 异步转换Html为文本，第一个参数为条目位置，第二参数为要显示的TextView
-	 */
-	private class showHtmlText extends AsyncTask<Object, Void, String> {
+	private class showHtmlTextTask extends AsyncTask<Object, Void, String> {
 
 		int position;
-		TextView textView;
+		ViewHolder holder;
+		ArrayList<String> imgLinks;
 
 		@Override
 		protected String doInBackground(Object... params) {// 子线程
 
 			position = (Integer) params[0];
-			textView = (TextView) params[1];
+			holder = (ViewHolder) params[1];
 
 			String textString = (String) getPreviewText(position);
 			return textString;
@@ -573,9 +595,65 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			if (position >= mListView.getFirstVisiblePosition()
 					&& position <= mListView.getLastVisiblePosition()) {// 判断是否还在显示中
-				textView.setText(result);
+
+				holder.preview.setText(result);
+
+				int size = imgLinks.size();
+				
+				// 统计有效图片地址
+				int availableImgCount = size;
+
+				for (int i = size; i < 0; i--) {
+					
+					if ("无法识别的图片地址".equals(imgLinks.get(i))) {
+						imgLinks.remove(i);
+						availableImgCount--;
+					}
+				}
+
+				if (availableImgCount >= 1) {
+					holder.previewPic1.setVisibility(View.VISIBLE);
+					holder.previewPic2.setVisibility(View.INVISIBLE);// 占位
+					holder.previewPic3.setVisibility(View.INVISIBLE);// 占位
+					BitmapCacheUtils.displayBitmap(mThisActivity,
+							holder.previewPic1, imgLinks.get(0), null);
+
+					if (availableImgCount >= 2) {
+						holder.previewPic2.setVisibility(View.VISIBLE);
+						holder.previewPic3.setVisibility(View.INVISIBLE);// 占位
+						BitmapCacheUtils.displayBitmap(mThisActivity,
+								holder.previewPic2, imgLinks.get(1), null);
+
+						if (availableImgCount >= 3) {
+							holder.previewPic3.setVisibility(View.VISIBLE);
+							BitmapCacheUtils.displayBitmap(mThisActivity,
+									holder.previewPic3, imgLinks.get(2), null);
+						}
+					}
+
+				}
+
 			}
 
+		}
+
+		/**
+		 * 获取预览内容
+		 * 
+		 * @param position
+		 *            条目位置
+		 * @return 预览内容文本
+		 */
+		private CharSequence getPreviewText(int position) {
+
+			String orgString = mContentInfoList.get(position).description;
+
+			imgLinks = new ArrayList<String>();
+			String tempString = HTTPUtils.html2Text(orgString, true, imgLinks)
+					.replace("\n", "");
+
+			LogUtils.w(this, imgLinks.toString());
+			return tempString;
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -250,7 +251,8 @@ public class FeedXMLParser {
 
 		});
 
-		mHttpUtils.connect(mFeedUrl, 10000, 10000);
+		mHttpUtils.connect(mFeedUrl, 10000, 10000,
+				Executors.newSingleThreadExecutor());
 	}
 
 	/**
@@ -439,7 +441,8 @@ public class FeedXMLParser {
 			}
 		});
 
-		mHttpUtils.connect(mFeedUrl, 15000, 15000);
+		mHttpUtils.connect(mFeedUrl, 15000, 15000,
+				Executors.newSingleThreadExecutor());
 	}
 
 	/**
@@ -582,22 +585,22 @@ public class FeedXMLParser {
 					// 无描述
 					if (TextUtils.isEmpty(info.description)) {
 
-						if (info.content != null) {//利用content代替
+						if (info.content != null) {// 利用content代替
 							info.description = info.content;
 						} else {
 							info.description = "没有接收到数据";
 						}
-						
+
 					}
 
 					// 无获取到时间，设置为当前时间
 					if (info.pubDate == null) {
-						
+
 						info.pubDate = TimeUtils.timestamp2String(
 								new Timestamp(System.currentTimeMillis()),
 								TimeUtils.STANDARD_TIME_PATTERN,
 								Locale.getDefault());
-						
+
 					}
 
 					// 无全文链接

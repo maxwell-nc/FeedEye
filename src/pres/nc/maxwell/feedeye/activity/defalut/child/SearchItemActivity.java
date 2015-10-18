@@ -320,7 +320,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 			// 使用三级缓存加载图片
 			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
-					mResultList.get(position).picURL);
+					mResultList.get(position).picURL,null);
 
 			String title = mResultList.get(position).baseInfo.title;
 

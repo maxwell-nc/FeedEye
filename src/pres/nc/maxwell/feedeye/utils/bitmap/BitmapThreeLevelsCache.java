@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
 
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
@@ -49,12 +50,21 @@ public class BitmapThreeLevelsCache {
 	 * 颜色配置
 	 */
 	private Bitmap.Config mConfig;
-	
 
 	/**
 	 * 是否开启网络缓存
 	 */
 	private boolean mIsEnableNetworkCache = true;
+
+	/**
+	 * HTTP链接工具类
+	 */
+	private HTTPUtils mHttpUtils;
+
+	/**
+	 * 任务线程池
+	 */
+	private ExecutorService mThreadPool;
 
 	/**
 	 * 每次使用请创建新的对象
@@ -63,16 +73,20 @@ public class BitmapThreeLevelsCache {
 	 *            需要显示的ImageView
 	 * @param url
 	 *            要显示图片的URL
+	 * @param threadPool
+	 *            自定义线程池
 	 */
 	public BitmapThreeLevelsCache(ImageView imageView, String url,
-			Bitmap errBitmap,boolean isEnableNetworkCache) {
+			Bitmap errBitmap, boolean isEnableNetworkCache,
+			ExecutorService threadPool) {
 		this.mImageView = imageView;
 		this.mURL = url;
 		this.mErrBitmap = errBitmap;
 		this.mIsEnableNetworkCache = isEnableNetworkCache;
 		mImageView.setTag(mURL);
+		mThreadPool = threadPool;
 	}
-	
+
 	/**
 	 * 从缓存中读取并显示图片
 	 */
@@ -86,12 +100,12 @@ public class BitmapThreeLevelsCache {
 				LogUtils.i("BitmapThreeLevelsCache", "L1:本地图片，写入内存缓存");
 				File file = new File(mURL);
 				setMemoryCache(file);// 写到内存缓存中
-				
+
 				// 重新从内存缓存中读取
-				if (!getMemoryCache()) {//路径不合法或者文件已经被删除
+				if (!getMemoryCache()) {// 路径不合法或者文件已经被删除
 					showErrorBitmap();
 				}
-				
+
 			}
 
 		} else {// 网络图片
@@ -102,16 +116,16 @@ public class BitmapThreeLevelsCache {
 				LogUtils.i("BitmapThreeLevelsCache", "L2:获取本地缓存");
 				if (!getLocalCache()) {// 2.获取本地缓存
 
-					if (mIsEnableNetworkCache) {//开启网络缓存
-						
+					if (mIsEnableNetworkCache) {// 开启网络缓存
+
 						LogUtils.i("BitmapThreeLevelsCache", "L3:获取网路缓存");
 						getNetworkCache();// 3.获取网络缓存
-						
-					}else {//不使用网络缓存
-						
+
+					} else {// 不使用网络缓存
+
 						LogUtils.i("BitmapThreeLevelsCache", "L2:不使用网络缓存");
 						showErrorBitmap();
-						
+
 					}
 
 				}
@@ -137,7 +151,9 @@ public class BitmapThreeLevelsCache {
 
 	/**
 	 * 设置内存缓存
-	 * @param bitmapFile 图片文件对象
+	 * 
+	 * @param bitmapFile
+	 *            图片文件对象
 	 */
 	private void setMemoryCache(File bitmapFile) {
 
@@ -154,7 +170,9 @@ public class BitmapThreeLevelsCache {
 
 	/**
 	 * 设置本地缓存
-	 * @param bitmapNetworkStream 图片网络流
+	 * 
+	 * @param bitmapNetworkStream
+	 *            图片网络流
 	 */
 	private void setLocalCache(InputStream bitmapNetworkStream) {
 		BufferedOutputStream bufferedOutputStream = getBufferedOutputStream();
@@ -186,6 +204,7 @@ public class BitmapThreeLevelsCache {
 
 	/**
 	 * 读取内存缓存
+	 * 
 	 * @return 是否成功读取
 	 */
 	private boolean getMemoryCache() {
@@ -216,6 +235,7 @@ public class BitmapThreeLevelsCache {
 
 	/**
 	 * 读取本地缓存
+	 * 
 	 * @return 是否成功读取
 	 */
 	private boolean getLocalCache() {
@@ -244,7 +264,8 @@ public class BitmapThreeLevelsCache {
 	 * 读取网络缓存
 	 */
 	private void getNetworkCache() {
-		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
+
+		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
 			public void onConnect(InputStream inputStream) {// 子线程
@@ -277,7 +298,7 @@ public class BitmapThreeLevelsCache {
 
 		});
 
-		httpUtils.connect(mURL, 10000, 10000);
+		mHttpUtils.connect(mURL, 10000, 10000, mThreadPool);
 
 	}
 
@@ -378,11 +399,10 @@ public class BitmapThreeLevelsCache {
 
 			mImageView.setImageBitmap(mErrBitmap);
 			// 加入内存缓存
-			BitmapLruCacheDispatcher.getInstance()
-					.getmMemoryCache().put(mURL, mErrBitmap);
+			BitmapLruCacheDispatcher.getInstance().getmMemoryCache()
+					.put(mURL, mErrBitmap);
 		} else {
-			LogUtils.i("BitmapThreeLevelsCache",
-					"mErrBitmap is null");
+			LogUtils.i("BitmapThreeLevelsCache", "mErrBitmap is null");
 		}
 	}
 

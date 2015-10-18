@@ -470,7 +470,7 @@ public class FeedPager extends BasePager {
 
 		// 使用三级缓存加载图片
 		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
-				feedItem.picURL);
+				feedItem.picURL,null);
 
 		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);
 		viewHolder.mItemPreview.setText(feedItem.baseInfo.summary);
@@ -524,46 +524,42 @@ public class FeedPager extends BasePager {
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				final int position, long id) {
 
-			new MainThemeLongClickDialog(mActivity,
-					new DialogDataAdapter() {
+			new MainThemeLongClickDialog(mActivity, new DialogDataAdapter() {
 
-						@Override
-						public int getLayoutViewId() {
-							return R.layout.view_long_click_lv_feed;
-						}
+				@Override
+				public int getLayoutViewId() {
+					return R.layout.view_long_click_lv_feed;
+				}
 
-						@Override
-						public int[] getTextViewResIds() {
-							int[] ids = {R.id.tv_modify, R.id.tv_delete,
-									R.id.tv_cancel};
-							return ids;
-						}
+				@Override
+				public int[] getTextViewResIds() {
+					int[] ids = {R.id.tv_modify, R.id.tv_delete, R.id.tv_cancel};
+					return ids;
+				}
 
-						@Override
-						public OnClickListener[] getItemOnClickListener(
-								final AlertDialog alertDialog) {
+				@Override
+				public OnClickListener[] getItemOnClickListener(
+						final AlertDialog alertDialog) {
 
-							OnClickListener[] listeners = {
-									new ModifyClickListener(position,
-											alertDialog),// 修改标题
-									new DeleteClickListener(position,
-											alertDialog), // 删除
-									new OnClickListener() {// 取消
+					OnClickListener[] listeners = {
+							new ModifyClickListener(position, alertDialog),// 修改标题
+							new DeleteClickListener(position, alertDialog), // 删除
+							new OnClickListener() {// 取消
 
-										@Override
-										public void onClick(View v) {
-											alertDialog.dismiss();// 对话框关闭
-										}
+								@Override
+								public void onClick(View v) {
+									alertDialog.dismiss();// 对话框关闭
+								}
 
-									}};
+							}};
 
-							return listeners;
-						}
-					}).show();
+					return listeners;
+				}
+			}).show();
 
 			return true;
 		}
-		
+
 		/**
 		 * 修改标题点击监听器
 		 */
@@ -652,7 +648,7 @@ public class FeedPager extends BasePager {
 									FrameLayout container,
 									TextView confirmButtom,
 									TextView cancelButtom) {
-								
+
 								// 获取原来的标题
 								String orgTitle = ((ViewHolder) mListView
 										.getChildAt(
@@ -673,7 +669,7 @@ public class FeedPager extends BasePager {
 		/**
 		 * 删除点击监听器
 		 */
-		class DeleteClickListener  extends AlertDialogOnClickListener {
+		class DeleteClickListener extends AlertDialogOnClickListener {
 
 			public DeleteClickListener(int position, AlertDialog alertDialog) {
 				super(position, alertDialog);
