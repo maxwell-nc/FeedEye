@@ -20,6 +20,8 @@ import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.ArrayListLoadingMoreAdapter;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
@@ -35,7 +37,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -84,9 +85,14 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	private FeedItem mFeedItem;
 
 	/**
-	 * 内容信息集合
+	 * 已显示内容信息集合
 	 */
-	public ArrayList<FeedXMLContentInfo> mContentInfoList;
+	public ArrayList<FeedXMLContentInfo> mContentInfoShowedList;
+
+	/**
+	 * 未显示内容信息集合
+	 */
+	public ArrayList<FeedXMLContentInfo> mContentInfoUnshowList;
 
 	/**
 	 * 获取本地缓存监听器
@@ -162,25 +168,46 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		mTitleView.setText(mFeedItem.baseInfo.title);
 
 		// 初始化内容信息列表
-		mContentInfoList = new ArrayList<FeedXMLContentInfo>();
+		mContentInfoShowedList = new ArrayList<FeedXMLContentInfo>();
+		mContentInfoUnshowList = new ArrayList<FeedXMLContentInfo>();
 
 		// 设置数据适配器
-		mListViewAdapter = new ItemDetailListAdapter();
+		mListViewAdapter = new ItemDetailListAdapter(mContentInfoUnshowList,
+				mContentInfoShowedList, 8);
+		// 设置适配器
 		mListView.setAdapter(mListViewAdapter);
-
-		// 不使用加载更多
-		mListView.isAllowLoadingMore = false;
-
+		
 		// 设置刷新监听
-		mListView
-				.setOnRefreshListener(new DragRefreshListView.SimpleOnRefreshListener() {
+		mListView.setOnRefreshListener(new OnRefreshListener() {
 
-					@Override
-					public void onDragRefresh() {
-						getLatestDataFromNetwork();
-					}
+			@Override
+			public void onDragRefresh() {
+				getLatestDataFromNetwork();
+			}
 
-				});
+			@Override
+			public void onLoadingMore() {
+
+				// 成功插入的数据条数
+				final int addCount = mListViewAdapter.insertMoreItem();
+
+				// 修改UI必须在主线程执行
+				mListViewAdapter.notifyDataSetChanged();
+
+				if (addCount == 0) {
+					Toast.makeText(mThisActivity, "没有更多数据了", Toast.LENGTH_SHORT)
+							.show();
+				} 
+				
+				if (mContentInfoUnshowList.size() <= 0) {
+					// 禁止再加载更多
+					mListView.isAllowLoadingMore = false;
+				}
+				mListView.completeRefresh();
+
+			}
+
+		});
 
 		// 失败时重新加载
 		mNothingFoundLayout.setOnClickListener(new ReloadClickListener());
@@ -195,14 +222,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				// TODO:
-
 				Intent intent = new Intent(mThisActivity,
 						SummaryBodyActivity.class);
 				// 传递数据
 				intent.putExtra(
 						"FeedXMLContentInfo",
-						mContentInfoList.get(position
+						mContentInfoShowedList.get(position
 								- mListView.getHeaderViewsCount()));
 				intent.putExtra("FeedItem", mFeedItem);
 
@@ -267,7 +292,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	private void GetInfosFromNetwork() {
 
-		if (mContentInfoList.size() != 0) {// 已有显示数据
+		if (mContentInfoShowedList.size() != 0) {// 已有显示数据
 
 			mListView.setOnRefreshing();// 设置强制刷新
 
@@ -304,10 +329,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 									Toast.LENGTH_SHORT).show();
 							// TODO：判断是否需要刷新adapter？
 
-							// 插入到首部
-							mContentInfoList.clear();
-							mContentInfoList = contentInfos;
+							mContentInfoShowedList.clear();
+							mContentInfoUnshowList.clear();
+							mContentInfoUnshowList.addAll(contentInfos);
 
+							// 插入
+							mListViewAdapter.insertMoreItem();
+							
 							// 更新
 							mListViewAdapter.notifyDataSetChanged();
 
@@ -323,7 +351,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 						}
 
 						// 改变显示状态
-						if (mContentInfoList.size() != 0) {
+						if (mContentInfoShowedList.size() != 0) {
 
 							changeDisplayState(STATE_SHOWING);
 
@@ -354,12 +382,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			if (contentInfos != null) {// 读取本地信息
 
-				mContentInfoList = contentInfos;
+				mContentInfoShowedList.clear();
+				mContentInfoUnshowList.clear();
+				mContentInfoUnshowList.addAll(contentInfos);
+
+				// 插入
+				mListViewAdapter.insertMoreItem();
 
 				LogUtils.w("ItemDetailListActivity",
-						"本地加载了" + mContentInfoList.size() + "条数据");
+						"本地加载了" + contentInfos.size() + "条数据");
 
-				if (mContentInfoList.size() != 0) {// 本地缓存数据不为空
+				if (mContentInfoShowedList.size() != 0) {// 本地缓存数据不为空
 
 					// 更新
 					mListViewAdapter.notifyDataSetChanged();
@@ -476,7 +509,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	/**
 	 * 详细信息的数据适配器
 	 */
-	class ItemDetailListAdapter extends BaseAdapter {
+	class ItemDetailListAdapter
+			extends
+				ArrayListLoadingMoreAdapter<FeedXMLContentInfo> {
 
 		/**
 		 * 清空缓存
@@ -499,7 +534,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 */
 		private SparseArray<ListItemCache> listItemCaches;
 
-		public ItemDetailListAdapter() {
+		public ItemDetailListAdapter(ArrayList<FeedXMLContentInfo> unshowList,
+				ArrayList<FeedXMLContentInfo> showedList, int onceShowedCount) {
+			mListView.super(unshowList, showedList, onceShowedCount);
+
 			// 初始化线程池
 			showTextThreadPool = Executors.newCachedThreadPool();
 
@@ -512,13 +550,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public void shutdownThreadPool() {
 			showTextThreadPool.shutdownNow();
 			BitmapCacheUtils.shutdownDefalutThreadPool();
-		}
-
-		@Override
-		public int getCount() {
-
-			return mContentInfoList.size();
-
 		}
 
 		@Override
@@ -553,7 +584,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			}
 
 			// 处理逻辑
-			holder.title.setText(mContentInfoList.get(position).title);
+			holder.title.setText(mContentInfoShowedList.get(position).title);
 
 			ListItemCache itemCache = listItemCaches.get(position);
 
@@ -591,22 +622,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			}
 
-			holder.time
-					.setText("发表于："
-							+ TimeUtils.LoopToTransTime(mContentInfoList
-									.get(position).pubDate));
+			holder.time.setText("发表于："
+					+ TimeUtils.LoopToTransTime(mContentInfoShowedList
+							.get(position).pubDate));
 
 			return itemView;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return null;
 		}
 
 	}
@@ -712,7 +732,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				listItemCaches.put(position - mListView.getHeaderViewsCount(),
 						itemCache);
 
-				LogUtils.w(this, position + "");
 			}
 
 		}
@@ -725,7 +744,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 */
 		private CharSequence getPreviewText(int position) {
 
-			String orgString = mContentInfoList.get(position).description;
+			String orgString = mContentInfoShowedList.get(position).description;
 
 			imgLinks = new ArrayList<String>();
 			String tempString = HTTPUtils.html2Text(orgString, true, imgLinks)
@@ -845,7 +864,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				int realPosition = position - mListView.getHeaderViewsCount();
 
 				// 获取链接
-				String link = mContentInfoList.get(realPosition).link;
+				String link = mContentInfoShowedList.get(realPosition).link;
 
 				ClipboardManager clipManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 				clipManager.setText(link);
@@ -872,14 +891,14 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				int realPosition = position - mListView.getHeaderViewsCount();
 
 				// 获取标题
-				String msgTitle = mContentInfoList.get(realPosition).title;
+				String msgTitle = mContentInfoShowedList.get(realPosition).title;
 				// 获取摘要
-				String msgSummary = mContentInfoList.get(realPosition).description
+				String msgSummary = mContentInfoShowedList.get(realPosition).description
 						.substring(0, 120);
 
 				msgSummary = HTTPUtils.html2Text(msgSummary, true, null);
 				// 获取链接
-				String link = mContentInfoList.get(realPosition).link;
+				String link = mContentInfoShowedList.get(realPosition).link;
 
 				Intent intent = new Intent();
 				intent.setAction("android.intent.action.SEND");

@@ -42,7 +42,7 @@
             <ImageView
                 android:id="@+id/iv_preview1"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:scaleType="fitCenter" />
@@ -50,7 +50,7 @@
             <ImageView
                 android:id="@+id/iv_preview2"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
@@ -59,7 +59,7 @@
             <ImageView
                 android:id="@+id/iv_preview3"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
