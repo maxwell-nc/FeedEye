@@ -52,13 +52,13 @@ public class FeedItemDAO {
 		map.put("pic_url", feedItem.picURL);
 		map.put("feed_url", feedItem.feedURL);
 		map.put("encoding", feedItem.encoding);
-		
+
 		map.put("type", feedItem.baseInfo.type);
 		map.put("title", feedItem.baseInfo.title);
 		map.put("summary", feedItem.baseInfo.summary);
 		map.put("pub_date", TimeUtils.timestamp2String(feedItem.baseInfo.time,
 				TimeUtils.STANDARD_TIME_PATTERN, Locale.getDefault()));
-		
+
 		map.put("delete_flag", feedItem.deleteFlag);
 
 		return map;
@@ -175,11 +175,12 @@ public class FeedItemDAO {
 	/**
 	 * 无条件查询所有的item，不包含已经删除的
 	 * 
-	 * @return FeedItem集合
+	 * @param result
+	 *            用于存放查询的结果
 	 */
-	public ArrayList<FeedItem> queryAllItems() {
+	public void queryAllItems(ArrayList<FeedItem> result) {
 
-		return queryItems(null, null, false);
+		queryItems(null, null, false, result);
 
 	}
 
@@ -192,18 +193,24 @@ public class FeedItemDAO {
 	 *            选择条件对应的参数数组
 	 * @param isReturnDeletedData
 	 *            是否显示已经删除但未同步删除的数据
-	 * @return 查询的结果
+	 * @param result
+	 *            用于存放查询的结果,如果为null则抛异常
 	 */
-	public ArrayList<FeedItem> queryItems(String selection,
-			String[] selectionArgs, boolean isReturnDeletedData) {
+	public void queryItems(String selection, String[] selectionArgs,
+			boolean isReturnDeletedData, ArrayList<FeedItem> result) {
 
+		// 检查是否创建了
+		if (result == null) {
+			throw new RuntimeException("result can't not be null");
+		}
+		
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
 				null, null, "id DESC");// 新的数据放在第一
 
-		ArrayList<FeedItem> retList = new ArrayList<FeedItem>();
-
+		result.clear();// 清空原来的数据
+		
 		while (cursor.moveToNext()) {// 查询所有结果
 
 			if (!isReturnDeletedData) {// 不显示已经删除的数据
@@ -220,21 +227,19 @@ public class FeedItemDAO {
 			feedItem.feedURL = cursor.getString(1);
 			feedItem.picURL = cursor.getString(2);
 			feedItem.encoding = cursor.getString(3);
-			
+
 			feedItem.baseInfo.type = cursor.getString(4);
 			feedItem.baseInfo.title = cursor.getString(5);
 			feedItem.baseInfo.summary = cursor.getString(6);
 			feedItem.baseInfo.time = TimeUtils.string2Timestamp(cursor
 					.getString(7));
 
-			retList.add(feedItem);
+			result.add(feedItem);
 
 		}
 
 		db.close();
 		db = null;
-
-		return retList;
 
 	}
 

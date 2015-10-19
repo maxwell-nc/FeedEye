@@ -1,5 +1,7 @@
 package pres.nc.maxwell.feedeye.view;
 
+import java.util.ArrayList;
+
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -573,4 +576,98 @@ public class DragRefreshListView extends ListView {
 		}
 	}
 
+	/**
+	 * 带双ArrayList的加载更多的数据适配器
+	 * 
+	 * @param <T>
+	 *            ArrayList的数据泛型
+	 */
+	public abstract class ArrayListLoadingMoreAdapter<T> extends BaseAdapter {
+
+		/**
+		 * 一次展示的Item数量
+		 */
+		protected final int onceShowedCount;
+
+		/**
+		 * 已显示数据列表
+		 */
+		ArrayList<T> showedList;
+
+		/**
+		 * 未显示数据列表
+		 */
+		ArrayList<T> unshowList;
+
+		/**
+		 * 初始化数据
+		 * 
+		 * @param unshowList
+		 *            存放已显示数据列表
+		 * @param showedList
+		 *            存放未显示数据列表
+		 * @param onceShowedCount
+		 *            一次展示的Item数量
+		 */
+		public ArrayListLoadingMoreAdapter(ArrayList<T> unshowList,
+				ArrayList<T> showedList, int onceShowedCount) {
+
+			this.unshowList = unshowList;
+			this.showedList = showedList;
+			this.onceShowedCount = onceShowedCount;
+
+		}
+
+		/**
+		 * 返回已经显示的数目
+		 */
+		@Override
+		public int getCount() {
+			return showedList.size();
+		}
+
+		/**
+		 * 如果有更多数据则插入更多数据
+		 * 
+		 * @return 添加了的条目数
+		 */
+		public int insertMoreItem() {
+			int addCount = 0;// 要添加的数量
+
+			if (unshowList.size() == 0) {// 没数据可以加载了
+				return 0;
+			}
+
+			// 有剩余数据
+			if (unshowList.size() > onceShowedCount) {
+				addCount = onceShowedCount;
+			} else {// 剩下数据全部加载
+				addCount = unshowList.size();
+
+				// 没有更多数据，禁止上拉加载更多
+				isAllowLoadingMore = false;
+			}
+
+			// 添加到显示列表
+			for (int i = 0; i < addCount; i++) {
+				showedList.add(unshowList.get(i));
+			}
+			for (int i = addCount - 1; i >= 0; i--) {
+				unshowList.remove(i);
+			}
+
+			return addCount;
+		};
+
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+
+	}
 }
