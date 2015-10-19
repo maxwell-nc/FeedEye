@@ -51,7 +51,7 @@ public class BitmapCacheUtils {
 		if (threadPool == null) {
 
 			if (DEFAULT_EXECUTOR_SERVICE == null) {
-				DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+				DEFAULT_EXECUTOR_SERVICE = Executors.newFixedThreadPool(10);
 			}
 			displayBitmap(context, imageView, url, true, -1, -1, -1, null,
 					DEFAULT_EXECUTOR_SERVICE);

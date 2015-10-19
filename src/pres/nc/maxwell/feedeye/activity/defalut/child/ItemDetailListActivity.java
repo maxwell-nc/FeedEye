@@ -176,7 +176,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				mContentInfoShowedList, 8);
 		// 设置适配器
 		mListView.setAdapter(mListViewAdapter);
-		
+
 		// 设置刷新监听
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
@@ -197,8 +197,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				if (addCount == 0) {
 					Toast.makeText(mThisActivity, "没有更多数据了", Toast.LENGTH_SHORT)
 							.show();
-				} 
-				
+				}
+
 				if (mContentInfoUnshowList.size() <= 0) {
 					// 禁止再加载更多
 					mListView.isAllowLoadingMore = false;
@@ -335,9 +335,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 							// 插入
 							mListViewAdapter.insertMoreItem();
-							
-							// 更新
-							mListViewAdapter.notifyDataSetChanged();
+
+							// 更新并清空缓存
+							mListViewAdapter.notifyDataSetChangedAndClearCache();
 
 							// 设置本地缓存,最新的部分（旧的舍弃）
 							XMLCacheUtils
@@ -516,8 +516,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		/**
 		 * 清空缓存
 		 */
-		@Override
-		public void notifyDataSetChanged() {
+		public void notifyDataSetChangedAndClearCache() {
+			
 			listItemCaches.clear();// 清空缓存
 			super.notifyDataSetChanged();
 		}
@@ -631,6 +631,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 	}
 
+	/**
+	 * 存放ListView异步加载后的数据缓存
+	 */
 	class ListItemCache {
 
 		int pic1Visibility;
@@ -750,7 +753,10 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			String tempString = HTTPUtils.html2Text(orgString, true, imgLinks)
 					.replace("\n", "");
 
-			LogUtils.w(this, imgLinks.toString());
+			if (tempString.length() > 250) {
+				tempString = tempString.substring(0, 250);
+			}
+
 			return tempString;
 		}
 	}
