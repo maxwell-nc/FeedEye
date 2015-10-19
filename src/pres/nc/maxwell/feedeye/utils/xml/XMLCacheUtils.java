@@ -20,12 +20,12 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.util.Xml;
 
 /**
- * ¿ØÖÆÍøÂçXMLÊı¾İµÄ»º´æ
+ * æ§åˆ¶ç½‘ç»œXMLæ•°æ®çš„ç¼“å­˜
  */
 public class XMLCacheUtils {
 
 	/**
-	 * Íê³É¶ÁÈ¡±¾µØÊı¾İ¼àÌıÆ÷
+	 * å®Œæˆè¯»å–æœ¬åœ°æ•°æ®ç›‘å¬å™¨
 	 * 
 	 * @author Forest
 	 * 
@@ -33,28 +33,28 @@ public class XMLCacheUtils {
 	public interface OnFinishGetLocalCacheListener {
 
 		/**
-		 * Íê³É»ñÈ¡±¾µØÄÚÈİ
-		 * @param contentInfos ±¾µØÄÚÈİ»º´æ
+		 * å®Œæˆè·å–æœ¬åœ°å†…å®¹
+		 * @param contentInfos æœ¬åœ°å†…å®¹ç¼“å­˜
 		 */
 		public void onFinishGetContentInfo(
 				ArrayList<FeedXMLContentInfo> contentInfos);
 		/**
-		 * Íê³É»ñÈ¡±¾µØ»ù±¾ĞÅÏ¢
-		 * @param baseInfo ±¾µØ»ù±¾ĞÅÏ¢»º´æ
+		 * å®Œæˆè·å–æœ¬åœ°åŸºæœ¬ä¿¡æ¯
+		 * @param baseInfo æœ¬åœ°åŸºæœ¬ä¿¡æ¯ç¼“å­˜
 		 */
 		public void onFinishGetBaseInfo(FeedXMLBaseInfo baseInfo);
 
 	}
 
 	/**
-	 * ¶ÁÈ¡±¾µØ»º´æ-»ù±¾ĞÅÏ¢
+	 * è¯»å–æœ¬åœ°ç¼“å­˜-åŸºæœ¬ä¿¡æ¯
 	 * 
 	 * @param feedItem
-	 *            ´«µİĞèÒª¶ÁÈ¡µÄĞÅÏ¢
+	 *            ä¼ é€’éœ€è¦è¯»å–çš„ä¿¡æ¯
 	 * @param listener
-	 *            Íê³É»ñÈ¡µÄ¼àÌıÆ÷
+	 *            å®Œæˆè·å–çš„ç›‘å¬å™¨
 	 * @throws FileNotFoundException
-	 *             »º´æ²»´æÔÚ
+	 *             ç¼“å­˜ä¸å­˜åœ¨
 	 */
 	public static void getLocalCacheBaseInfo(FeedItem feedItem,
 			final OnFinishGetLocalCacheListener listener)
@@ -65,7 +65,7 @@ public class XMLCacheUtils {
 
 		final FileInputStream fileInputStream = new FileInputStream(file);
 
-		// ¶ÁÈ¡ĞÅÏ¢
+		// è¯»å–ä¿¡æ¯
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
@@ -79,26 +79,26 @@ public class XMLCacheUtils {
 							listener.onFinishGetBaseInfo(baseInfo);
 						}
 
-						// ¹Ø±ÕÁ÷
+						// å…³é—­æµ
 						IOUtils.closeQuietly(fileInputStream);
 					}
 				});
 
-		// ½âÎöÊı¾İ
+		// è§£ææ•°æ®
 		feedXMLParser.parse(fileInputStream, feedItem.encoding,
 				FeedXMLParser.TYPE_PARSE_BASE_INFO);
 
 	}
 
 	/**
-	 * ¶ÁÈ¡±¾µØ»º´æ-ÄÚÈİĞÅÏ¢
+	 * è¯»å–æœ¬åœ°ç¼“å­˜-å†…å®¹ä¿¡æ¯
 	 * 
 	 * @param feedItem
-	 *            ´«µİĞèÒª¶ÁÈ¡µÄĞÅÏ¢
+	 *            ä¼ é€’éœ€è¦è¯»å–çš„ä¿¡æ¯
 	 * @param listener
-	 *            Íê³É»ñÈ¡µÄ¼àÌıÆ÷
+	 *            å®Œæˆè·å–çš„ç›‘å¬å™¨
 	 * @throws FileNotFoundException
-	 *             »º´æ²»´æÔÚ
+	 *             ç¼“å­˜ä¸å­˜åœ¨
 	 */
 	public static void getLocalCacheContentInfo(FeedItem feedItem,
 			final OnFinishGetLocalCacheListener listener)
@@ -109,7 +109,7 @@ public class XMLCacheUtils {
 
 		final FileInputStream fileInputStream = new FileInputStream(file);
 
-		// ¶ÁÈ¡ĞÅÏ¢
+		// è¯»å–ä¿¡æ¯
 		FeedXMLParser feedXMLParser = new FeedXMLParser();
 
 		feedXMLParser
@@ -123,31 +123,31 @@ public class XMLCacheUtils {
 							listener.onFinishGetContentInfo(contentInfos);
 						}
 
-						// ¹Ø±ÕÁ÷
+						// å…³é—­æµ
 						IOUtils.closeQuietly(fileInputStream);
 
 					}
 
 				});
 
-		// ½âÎöÊı¾İ
+		// è§£ææ•°æ®
 		feedXMLParser.parse(fileInputStream, feedItem.encoding,
 				FeedXMLParser.TYPE_PARSE_CONTENT);
 
 	}
 
 	/**
-	 * ±£´æ±¾µØ»º´æ
+	 * ä¿å­˜æœ¬åœ°ç¼“å­˜
 	 * 
 	 * @param feedItem
-	 *            ÓÃÓÚ´«µİ»ù±¾ĞÅÏ¢µÈĞÅÏ¢
+	 *            ç”¨äºä¼ é€’åŸºæœ¬ä¿¡æ¯ç­‰ä¿¡æ¯
 	 * @param contentInfos
-	 *            ÄÚÈİÊı¾İ¼¯ºÏ
+	 *            å†…å®¹æ•°æ®é›†åˆ
 	 */
 	public static void setLocalCache(FeedItem feedItem,
 			ArrayList<FeedXMLContentInfo> contentInfos) {
 
-		if (contentInfos.size()<=0) {//·ÀÖ¹Ğ´Èë¿ÕÊı¾İ
+		if (contentInfos.size()<=0) {//é˜²æ­¢å†™å…¥ç©ºæ•°æ®
 			return;
 		}
 		
@@ -165,10 +165,10 @@ public class XMLCacheUtils {
 			xmlSerializer.setOutput(fileOutputStream, "utf-8");
 			xmlSerializer.startDocument("utf-8", true);
 
-			// ÅĞ¶ÏÀàĞÍ
+			// åˆ¤æ–­ç±»å‹
 			FeedXMLBaseInfo baseInfo = feedItem.baseInfo;
 
-			if (baseInfo.type.equals(FeedXMLBaseInfo.TYPE_RSS)) {// RSSÀàĞÍ
+			if (baseInfo.type.equals(FeedXMLBaseInfo.TYPE_RSS)) {// RSSç±»å‹
 
 				// <rss version="2.0">
 				xmlSerializer.startTag(null, "rss");
@@ -176,13 +176,13 @@ public class XMLCacheUtils {
 
 				xmlSerializer.startTag(null, "channel");// <channel>
 
-				// Ğ´»ù±¾ĞÅÏ¢
+				// å†™åŸºæœ¬ä¿¡æ¯
 				xmlSerializer.startTag(null, "title");
 				xmlSerializer.text(baseInfo.title);
 				xmlSerializer.endTag(null, "title");
 
 				xmlSerializer.startTag(null, "description");
-				xmlSerializer.cdsect(baseInfo.summary);// Éú³ÉCDATA
+				xmlSerializer.cdsect(baseInfo.summary);// ç”ŸæˆCDATA
 				// xmlSerializer.text(contentInfo.description);
 				xmlSerializer.endTag(null, "description");
 
@@ -191,7 +191,7 @@ public class XMLCacheUtils {
 						TimeUtils.STANDARD_TIME_PATTERN, Locale.getDefault()));
 				xmlSerializer.endTag(null, "pubDate");
 
-				// Ğ´ÄÚÈİ
+				// å†™å†…å®¹
 				for (FeedXMLContentInfo contentInfo : contentInfos) {
 					xmlSerializer.startTag(null, "item");// <item>
 
@@ -200,7 +200,7 @@ public class XMLCacheUtils {
 					xmlSerializer.endTag(null, "title");
 
 					xmlSerializer.startTag(null, "description");
-					xmlSerializer.cdsect(contentInfo.description);// Éú³ÉCDATA
+					xmlSerializer.cdsect(contentInfo.description);// ç”ŸæˆCDATA
 					// xmlSerializer.text(contentInfo.description);
 					xmlSerializer.endTag(null, "description");
 
@@ -219,19 +219,19 @@ public class XMLCacheUtils {
 				xmlSerializer.endTag(null, "rss");// </rss>
 			}
 
-			if (baseInfo.type.equals(FeedXMLBaseInfo.TYPE_ATOM)) {// TODO:ATOMÀàĞÍ
+			if (baseInfo.type.equals(FeedXMLBaseInfo.TYPE_ATOM)) {// TODO:ATOMç±»å‹
 				
 				// <feed xmlns="http://www.w3.org/2005/Atom">
 				xmlSerializer.startTag(null, "feed");
 				xmlSerializer.attribute(null, "xmlns", "http://www.w3.org/2005/Atom");
 
-				// Ğ´»ù±¾ĞÅÏ¢
+				// å†™åŸºæœ¬ä¿¡æ¯
 				xmlSerializer.startTag(null, "title");
 				xmlSerializer.text(baseInfo.title);
 				xmlSerializer.endTag(null, "title");
 
 				xmlSerializer.startTag(null, "subtitle");
-				xmlSerializer.cdsect(baseInfo.summary);// Éú³ÉCDATA
+				xmlSerializer.cdsect(baseInfo.summary);// ç”ŸæˆCDATA
 				// xmlSerializer.text(contentInfo.description);
 				xmlSerializer.endTag(null, "subtitle");
 
@@ -240,7 +240,7 @@ public class XMLCacheUtils {
 						TimeUtils.STANDARD_TIME_PATTERN, Locale.getDefault()));
 				xmlSerializer.endTag(null, "updated");
 
-				// Ğ´ÄÚÈİ
+				// å†™å†…å®¹
 				for (FeedXMLContentInfo contentInfo : contentInfos) {
 					xmlSerializer.startTag(null, "entry");// <entry>
 
@@ -249,7 +249,7 @@ public class XMLCacheUtils {
 					xmlSerializer.endTag(null, "title");
 
 					xmlSerializer.startTag(null, "summary");
-					xmlSerializer.cdsect(contentInfo.description);// Éú³ÉCDATA
+					xmlSerializer.cdsect(contentInfo.description);// ç”ŸæˆCDATA
 					// xmlSerializer.text(contentInfo.description);
 					xmlSerializer.endTag(null, "summary");
 
@@ -264,7 +264,7 @@ public class XMLCacheUtils {
 					
 					xmlSerializer.startTag(null, "content");
 					xmlSerializer.attribute(null, "type", contentInfo.contentType);
-					xmlSerializer.cdsect(contentInfo.content);// Éú³ÉCDATA
+					xmlSerializer.cdsect(contentInfo.content);// ç”ŸæˆCDATA
 					xmlSerializer.endTag(null, "content");
 					
 					xmlSerializer.endTag(null, "entry");// </entry>
@@ -284,7 +284,7 @@ public class XMLCacheUtils {
 			e.printStackTrace();
 		}
 
-		// ¹Ø±ÕÁ÷
+		// å…³é—­æµ
 		IOUtils.closeQuietly(fileOutputStream);
 
 	}

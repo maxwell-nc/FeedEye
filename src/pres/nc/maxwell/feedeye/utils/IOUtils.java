@@ -14,15 +14,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 /**
- * ´¦ÀíIO¹¤¾ßÀà
+ * å¤„ç†IOå·¥å…·ç±»
  */
 public class IOUtils {
 
 	/**
-	 * ¹Ø±ÕÊäÈëÁ÷²¢²¶»ñIOÒì³£
+	 * å…³é—­è¾“å…¥æµå¹¶æ•è·IOå¼‚å¸¸
 	 * 
 	 * @param inputStream
-	 *            ÊäÈëÁ÷
+	 *            è¾“å…¥æµ
 	 */
 	public static void closeQuietly(InputStream inputStream) {
 
@@ -39,10 +39,10 @@ public class IOUtils {
 	}
 
 	/**
-	 * ¹Ø±ÕÊä³öÁ÷²¢²¶»ñIOÒì³£
+	 * å…³é—­è¾“å‡ºæµå¹¶æ•è·IOå¼‚å¸¸
 	 * 
 	 * @param outputStream
-	 *            Êä³öÁ÷
+	 *            è¾“å‡ºæµ
 	 */
 	public static void closeQuietly(OutputStream outputStream) {
 
@@ -58,10 +58,10 @@ public class IOUtils {
 	}
 
 	/**
-	 * ¹Ø±Õ×Ö·ûÁ÷²¢²¶»ñIOÒì³£
+	 * å…³é—­å­—ç¬¦æµå¹¶æ•è·IOå¼‚å¸¸
 	 * 
 	 * @param reader
-	 *            ×Ö·ûÁ÷
+	 *            å­—ç¬¦æµ
 	 */
 	public static void closeQuietly(Reader reader) {
 
@@ -77,10 +77,10 @@ public class IOUtils {
 	}
 
 	/**
-	 * ¹Ø±Õ×Ö·ûÁ÷²¢²¶»ñIOÒì³£
+	 * å…³é—­å­—ç¬¦æµå¹¶æ•è·IOå¼‚å¸¸
 	 * 
 	 * @param writer
-	 *            ×Ö·ûÁ÷
+	 *            å­—ç¬¦æµ
 	 */
 	public static void closeQuietly(Writer writer) {
 
@@ -96,21 +96,21 @@ public class IOUtils {
 	}
 
 	/**
-	 * »ñµÃSD¿¨ÖĞµÄ´æ´¢File¶ÔÏó
+	 * è·å¾—SDå¡ä¸­çš„å­˜å‚¨Fileå¯¹è±¡
 	 * 
 	 * @param dir
-	 *            SD¿¨ÏÂµÄÄ¿Â¼£¬Èç"/xxx"
+	 *            SDå¡ä¸‹çš„ç›®å½•ï¼Œå¦‚"/xxx"
 	 * @param filename
-	 *            ÎÄ¼şÃû
-	 * @return File¶ÔÏó
+	 *            æ–‡ä»¶å
+	 * @return Fileå¯¹è±¡
 	 */
 	public static File getFileInSdcard(String dir, String filename) {
 
-		// sdcardÎ»ÖÃ
+		// sdcardä½ç½®
 		String savePath = Environment.getExternalStorageDirectory()
 				.getAbsolutePath() + dir;
 
-		// Èç¹ûÎÄ¼ş¼Ğ²»´æÔÚ, ´´½¨ÎÄ¼ş¼Ğ
+		// å¦‚æœæ–‡ä»¶å¤¹ä¸å­˜åœ¨, åˆ›å»ºæ–‡ä»¶å¤¹
 		File errLogFile = new File(savePath);
 
 		if (!errLogFile.exists()) {
@@ -123,12 +123,12 @@ public class IOUtils {
 	}
 
 	/**
-	 * ÊäÈëÁ÷Ğ´Èëµ½Êä³öÁ÷
+	 * è¾“å…¥æµå†™å…¥åˆ°è¾“å‡ºæµ
 	 * 
 	 * @param inputStream
-	 *            ÊäÈëÁ÷
+	 *            è¾“å…¥æµ
 	 * @param outputStream
-	 *            Êä³öÁ÷
+	 *            è¾“å‡ºæµ
 	 */
 	public static void writeStream(InputStream inputStream,
 			OutputStream outputStream) {
@@ -147,10 +147,10 @@ public class IOUtils {
 	
 	
 	/**
-	 * ×ª»»URIÎª¾ø¶ÔÂ·¾¶
-	 * @param activity Activity¶ÔÏó
+	 * è½¬æ¢URIä¸ºç»å¯¹è·¯å¾„
+	 * @param activity Activityå¯¹è±¡
 	 * @param uri Uri
-	 * @return ¾ø¶ÔÂ·¾¶ÎÄ±¾
+	 * @return ç»å¯¹è·¯å¾„æ–‡æœ¬
 	 */
 	public static String getAbsolutePathFromURI(Activity activity,
 			Uri uri) {

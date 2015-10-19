@@ -26,67 +26,67 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Ìí¼Ó¶©ÔÄÒ³ÃæµÄActivity
+ * æ·»åŠ è®¢é˜…é¡µé¢çš„Activity
  */
 public class AddFeedActivity extends DefaultNewActivity {
 
 	/**
-	 * Activity¶ÔÏó
+	 * Activityå¯¹è±¡
 	 */
 	private final AddFeedActivity mThisActivity = this;
 
 	/**
-	 * Íê³ÉÌí¼Ó°´Å¥
+	 * å®Œæˆæ·»åŠ æŒ‰é’®
 	 */
 	private ImageView mFinishButtonView;
 
 	/**
-	 * ÍøÖ·ÊäÈë¿ò
+	 * ç½‘å€è¾“å…¥æ¡†
 	 */
 	private EditText mUrlText;
 
 	/**
-	 * ±êÌâÊäÈë¿ò
+	 * æ ‡é¢˜è¾“å…¥æ¡†
 	 */
 	private EditText mTitleText;
 
 	/**
-	 * ±àÂëµ¥Ñ¡×é
+	 * ç¼–ç å•é€‰ç»„
 	 */
 	private RadioGroup mEncodingGroup;
 
 	/**
-	 * ±àÂë¸ñÊ½£¬Ä¬ÈÏUTF-8
+	 * ç¼–ç æ ¼å¼ï¼Œé»˜è®¤UTF-8
 	 */
 	private String mEncodingString = "utf-8";
 
 	/**
-	 * ¼ÓÔØÖĞÖ¡²¼¾Ö
+	 * åŠ è½½ä¸­å¸§å¸ƒå±€
 	 */
 	private FrameLayout mLoadingFrame;
 
 	/**
-	 * ÒªÌí¼ÓµÄ¶©ÔÄµÄµØÖ·
+	 * è¦æ·»åŠ çš„è®¢é˜…çš„åœ°å€
 	 */
 	private String mUrlString;
 
 	/**
-	 * ×Ô¶¨ÒåµÄÍ¼±ê
+	 * è‡ªå®šä¹‰çš„å›¾æ ‡
 	 */
 	private ImageView mCustomImage;
 
 	/**
-	 * ×Ô¶¨ÒåµÄÍ¼Æ¬Â·¾¶
+	 * è‡ªå®šä¹‰çš„å›¾ç‰‡è·¯å¾„
 	 */
 	private TextView mCustomImagePath;
 
 	/**
-	 * XML½âÎöÆ÷
+	 * XMLè§£æå™¨
 	 */
 	private FeedXMLParser mFeedXMLParser;
 
 	/**
-	 * ³õÊ¼»¯View¶ÔÏó
+	 * åˆå§‹åŒ–Viewå¯¹è±¡
 	 */
 	@Override
 	protected void initView() {
@@ -118,14 +118,14 @@ public class AddFeedActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ
+	 * åˆå§‹åŒ–æ•°æ®
 	 */
 	@Override
 	protected void initData() {
 		super.initData();
 
 		/**
-		 * µã»÷Íê³É°´Å¥
+		 * ç‚¹å‡»å®ŒæˆæŒ‰é’®
 		 */
 		mFinishButtonView.setOnClickListener(new OnClickListener() {
 
@@ -139,7 +139,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		});
 
 		/**
-		 * ÅĞ¶Ï±àÂëÀàĞÍ
+		 * åˆ¤æ–­ç¼–ç ç±»å‹
 		 */
 		mEncodingGroup
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -162,7 +162,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 					}
 				});
 
-		// ×Ô¶¨ÒåÍ¼±ê
+		// è‡ªå®šä¹‰å›¾æ ‡
 		mCustomImage.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -171,7 +171,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 				Intent intent = new Intent();
 				intent.setType("image/*");
 				intent.setAction(Intent.ACTION_GET_CONTENT);
-				// ÇëÇóÂëÎª1
+				// è¯·æ±‚ç ä¸º1
 				startActivityForResult(intent, 1);
 			}
 		});
@@ -181,14 +181,14 @@ public class AddFeedActivity extends DefaultNewActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == 1) {// »ñÈ¡×Ô¶¨ÒåµÄÍ¼±ê
+		if (requestCode == 1) {// è·å–è‡ªå®šä¹‰çš„å›¾æ ‡
 
 			if (resultCode == RESULT_OK) {
-				Uri uri = data.getData();// »ñÈ¡·µ»ØµÄURI
+				Uri uri = data.getData();// è·å–è¿”å›çš„URI
 				String customImagePath = IOUtils.getAbsolutePathFromURI(
 						mThisActivity, uri);
 				mCustomImagePath.setText(customImagePath);
-				// ÏÔÊ¾³öÀ´
+				// æ˜¾ç¤ºå‡ºæ¥
 				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage,
 						customImagePath, null);
 			}
@@ -205,18 +205,18 @@ public class AddFeedActivity extends DefaultNewActivity {
 		if (mFeedXMLParser != null) {
 			mFeedXMLParser.cancelParse();
 		}
-		setResult(-1, null);// -1±íÊ¾Ã»ÓĞ·µ»ØÊı¾İ
+		setResult(-1, null);// -1è¡¨ç¤ºæ²¡æœ‰è¿”å›æ•°æ®
 		return super.beforeClose();
 	}
 
 	/**
-	 * Ìí¼Ó¶©ÔÄĞÅÏ¢
+	 * æ·»åŠ è®¢é˜…ä¿¡æ¯
 	 */
 	public void addItem() {
 
 		mUrlString = mUrlText.getText().toString();
 
-		if (TextUtils.isEmpty(mUrlString)) {// ÌáÊ¾²»ÄÜÎª¿Õ
+		if (TextUtils.isEmpty(mUrlString)) {// æç¤ºä¸èƒ½ä¸ºç©º
 
 			mUrlText.startAnimation(AnimationUtils.loadAnimation(mThisActivity,
 					R.anim.edit_text_translate));
@@ -224,14 +224,14 @@ public class AddFeedActivity extends DefaultNewActivity {
 			return;
 		}
 
-		// ÏÔÊ¾´¦ÀíÖĞ
+		// æ˜¾ç¤ºå¤„ç†ä¸­
 		mLoadingFrame.setVisibility(View.VISIBLE);
-		// ½ûÖ¹ÔÚÌá½»
+		// ç¦æ­¢åœ¨æäº¤
 		mFinishButtonView.setVisibility(View.INVISIBLE);
 
 		final String titleString = mTitleText.getText().toString();
 
-		// ×Ô¶¯²¹È«httpÍ·
+		// è‡ªåŠ¨è¡¥å…¨httpå¤´
 		if (!(mUrlString.startsWith("http://") || mUrlString
 				.startsWith("https://"))) {
 
@@ -239,11 +239,11 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 		}
 
-		// Ìí¼ÓĞÅÏ¢
+		// æ·»åŠ ä¿¡æ¯
 		final FeedItem feedItem = new FeedItem();
 		final FeedItemDAO feedItemDAO = new FeedItemDAO(this);
 
-		// ÉèÖÃURL
+		// è®¾ç½®URL
 		feedItem.feedURL = mUrlString;
 
 		mFeedXMLParser = new FeedXMLParser();
@@ -255,46 +255,46 @@ public class AddFeedActivity extends DefaultNewActivity {
 					public void onFinishParseBaseInfo(boolean result,
 							FeedXMLBaseInfo baseInfo) {
 
-						if (result) {// ³É¹¦¶ÁÈ¡
+						if (result) {// æˆåŠŸè¯»å–
 
-							// ÅĞ¶ÏÊÇ·ñÀàĞÍºÏ·¨
+							// åˆ¤æ–­æ˜¯å¦ç±»å‹åˆæ³•
 							if (baseInfo.type == FeedXMLBaseInfo.TYPE_UNKNOWN) {
 
-								failedToGet("²»Ö§³ÖµÄ¶©ÔÄÀàĞÍ");
+								failedToGet("ä¸æ”¯æŒçš„è®¢é˜…ç±»å‹");
 								return;
 
 							}
 
-							// ÉèÖÃ»ù±¾ĞÅÏ¢
+							// è®¾ç½®åŸºæœ¬ä¿¡æ¯
 							feedItem.baseInfo = baseInfo;
 
-							// ×Ô¶¨ÒåÉèÖÃ±êÌâ
-							if (!TextUtils.isEmpty(titleString)) {// ÓÃ»§×Ô¶¨Òå
+							// è‡ªå®šä¹‰è®¾ç½®æ ‡é¢˜
+							if (!TextUtils.isEmpty(titleString)) {// ç”¨æˆ·è‡ªå®šä¹‰
 
 								feedItem.baseInfo.title = titleString;
 
 							}
 
-							// ÉèÖÃÍ¼Æ¬
+							// è®¾ç½®å›¾ç‰‡
 							String customImagePath = mCustomImagePath.getText()
 									.toString();
 
-							if (customImagePath.startsWith("/")) {// Ê¹ÓÃ±¾µØÍ¼Æ¬
+							if (customImagePath.startsWith("/")) {// ä½¿ç”¨æœ¬åœ°å›¾ç‰‡
 
 								feedItem.picURL = customImagePath;
 
-							} else {// Ã»ÓĞÉèÖÃ
+							} else {// æ²¡æœ‰è®¾ç½®
 
-								// favicon»ñÈ¡
+								// faviconè·å–
 
 								Pattern p = Pattern
-										.compile("(?<=//|)((\\w)+\\.)+\\w+");// Æ¥Åä¶¥¼¶ÓòÃû
+										.compile("(?<=//|)((\\w)+\\.)+\\w+");// åŒ¹é…é¡¶çº§åŸŸå
 
 								Matcher m = p.matcher(mUrlString);
 
 								if (m.find()) {
 
-									// ²¹È«httpÍ·
+									// è¡¥å…¨httpå¤´
 									String host = m.group();
 									if (host.startsWith("http://")
 											|| host.startsWith("https://")) {
@@ -319,41 +319,41 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 							}
 
-							// ÉèÖÃ¶©ÔÄURL
+							// è®¾ç½®è®¢é˜…URL
 							feedItem.feedURL = mUrlString;
 
-							// ÉèÖÃ±àÂë·½Ê½
+							// è®¾ç½®ç¼–ç æ–¹å¼
 							feedItem.encoding = mEncodingString;
 
 							feedItemDAO.addItem(feedItem);
 
-							// ·µ»ØÊı¾İ¸øMainActivity
+							// è¿”å›æ•°æ®ç»™MainActivity
 							Intent returnData = new Intent();
 							returnData.putExtra("FeedItem", feedItem);
 
 							setResult(0, returnData);
 
-							Toast.makeText(mThisActivity, "Ìí¼Ó³É¹¦",
+							Toast.makeText(mThisActivity, "æ·»åŠ æˆåŠŸ",
 									Toast.LENGTH_LONG).show();
 
-							// ¹Ø±ÕActivity
+							// å…³é—­Activity
 							finish();
 
-						} else {// ¶ÁÈ¡Ê§°Ü
+						} else {// è¯»å–å¤±è´¥
 
-							failedToGet("»ñÈ¡Ê§°Ü£¬Çë¼ì²éµØÖ·ºÍÍøÂç");
+							failedToGet("è·å–å¤±è´¥ï¼Œè¯·æ£€æŸ¥åœ°å€å’Œç½‘ç»œ");
 						}
 
 					}
 
 					/**
-					 * »ñÈ¡Ê§°Ü
+					 * è·å–å¤±è´¥
 					 * 
 					 * @param errMsg
-					 *            ÌáÊ¾´íÎóĞÅÏ¢
+					 *            æç¤ºé”™è¯¯ä¿¡æ¯
 					 */
 					private void failedToGet(String errMsg) {
-						// »Ö¸´
+						// æ¢å¤
 						mLoadingFrame.setVisibility(View.GONE);
 						mFinishButtonView.setVisibility(View.VISIBLE);
 
@@ -363,7 +363,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 				});
 
-		// ½âÎöÊı¾İ
+		// è§£ææ•°æ®
 		mFeedXMLParser.parse(mUrlString, mEncodingString,
 				FeedXMLParser.TYPE_PARSE_BASE_INFO);
 

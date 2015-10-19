@@ -11,71 +11,71 @@ import pres.nc.maxwell.feedeye.utils.IOUtils;
 import android.util.Xml;
 
 /**
- * XML½âÎöµÄ¹¤¾ßÀà
+ * XMLè§£æçš„å·¥å…·ç±»
  */
 public class XMLParseUtils {
 
 	/**
-	 * ½âÎö¼àÌıÆ÷
+	 * è§£æç›‘å¬å™¨
 	 */
 	public interface OnParseListener {
 		/**
-		 * ÊÇ·ñÖ»½âÎö¿ªÊ¼±êÇ©
+		 * æ˜¯å¦åªè§£æå¼€å§‹æ ‡ç­¾
 		 * 
-		 * @return ·µ»ØÕæ±íÊ¾Ö»½âÎö¿ªÊ¼±êÇ©
+		 * @return è¿”å›çœŸè¡¨ç¤ºåªè§£æå¼€å§‹æ ‡ç­¾
 		 */
 		public boolean isOnlyParseStartTag();
 
 		/**
-		 * ½âÎö±êÇ©Ãû
+		 * è§£ææ ‡ç­¾å
 		 * 
 		 * @param parser
-		 *            ½âÎöÆ÷
+		 *            è§£æå™¨
 		 * @param name
-		 *            ±êÇ©Ãû
+		 *            æ ‡ç­¾å
 		 * @param eventType
-		 *            ½âÎöµ½µÄÀàĞÍ
+		 *            è§£æåˆ°çš„ç±»å‹
 		 */
 		public void onGetName(XmlPullParser parser, String name, int eventType)
 				throws XmlPullParserException, IOException;
 
 		/**
-		 * ÊÇ·ñÖĞ¶Ï½âÎö
+		 * æ˜¯å¦ä¸­æ–­è§£æ
 		 * 
 		 * @param parser
-		 *            ½âÎöÆ÷
-		 * @return Èç¹û·µ»ØÕæ±íÊ¾²»ĞèÒªÔÙ½âÎö£¬½âÎöÍ£Ö¹
+		 *            è§£æå™¨
+		 * @return å¦‚æœè¿”å›çœŸè¡¨ç¤ºä¸éœ€è¦å†è§£æï¼Œè§£æåœæ­¢
 		 */
 		public boolean isInterruptParse(XmlPullParser parser);
 
 		/**
-		 * ½âÎöÍê³Éºó´¦Àí£¬×îºó´¦Àí²¢ÇÒÒ»¶¨Ö´ĞĞ
+		 * è§£æå®Œæˆåå¤„ç†ï¼Œæœ€åå¤„ç†å¹¶ä¸”ä¸€å®šæ‰§è¡Œ
 		 */
 		public void doWhenFinishedParse();
 	}
 
 	/**
-	 * ¼àÌıÆ÷
+	 * ç›‘å¬å™¨
 	 */
 	private OnParseListener onParseListener;
 
 	/**
-	 * ÉèÖÃ½âÎö¼àÌıÆ÷
+	 * è®¾ç½®è§£æç›‘å¬å™¨
 	 * 
 	 * @param listener
-	 *            ¼àÌıÆ÷
+	 *            ç›‘å¬å™¨
 	 */
 	public void setOnParseListener(OnParseListener listener) {
 		this.onParseListener = listener;
 	}
 
 	/**
-	 * ½âÎöÍøÂçÁ÷XML
+	 * è§£æç½‘ç»œæµXML
 	 * 
 	 * @param inputStream
-	 *            ÍøÂçÁ÷
+	 *            ç½‘ç»œæµ
 	 * @param encodingString
-	 *            ±àÂë·½Ê½
+	 *            ç¼–ç æ–¹å¼
 	 */
 	public void parseStream(InputStream inputStream, String encodingString) {
 
@@ -85,12 +85,12 @@ public class XMLParseUtils {
 			parser.setInput(inputStream, encodingString);
 			int eventType = parser.getEventType();
 
-			// ²»¶Ï½âÎö
+			// ä¸æ–­è§£æ
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 
 				if (onParseListener != null) {
 
-					if (onParseListener.isOnlyParseStartTag()) {// Ö±½Ó½âÎö¿ªÊ¼±êÇ©
+					if (onParseListener.isOnlyParseStartTag()) {// ç›´æ¥è§£æå¼€å§‹æ ‡ç­¾
 
 						if (eventType != XmlPullParser.START_TAG
 								|| parser.getName() == null) {
@@ -101,13 +101,13 @@ public class XMLParseUtils {
 					}
 
 					onParseListener.onGetName(parser, parser.getName(),
-							eventType);// ½âÎö±êÇ©Ãû
+							eventType);// è§£ææ ‡ç­¾å
 
-					if (onParseListener.isInterruptParse(parser)) {// Ìø³ö
+					if (onParseListener.isInterruptParse(parser)) {// è·³å‡º
 						break;
 					}
 
-				} else {// ²»ÉèÖÃ¼àÌıÆ÷ÎŞÒâÒå
+				} else {// ä¸è®¾ç½®ç›‘å¬å™¨æ— æ„ä¹‰
 					break;
 				}
 

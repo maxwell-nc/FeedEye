@@ -26,17 +26,17 @@ public class SummaryBodyActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯View
+	 * åˆå§‹åŒ–View
 	 */
 	private void initView() {
 
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ
+	 * åˆå§‹åŒ–æ•°æ®
 	 */
 	private void initData() {
-		// »ñÈ¡´«µİ½øÀ´µÄÊı¾İ
+		// è·å–ä¼ é€’è¿›æ¥çš„æ•°æ®
 		FeedXMLContentInfo feedXMLContentInfo = (FeedXMLContentInfo) getIntent()
 				.getExtras().getSerializable("FeedXMLContentInfo");
 		FeedItem feedItem = (FeedItem) getIntent().getExtras().getSerializable(

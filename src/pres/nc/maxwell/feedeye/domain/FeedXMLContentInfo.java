@@ -3,38 +3,38 @@ package pres.nc.maxwell.feedeye.domain;
 import java.io.Serializable;
 
 /**
- * ¶©ÔÄµÄXMLµÄÄÚÈİĞÅÏ¢
+ * è®¢é˜…çš„XMLçš„å†…å®¹ä¿¡æ¯
  */
 @SuppressWarnings("serial")
 public class FeedXMLContentInfo implements Serializable{
 
 	/**
-	 * ÄÚÈİ±êÌâ
+	 * å†…å®¹æ ‡é¢˜
 	 */
 	public String title;
 	
 	/**
-	 * ÄÚÈİÃèÊö
+	 * å†…å®¹æè¿°
 	 */
 	public String description;
 	
 	/**
-	 * ÄÚÈİ·¢²¼Ê±¼ä
+	 * å†…å®¹å‘å¸ƒæ—¶é—´
 	 */
 	public String pubDate;
 
 	/**
-	 * È«ÎÄÁ¬½Ó
+	 * å…¨æ–‡è¿æ¥
 	 */
 	public String link;
 
 	/**
-	 * ATOMµÄÄÚÈİÀàĞÍ
+	 * ATOMçš„å†…å®¹ç±»å‹
 	 */
 	public String contentType;
 	
 	/**
-	 * ATOMµÄÄÚÈİ
+	 * ATOMçš„å†…å®¹
 	 */
 	public String content;
 }

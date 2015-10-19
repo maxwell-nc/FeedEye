@@ -14,7 +14,7 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.app.Application;
 
 /**
- * ×Ô¶¨ÒåµÄApplication
+ * è‡ªå®šä¹‰çš„Application
  */
 public class FeedEyeApplication extends Application {
 
@@ -22,7 +22,7 @@ public class FeedEyeApplication extends Application {
 	public void onCreate() {
 
 		/**
-		 * ²¶»ñÎ´²¶»ñµÄÒì³£
+		 * æ•è·æœªæ•è·çš„å¼‚å¸¸
 		 */
 		Thread.currentThread().setUncaughtExceptionHandler(
 				new ExpectionHandler());
@@ -31,12 +31,12 @@ public class FeedEyeApplication extends Application {
 	}
 
 	/**
-	 * È«¾ÖÒì³£²¶»ñ´¦ÀíÆ÷
+	 * å…¨å±€å¼‚å¸¸æ•è·å¤„ç†å™¨
 	 */
 	private class ExpectionHandler implements UncaughtExceptionHandler {
 
 		/**
-		 * ¶ÔÎ´²¶»ñÒì³£²¶»ñ²¢ÇÒÊä³ö´íÎóÈÕÖ¾ÎÄ¼ş£¬È»ºó×ÔÉ±
+		 * å¯¹æœªæ•è·å¼‚å¸¸æ•è·å¹¶ä¸”è¾“å‡ºé”™è¯¯æ—¥å¿—æ–‡ä»¶ï¼Œç„¶åè‡ªæ€
 		 */
 		@Override
 		public void uncaughtException(Thread thread, Throwable ex) {
@@ -56,11 +56,11 @@ public class FeedEyeApplication extends Application {
 				FileWriter fileWriter = new FileWriter(file);
 				bufferedWriter = new BufferedWriter(fileWriter);
 
-				// ¼ÇÂ¼´íÎóÈÕÖ¾
+				// è®°å½•é”™è¯¯æ—¥å¿—
 				stringWriter = new StringWriter();
 				printWriter = new PrintWriter(stringWriter);
 				ex.printStackTrace(printWriter);
-				ex.printStackTrace();// ´òÓ¡Ò»·İµ½¿ØÖÆÌ¨
+				ex.printStackTrace();// æ‰“å°ä¸€ä»½åˆ°æ§åˆ¶å°
 
 				bufferedWriter.write(stringWriter.toString());
 				bufferedWriter.flush();
@@ -74,7 +74,7 @@ public class FeedEyeApplication extends Application {
 				IOUtils.closeQuietly(stringWriter);
 				IOUtils.closeQuietly(printWriter);
 				IOUtils.closeQuietly(bufferedWriter);
-				// ×ÔÉ±
+				// è‡ªæ€
 				android.os.Process.killProcess(android.os.Process.myPid());
 
 			}

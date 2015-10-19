@@ -10,17 +10,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * PopWindowÉÏµÄÒ»¸ö°´Å¥
+ * PopWindowä¸Šçš„ä¸€ä¸ªæŒ‰é’®
  */
 public class PopupWindowItemView extends LinearLayout {
 
 	/**
-	 * µ±Ç°²¼¾ÖView
+	 * å½“å‰å¸ƒå±€View
 	 */
 	private LinearLayout mThisView;
 
 	/**
-	 * ÃüÃû¿Õ¼ä
+	 * å‘½åç©ºé—´
 	 */
 	private static final String NAMESPACE = "http://schemas.android.com/apk/res/pres.nc.maxwell.feedeye";
 
@@ -39,7 +39,7 @@ public class PopupWindowItemView extends LinearLayout {
 	}
 
 	/**
-	 * ²»´øÉèÖÃÊôĞÔµÄ
+	 * ä¸å¸¦è®¾ç½®å±æ€§çš„
 	 */
 	private void initView() {
 		mThisView = (LinearLayout) View.inflate(getContext(),
@@ -48,12 +48,12 @@ public class PopupWindowItemView extends LinearLayout {
 	}
 
 	/**
-	 * ´øÉèÖÃÊôĞÔ
+	 * å¸¦è®¾ç½®å±æ€§
 	 * 
 	 * @param resId
-	 *            Í¼Æ¬Id
+	 *            å›¾ç‰‡Id
 	 * @param text
-	 *            ÎÄ±¾
+	 *            æ–‡æœ¬
 	 */
 	private void initView(int resId, String text) {
 		initView();

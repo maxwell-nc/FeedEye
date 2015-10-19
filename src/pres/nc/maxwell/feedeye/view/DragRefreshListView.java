@@ -15,73 +15,73 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
- * ·â×°ÏÂÀ­Ë¢ĞÂºÍ¼ÓÔØ¸ü¶àµÄListView
- * TODO:¿¼ÂÇÊÇ·ñÆÁ±Î¼ÓÔØÖĞºÍË¢ĞÂÖĞµÄµã»÷ÊÂ¼ş
+ * å°è£…ä¸‹æ‹‰åˆ·æ–°å’ŒåŠ è½½æ›´å¤šçš„ListView
+ * TODO:è€ƒè™‘æ˜¯å¦å±è”½åŠ è½½ä¸­å’Œåˆ·æ–°ä¸­çš„ç‚¹å‡»äº‹ä»¶
  */
 public class DragRefreshListView extends ListView {
 
 	/**
-	 * ÏÂÀ­Ë¢ĞÂµÄ¿Ø¼ş
+	 * ä¸‹æ‹‰åˆ·æ–°çš„æ§ä»¶
 	 */
 	private View mHeaderView;
 
 	/**
-	 * ÏÂÀ­Ë¢ĞÂµÄ¿Ø¼şµÄ¸ß¶È
+	 * ä¸‹æ‹‰åˆ·æ–°çš„æ§ä»¶çš„é«˜åº¦
 	 */
 	private int mHeaderViewHeight;
 
 	/**
-	 * ÉÏÀ­¼ÓÔØ¸ü¶àµÄ¿Ø¼ş
+	 * ä¸Šæ‹‰åŠ è½½æ›´å¤šçš„æ§ä»¶
 	 */
 	private View mFooterView;
 
 	/**
-	 * ÉÏÀ­¼ÓÔØ¸ü¶àµÄ¸ß¶È
+	 * ä¸Šæ‹‰åŠ è½½æ›´å¤šçš„é«˜åº¦
 	 */
 	private int mFooterViewHeight;
 
 	/**
-	 * HeaderViewÖĞµÄÊ±¼äÎÄ±¾
+	 * HeaderViewä¸­çš„æ—¶é—´æ–‡æœ¬
 	 */
 	private TextView mHeaderTimeText;
 
 	/**
-	 * HeaderViewÖĞµÄÌáÊ¾ÎÄ±¾
+	 * HeaderViewä¸­çš„æç¤ºæ–‡æœ¬
 	 */
 	private TextView mHeaderTipsText;
 
 	/**
-	 * HeaderViewÖĞµÄĞı×ªÍ¼Æ¬
+	 * HeaderViewä¸­çš„æ—‹è½¬å›¾ç‰‡
 	 */
 	private ProgressBar mHeaderRotatewPic;
 
 	/**
-	 * HeaderViewÖĞµÄ¼ıÍ·Í¼Æ¬
+	 * HeaderViewä¸­çš„ç®­å¤´å›¾ç‰‡
 	 */
 	private ImageView mHeaderArrowPic;
 
 	/**
-	 * ÊÇ·ñÉÏÀ­£¬Èç¹ûÎªÕæÔò´ú±í²»ÄÜÏÔÊ¾ÏÂÀ­Ë¢ĞÂ
+	 * æ˜¯å¦ä¸Šæ‹‰ï¼Œå¦‚æœä¸ºçœŸåˆ™ä»£è¡¨ä¸èƒ½æ˜¾ç¤ºä¸‹æ‹‰åˆ·æ–°
 	 */
 	private boolean istoUp = false;
 
 	/**
-	 * ÏÂÀ­×´Ì¬
+	 * ä¸‹æ‹‰çŠ¶æ€
 	 */
 	private final int STATE_DRAGING = 1;
 
 	/**
-	 * µ½´ïËÉ¿ª¼´¿ÉË¢ĞÂ×´Ì¬
+	 * åˆ°è¾¾æ¾å¼€å³å¯åˆ·æ–°çŠ¶æ€
 	 */
 	private final int STATE_AREADY_REFRESH = 2;
 
 	/**
-	 * Ë¢ĞÂÖĞ
+	 * åˆ·æ–°ä¸­
 	 */
 	private final int STATE_REFRESHING = 3;
 
 	/**
-	 * µ±Ç°Ë¢ĞÂ×´Ì¬
+	 * å½“å‰åˆ·æ–°çŠ¶æ€
 	 * 
 	 * @see #STATE_DRAGING
 	 * @see #STATE_AREADY_REFRESH
@@ -90,52 +90,52 @@ public class DragRefreshListView extends ListView {
 	private int dragState = STATE_DRAGING;
 
 	/**
-	 * ´¥ÃşÊ±Y×ø±ê
+	 * è§¦æ‘¸æ—¶Yåæ ‡
 	 */
 	private int downY;
 	
 	/**
-	 * ÒÆ¶¯¾àÀë
+	 * ç§»åŠ¨è·ç¦»
 	 */
 	private int deltaY;
 	
 	/**
-	 * ÊÇ·ñÕıÔÚ¼ÓÔØ¸ü¶à
+	 * æ˜¯å¦æ­£åœ¨åŠ è½½æ›´å¤š
 	 */
 	private boolean isLoadingMore = false;
 
 	/**
-	 * ÊÇ·ñÔÊĞíÉÏÀ­¼ÓÔØ¸ü¶à
+	 * æ˜¯å¦å…è®¸ä¸Šæ‹‰åŠ è½½æ›´å¤š
 	 */
 	public boolean isAllowLoadingMore = true;
 
 	/**
-	 * ÊÇ·ñÔÊĞíÏÂÀ­Ë¢ĞÂ
+	 * æ˜¯å¦å…è®¸ä¸‹æ‹‰åˆ·æ–°
 	 */
 	public boolean isAllowRefresh = true;
 
 	/**
-	 * ×îĞ¡Ë¢ĞÂÊ±¼ä
+	 * æœ€å°åˆ·æ–°æ—¶é—´
 	 */
 	public int MinRefreshMills = 1000;
 
 	/**
-	 * ×îĞ¡Ë¢ĞÂÊ±¼ä
+	 * æœ€å°åˆ·æ–°æ—¶é—´
 	 */
 	public int MinLoadingMoreMills = 500;
 	
 	/**
-	 * ÏÂÀ­Ë¢ĞÂºÍ¼ÓÔØ¸ü¶à¼àÌıÆ÷
+	 * ä¸‹æ‹‰åˆ·æ–°å’ŒåŠ è½½æ›´å¤šç›‘å¬å™¨
 	 */
 	private OnRefreshListener refreshListener;
 
 	/**
-	 * Ë¢ĞÂ¶¯»­
+	 * åˆ·æ–°åŠ¨ç”»
 	 */
 	private RotateAnimation mArrowToRefreshAnimation;
 
 	/**
-	 * Õı³£¶¯»­
+	 * æ­£å¸¸åŠ¨ç”»
 	 */
 	private RotateAnimation mArrowToNormalAnimation;
 
@@ -150,22 +150,22 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * ³õÊ¼»¯View
+	 * åˆå§‹åŒ–View
 	 */
 	private void initView() {
 		initHeaderView();
 		initFooterView();
 
-		// ÉèÖÃselectorÎªÍ¸Ã÷
+		// è®¾ç½®selectorä¸ºé€æ˜
 		this.setSelector(R.color.transparent);
 		// this.setCacheColorHint(R.color.transparent);
 
-		// ³õÊ¼»¯Ä¬ÈÏµÄ¼àÌıÆ÷
+		// åˆå§‹åŒ–é»˜è®¤çš„ç›‘å¬å™¨
 		setOnScrollListener(new EmptyScrollListener());
 	}
 
 	/**
-	 * ³õÊ¼»¯HeaderView
+	 * åˆå§‹åŒ–HeaderView
 	 */
 	private void initHeaderView() {
 		mHeaderView = View.inflate(getContext(),
@@ -179,8 +179,8 @@ public class DragRefreshListView extends ListView {
 
 		addHeaderView(mHeaderView);
 
-		// Ä¬ÈÏÒş²ØHeaderView
-		mHeaderView.measure(0, 0);// headerView¸ù½Úµã²»ÄÜÎªRelativeLayout£¬·ñÔò¿ÕÖ¸ÕëÒì³£
+		// é»˜è®¤éšè—HeaderView
+		mHeaderView.measure(0, 0);// headerViewæ ¹èŠ‚ç‚¹ä¸èƒ½ä¸ºRelativeLayoutï¼Œå¦åˆ™ç©ºæŒ‡é’ˆå¼‚å¸¸
 		mHeaderViewHeight = mHeaderView.getMeasuredHeight();
 		mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
 
@@ -188,14 +188,14 @@ public class DragRefreshListView extends ListView {
 	}
 
 	private void initHeaderAnimation() {
-		// ¼ıÍ·Ğı×ª¶¯»­ - ±ä³ÉËÉ¿ª¾ÍË¢ĞÂ
+		// ç®­å¤´æ—‹è½¬åŠ¨ç”» - å˜æˆæ¾å¼€å°±åˆ·æ–°
 		mArrowToRefreshAnimation = new RotateAnimation(0, -180,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		mArrowToRefreshAnimation.setDuration(300);
 		mArrowToRefreshAnimation.setFillAfter(true);
 
-		// ¼ıÍ·Ğı×ª¶¯»­ - ±ä³ÉËÉ¿ª²»Ë¢ĞÂ
+		// ç®­å¤´æ—‹è½¬åŠ¨ç”» - å˜æˆæ¾å¼€ä¸åˆ·æ–°
 		mArrowToNormalAnimation = new RotateAnimation(-180, -360,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
@@ -205,7 +205,7 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * ³õÊ¼»¯FooterView
+	 * åˆå§‹åŒ–FooterView
 	 */
 	private void initFooterView() {
 		mFooterView = View.inflate(getContext(),
@@ -213,43 +213,43 @@ public class DragRefreshListView extends ListView {
 
 		addFooterView(mFooterView);
 
-		// Ä¬ÈÏÒş²ØfooterView
-		mFooterView.measure(0, 0);// footerView¸ù½Úµã²»ÄÜÎªRelativeLayout£¬·ñÔò¿ÕÖ¸ÕëÒì³£
+		// é»˜è®¤éšè—footerView
+		mFooterView.measure(0, 0);// footerViewæ ¹èŠ‚ç‚¹ä¸èƒ½ä¸ºRelativeLayoutï¼Œå¦åˆ™ç©ºæŒ‡é’ˆå¼‚å¸¸
 		mFooterViewHeight = mHeaderView.getMeasuredHeight();
 		mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
 
 	}
 
 	/**
-	 * ¸ù¾İ×´Ì¬ĞŞ¸ÄHeaderView
+	 * æ ¹æ®çŠ¶æ€ä¿®æ”¹HeaderView
 	 */
 	private void changeHeaderView() {
 
 		switch (dragState) {
 
-			case STATE_DRAGING :// ÏÂÀ­×´Ì¬
+			case STATE_DRAGING :// ä¸‹æ‹‰çŠ¶æ€
 				mHeaderArrowPic.startAnimation(mArrowToNormalAnimation);
-				mHeaderTipsText.setText("ÏÂÀ­Ë¢ĞÂ");
+				mHeaderTipsText.setText("ä¸‹æ‹‰åˆ·æ–°");
 				break;
 
-			case STATE_AREADY_REFRESH :// ËÉ¿ª¾ÍË¢ĞÂ×´Ì¬
+			case STATE_AREADY_REFRESH :// æ¾å¼€å°±åˆ·æ–°çŠ¶æ€
 				mHeaderArrowPic.startAnimation(mArrowToRefreshAnimation);
-				mHeaderTipsText.setText("ËÉ¿ªË¢ĞÂ");
+				mHeaderTipsText.setText("æ¾å¼€åˆ·æ–°");
 				break;
 
-			case STATE_REFRESHING :// Ë¢ĞÂÖĞ×´Ì¬
-				mHeaderArrowPic.clearAnimation();// ·ÀÖ¹¼ıÍ·²»Òş²Ø
-				mHeaderTipsText.setText("ÕıÔÚË¢ĞÂ...");
+			case STATE_REFRESHING :// åˆ·æ–°ä¸­çŠ¶æ€
+				mHeaderArrowPic.clearAnimation();// é˜²æ­¢ç®­å¤´ä¸éšè—
+				mHeaderTipsText.setText("æ­£åœ¨åˆ·æ–°...");
 				mHeaderArrowPic.setVisibility(View.INVISIBLE);
 				mHeaderRotatewPic.setVisibility(View.VISIBLE);
 
-				// ÑÓ³ÙÖ´ĞĞ
+				// å»¶è¿Ÿæ‰§è¡Œ
 				postDelayed(new Runnable() {
 
 					@Override
 					public void run() {
 						/**
-						 * µ÷ÓÃÍâ²¿Ğ´µÄ·½·¨
+						 * è°ƒç”¨å¤–éƒ¨å†™çš„æ–¹æ³•
 						 */
 						if (refreshListener != null) {
 							refreshListener.onDragRefresh();
@@ -264,41 +264,41 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * Ë¢ĞÂÂß¼­Íê³É£¬µ÷ÓÃ´Ë·½·¨ÖØÖÃHeaderView×´Ì¬,×¢Òâ±ØĞëÔÚÖ÷Ïß³ÌÔËĞĞ´Ë·½·¨
+	 * åˆ·æ–°é€»è¾‘å®Œæˆï¼Œè°ƒç”¨æ­¤æ–¹æ³•é‡ç½®HeaderViewçŠ¶æ€,æ³¨æ„å¿…é¡»åœ¨ä¸»çº¿ç¨‹è¿è¡Œæ­¤æ–¹æ³•
 	 */
 	public void completeRefresh() {
 
-		if (isLoadingMore) {// ¼ÓÔØ¸ü¶àÍê³É
+		if (isLoadingMore) {// åŠ è½½æ›´å¤šå®Œæˆ
 			mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
 			isLoadingMore = false;
 
-		} else {// ÏÂÀ­Ë¢ĞÂÍê³É
+		} else {// ä¸‹æ‹‰åˆ·æ–°å®Œæˆ
 			mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
 			dragState = STATE_DRAGING;
 
 			mHeaderArrowPic.setVisibility(View.VISIBLE);
 			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
 
-			mHeaderTipsText.setText("ÏÂÀ­Ë¢ĞÂ");
-			mHeaderTimeText.setText("ÉÏ´ÎË¢ĞÂ£º" + SystemInfoUtils.getCurrentTime());
+			mHeaderTipsText.setText("ä¸‹æ‹‰åˆ·æ–°");
+			mHeaderTimeText.setText("ä¸Šæ¬¡åˆ·æ–°ï¼š" + SystemInfoUtils.getCurrentTime());
 
 		}
 
 	}
 
 	/**
-	 * ÊÖ¶¯ÉèÖÃÕıÔÚ¼ÓÔØÖĞ
+	 * æ‰‹åŠ¨è®¾ç½®æ­£åœ¨åŠ è½½ä¸­
 	 * 
 	 * @see #completeRefresh()
 	 */
 	public void setOnRefreshing() {
 
-		// ÅĞ¶ÏÊÇ·ñÕıÔÚ¼ÓÔØ
+		// åˆ¤æ–­æ˜¯å¦æ­£åœ¨åŠ è½½
 		if (isLoadingMore) {
 			return;
 		}
 
-		// ÅĞ¶ÏÊÇ·ñÕıÔÚË¢ĞÂ
+		// åˆ¤æ–­æ˜¯å¦æ­£åœ¨åˆ·æ–°
 		if (dragState != STATE_DRAGING) {
 			return;
 		}
@@ -308,28 +308,28 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * ´¥ÃşÊÂ¼şÀ¹½Ø
+	 * è§¦æ‘¸äº‹ä»¶æ‹¦æˆª
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 
 		switch (ev.getAction()) {
 
-			case MotionEvent.ACTION_DOWN :// ´¥Ãş°´ÏÂ
+			case MotionEvent.ACTION_DOWN :// è§¦æ‘¸æŒ‰ä¸‹
 
 				downY = (int) ev.getY();
-				istoUp = false;// ÖØÖÃ
+				istoUp = false;// é‡ç½®
 
 				break;
 
-			case MotionEvent.ACTION_MOVE :// ´¥Ãş°´×¡ÒÆ¶¯
+			case MotionEvent.ACTION_MOVE :// è§¦æ‘¸æŒ‰ä½ç§»åŠ¨
 
-				// ²»ÔÊĞíË¢ĞÂ²»´¦Àí
+				// ä¸å…è®¸åˆ·æ–°ä¸å¤„ç†
 				if (!isAllowRefresh) {
 					break;
 				}
 
-				// Ë¢ĞÂÊ±¡¢¼ÓÔØ¸ü¶àÊ±²»´¦Àí
+				// åˆ·æ–°æ—¶ã€åŠ è½½æ›´å¤šæ—¶ä¸å¤„ç†
 				if (dragState == STATE_REFRESHING || isLoadingMore) {
 					break;
 				}
@@ -338,7 +338,7 @@ public class DragRefreshListView extends ListView {
 
 				deltaY = (currentY - downY) / 3;
 
-				// µÚÒ»¸öÏîÄ¿ÏÂÀ­²ÅÏÔÊ¾ÏÂÀ­Ë¢ĞÂ
+				// ç¬¬ä¸€ä¸ªé¡¹ç›®ä¸‹æ‹‰æ‰æ˜¾ç¤ºä¸‹æ‹‰åˆ·æ–°
 				if (deltaY < 0 || getFirstVisiblePosition() > 1) {
 
 					dragState = STATE_DRAGING;
@@ -348,7 +348,7 @@ public class DragRefreshListView extends ListView {
 					break;
 				}
 
-				// ÉÏÀ­ºó²»ÔÙÄÜÏÂÀ­Ë¢ĞÂ
+				// ä¸Šæ‹‰åä¸å†èƒ½ä¸‹æ‹‰åˆ·æ–°
 				if (!istoUp) {
 
 					int paddingTop = -mHeaderViewHeight + deltaY;
@@ -357,23 +357,23 @@ public class DragRefreshListView extends ListView {
 					// mHeaderViewHeight + "\npaddingTop:" + paddingTop+
 					// "\ndeltaY:" + deltaY);
 
-					// ÏŞÖÆÏÂÀ­¸ß¶È
+					// é™åˆ¶ä¸‹æ‹‰é«˜åº¦
 					if (paddingTop >= -mHeaderViewHeight
 							&& getFirstVisiblePosition() < 1) {
 
-						setSelection(0);// È·±£ÏòÏÂ¹ö¶¯²»Ó°Ïì
+						setSelection(0);// ç¡®ä¿å‘ä¸‹æ»šåŠ¨ä¸å½±å“
 						mHeaderView.setPadding(0, paddingTop, 0, 0);
 
 						if (deltaY >= mHeaderViewHeight
 								&& dragState == STATE_DRAGING) {
 
-							// ËÉ¿ª¾ÍË¢ĞÂ
+							// æ¾å¼€å°±åˆ·æ–°
 							dragState = STATE_AREADY_REFRESH;
 							changeHeaderView();
 
 						} else if (deltaY < mHeaderViewHeight
 								&& dragState == STATE_AREADY_REFRESH) {
-							// ËÉ¿ª²»Ë¢ĞÂ
+							// æ¾å¼€ä¸åˆ·æ–°
 							dragState = STATE_DRAGING;
 							changeHeaderView();
 
@@ -389,16 +389,16 @@ public class DragRefreshListView extends ListView {
 
 				break;
 
-			case MotionEvent.ACTION_UP :// ´¥ÃşËÉ¿ª
+			case MotionEvent.ACTION_UP :// è§¦æ‘¸æ¾å¼€
 
-				// ²»ÔÊĞíË¢ĞÂ²»´¦Àí
+				// ä¸å…è®¸åˆ·æ–°ä¸å¤„ç†
 				if (!isAllowRefresh) {
 					break;
 				}
 
-				if (dragState == STATE_DRAGING) {// ²»Ë¢ĞÂ
+				if (dragState == STATE_DRAGING) {// ä¸åˆ·æ–°
 					mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
-				} else if (dragState == STATE_AREADY_REFRESH) {// Ë¢ĞÂ
+				} else if (dragState == STATE_AREADY_REFRESH) {// åˆ·æ–°
 					refresh();
 				}
 
@@ -406,13 +406,13 @@ public class DragRefreshListView extends ListView {
 
 		}
 
-		// ¸¸ÀàÖĞÓĞ½ûÖ¹»¬¶¯Ê±µã»÷µÄÂß¼­
+		// çˆ¶ç±»ä¸­æœ‰ç¦æ­¢æ»‘åŠ¨æ—¶ç‚¹å‡»çš„é€»è¾‘
 		return super.onTouchEvent(ev);
 
 	}
 
 	/**
-	 * Ë¢ĞÂÂß¼­
+	 * åˆ·æ–°é€»è¾‘
 	 */
 	private void refresh() {
 		mHeaderView.setPadding(0, 0, 0, 0);
@@ -424,19 +424,19 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * Ìá¹©¼àÌıÆ÷¸øµ÷ÓÃÕßÌîÈëË¢ĞÂÂß¼­
+	 * æä¾›ç›‘å¬å™¨ç»™è°ƒç”¨è€…å¡«å…¥åˆ·æ–°é€»è¾‘
 	 * @see SimpleOnRefreshListener
 	 */
 	public interface OnRefreshListener {
 		/**
-		 * ÏÂÀ­Ë¢ĞÂÊ±µÄ²Ù×÷£¬²Ù×÷ºóĞèÒªµ÷ÓÃcompleteRefresh()·½·¨
+		 * ä¸‹æ‹‰åˆ·æ–°æ—¶çš„æ“ä½œï¼Œæ“ä½œåéœ€è¦è°ƒç”¨completeRefresh()æ–¹æ³•
 		 * 
 		 * @see #completeRefresh()
 		 */
 		void onDragRefresh();
 
 		/**
-		 * ¼ÓÔØ¸ü¶àÊ±µÄ²Ù×÷£¬²Ù×÷ºóĞèÒªµ÷ÓÃcompleteRefresh()·½·¨
+		 * åŠ è½½æ›´å¤šæ—¶çš„æ“ä½œï¼Œæ“ä½œåéœ€è¦è°ƒç”¨completeRefresh()æ–¹æ³•
 		 * 
 		 * @see #completeRefresh()
 		 */
@@ -444,7 +444,7 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * ¿ÕÊµÏÖ£¬¸øÖ»ĞèÒªÉÏÀ­¼ÓÔØ¸ü¶à»òÕßÖ»ĞèÒªÏÂÀ­Ë¢ĞÂÊ±ÉèÖÃµÄ¼àÌıÆ÷
+	 * ç©ºå®ç°ï¼Œç»™åªéœ€è¦ä¸Šæ‹‰åŠ è½½æ›´å¤šæˆ–è€…åªéœ€è¦ä¸‹æ‹‰åˆ·æ–°æ—¶è®¾ç½®çš„ç›‘å¬å™¨
 	 * @see OnRefreshListener
 	 */
 	public static class SimpleOnRefreshListener implements OnRefreshListener{
@@ -460,24 +460,24 @@ public class DragRefreshListView extends ListView {
 	}
 	
 	/**
-	 * ¼àÌı·½·¨£¬¸øÍâ²¿¼àÌıË¢ĞÂÊ±¼ä
+	 * ç›‘å¬æ–¹æ³•ï¼Œç»™å¤–éƒ¨ç›‘å¬åˆ·æ–°æ—¶é—´
 	 */
 	public void setOnRefreshListener(OnRefreshListener refreshListener) {
 		this.refreshListener = refreshListener;
 	}
 
 	/**
-	 * ×°ÊÎÓÃ»§µÄ¹ö¶¯¼àÌıÆ÷
+	 * è£…é¥°ç”¨æˆ·çš„æ»šåŠ¨ç›‘å¬å™¨
 	 */
 	@Override
 	public void setOnScrollListener(OnScrollListener l) {
-		// ÉèÖÃ¹ö¶¯¼àÌı
+		// è®¾ç½®æ»šåŠ¨ç›‘å¬
 		super.setOnScrollListener(new LoadingMoreScrollListener(l));
 
 	}
 
 	/**
-	 * Ê²Ã´¶¼²»´¦ÀíµÄEmptyScrollListener ÉÏÀ­¼ÓÔØ¸ü¶àĞèÒª¹ö¶¯¼àÌıÆ÷£¬ ÓÃÓÚÓÃ»§²»ÉèÖÃ¼àÌıÆ÷Ê±£¬»áÊ¹ÓÃ´Ë×÷ÎªÓÃ»§µÄ¼àÌıÆ÷
+	 * ä»€ä¹ˆéƒ½ä¸å¤„ç†çš„EmptyScrollListener ä¸Šæ‹‰åŠ è½½æ›´å¤šéœ€è¦æ»šåŠ¨ç›‘å¬å™¨ï¼Œ ç”¨äºç”¨æˆ·ä¸è®¾ç½®ç›‘å¬å™¨æ—¶ï¼Œä¼šä½¿ç”¨æ­¤ä½œä¸ºç”¨æˆ·çš„ç›‘å¬å™¨
 	 * 
 	 * @see LoadingMoreScrollListener
 	 */
@@ -494,20 +494,20 @@ public class DragRefreshListView extends ListView {
 	}
 
 	/**
-	 * ÓÃÓÚ¼àÌı¹ö¶¯ÊÂ¼ş£¬ÉÏÀ­¼ÓÔØ¸ü¶à
+	 * ç”¨äºç›‘å¬æ»šåŠ¨äº‹ä»¶ï¼Œä¸Šæ‹‰åŠ è½½æ›´å¤š
 	 */
 	class LoadingMoreScrollListener implements OnScrollListener {
 
 		/**
-		 * ÓÃ»§ÉèÖÃµÄ¹ö¶¯¼àÌıÆ÷
+		 * ç”¨æˆ·è®¾ç½®çš„æ»šåŠ¨ç›‘å¬å™¨
 		 */
 		OnScrollListener userListener;
 
 		/**
-		 * »ñÈ¡ ÓÃ»§ÉèÖÃµÄ¹ö¶¯¼àÌıÆ÷
+		 * è·å– ç”¨æˆ·è®¾ç½®çš„æ»šåŠ¨ç›‘å¬å™¨
 		 * 
 		 * @param orginListener
-		 *            ¹ö¶¯¼àÌıÆ÷
+		 *            æ»šåŠ¨ç›‘å¬å™¨
 		 * @see EmptyScrollListener
 		 */
 		public LoadingMoreScrollListener(OnScrollListener userListener) {
@@ -515,12 +515,12 @@ public class DragRefreshListView extends ListView {
 		}
 
 		/**
-		 * ¹ö¶¯×´Ì¬¸Ä±ä£¬ÓÃÓÚÉÏÀ­¼ÓÔØ¸ü¶à
+		 * æ»šåŠ¨çŠ¶æ€æ”¹å˜ï¼Œç”¨äºä¸Šæ‹‰åŠ è½½æ›´å¤š
 		 */
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-			// µ±»¬ĞĞ¿ÕÏĞÊ±²¢ÇÒ²»ÔÚ¼ÓÔØÖĞ£¬×îºóÒ»ÌõÏîÄ¿ÔÚµ×²¿Ê±
+			// å½“æ»‘è¡Œç©ºé—²æ—¶å¹¶ä¸”ä¸åœ¨åŠ è½½ä¸­ï¼Œæœ€åä¸€æ¡é¡¹ç›®åœ¨åº•éƒ¨æ—¶
 			if (scrollState == OnScrollListener.SCROLL_STATE_FLING
 					|| scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
 
@@ -530,18 +530,18 @@ public class DragRefreshListView extends ListView {
 					if (isAllowLoadingMore) {
 						isLoadingMore = true;
 
-						// ÏÔÊ¾FooterView
+						// æ˜¾ç¤ºFooterView
 						mFooterView.setPadding(0, 0, 0, 0);
 						setSelection(getCount());
 
-						// ÑÓ³ÙÖ´ĞĞ
+						// å»¶è¿Ÿæ‰§è¡Œ
 						postDelayed(new Runnable() {
 							
 							@Override
 							public void run() {
 								
 								/**
-								 * µ÷ÓÃÍâ²¿Ğ´µÄ·½·¨
+								 * è°ƒç”¨å¤–éƒ¨å†™çš„æ–¹æ³•
 								 */
 								if (refreshListener != null) {
 									refreshListener.onLoadingMore();
@@ -555,18 +555,18 @@ public class DragRefreshListView extends ListView {
 				}
 			}
 
-			// ÓÃ»§µÄ²Ù×÷
+			// ç”¨æˆ·çš„æ“ä½œ
 			userListener.onScrollStateChanged(view, scrollState);
 		}
 
 		/**
-		 * ¹ö¶¯ÊÂ¼ş
+		 * æ»šåŠ¨äº‹ä»¶
 		 */
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
 
-			// ÓÃ»§µÄ²Ù×÷
+			// ç”¨æˆ·çš„æ“ä½œ
 			userListener.onScroll(view, firstVisibleItem, visibleItemCount,
 					totalItemCount);
 		}

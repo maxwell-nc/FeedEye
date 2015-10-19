@@ -9,33 +9,33 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 /**
- * Ñ¹Ëõbitmap¹¤¾ßÀà
+ * å‹ç¼©bitmapå·¥å…·ç±»
  */
 public class BitmapCompressUtils {
 
 	/**
-	 * BitmapÊäÈëÁ÷
+	 * Bitmapè¾“å…¥æµ
 	 */
 	private InputStream mInputStream;
 
 	/**
-	 * BitmapµÄFile¶ÔÏó
+	 * Bitmapçš„Fileå¯¹è±¡
 	 */
 	private File mFile;
 
 	/**
-	 * Bitmap½âÎöÅäÖÃ
+	 * Bitmapè§£æé…ç½®
 	 */
 	private BitmapFactory.Options mOptions;
 
 	/**
-	 * ×Ô¶¯¼ÆËã²ÉÑù´óĞ¡£¬Ëã·¨²Î¿¼xUtils¿ªÔ´ÏîÄ¿
+	 * è‡ªåŠ¨è®¡ç®—é‡‡æ ·å¤§å°ï¼Œç®—æ³•å‚è€ƒxUtilså¼€æºé¡¹ç›®
 	 * 
 	 * @param viewHeight
-	 *            ImageViewµÄ¸ß
+	 *            ImageViewçš„é«˜
 	 * @param viewWidth
-	 *            ImageViewµÄ¿í
-	 * @return ²ÉÑù´óĞ¡
+	 *            ImageViewçš„å®½
+	 * @return é‡‡æ ·å¤§å°
 	 */
 	public int AutoCalculateSampleSize(int viewHeight, int viewWidth) {
 		
@@ -66,13 +66,13 @@ public class BitmapCompressUtils {
 		return defaultSampleSize;
 	}
 
-	// ================================ ²Ù×÷InputStream¶ÔÏó ========================
+	// ================================ æ“ä½œInputStreamå¯¹è±¡ ========================
 
 	/**
-	 * ³õÊ¼»¯Ñ¹ËõÅäÖÃ
+	 * åˆå§‹åŒ–å‹ç¼©é…ç½®
 	 * 
 	 * @param inputStream
-	 *            ´«ÈëBitmapÍøÂçÁ÷
+	 *            ä¼ å…¥Bitmapç½‘ç»œæµ
 	 */
 	public BitmapCompressUtils(InputStream inputStream) {
 		this.mInputStream = inputStream;
@@ -80,12 +80,12 @@ public class BitmapCompressUtils {
 	}
 
 	/**
-	 * ×Ô¶¨ÒåÑ¹ËõBitmap
+	 * è‡ªå®šä¹‰å‹ç¼©Bitmap
 	 * 
 	 * @param sampleSize
-	 *            ²ÉÑù´óĞ¡
+	 *            é‡‡æ ·å¤§å°
 	 * @param config
-	 *            ÑÕÉ«ÅäÖÃ
+	 *            é¢œè‰²é…ç½®
 	 * @return Bitmap
 	 */
 	public Bitmap CompressBitmapInputStream(int sampleSize, Bitmap.Config config) {
@@ -98,7 +98,7 @@ public class BitmapCompressUtils {
 		mOptions.inPreferredConfig = config;
 		mOptions.inJustDecodeBounds = false;
 
-		LogUtils.w("BitmapCompressUtils", "ÊÖ¶¯ÉèÖÃÑ¹ËõÑ¡Ïî£¬²ÉÑùÂÊÎª£º"+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "æ‰‹åŠ¨è®¾ç½®å‹ç¼©é€‰é¡¹ï¼Œé‡‡æ ·ç‡ä¸ºï¼š"+mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
 
@@ -106,12 +106,12 @@ public class BitmapCompressUtils {
 	}
 
 	/**
-	 * ¸ù¾İView¿í¸ß×Ô¶¯Ñ¹ËõÍ¼Æ¬
+	 * æ ¹æ®Viewå®½é«˜è‡ªåŠ¨å‹ç¼©å›¾ç‰‡
 	 * 
 	 * @param viewHeight
-	 *            ViewµÄ¸ß¶È
+	 *            Viewçš„é«˜åº¦
 	 * @param viewWidth
-	 *            ViewµÄ¿í¶È
+	 *            Viewçš„å®½åº¦
 	 * @return Bitmap
 	 */
 	public Bitmap CompressBitmapInputStream(int viewHeight, int viewWidth) {
@@ -124,25 +124,25 @@ public class BitmapCompressUtils {
 		mOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
 		try {
-			mInputStream.reset();// ÓÉÓÚÒÑ¾­½âÎöÁËÒ»´Î£¬ĞèÒªÖØÖÃinputSteam
+			mInputStream.reset();// ç”±äºå·²ç»è§£æäº†ä¸€æ¬¡ï¼Œéœ€è¦é‡ç½®inputSteam
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		LogUtils.w("BitmapCompressUtils", "×Ô¶¯ÉèÖÃÑ¹ËõÑ¡Ïî£¬²ÉÑùÂÊÎª£º"+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "è‡ªåŠ¨è®¾ç½®å‹ç¼©é€‰é¡¹ï¼Œé‡‡æ ·ç‡ä¸ºï¼š"+mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
 
 		return bitmap;
 	}
 
-	// ======================= ²Ù×÷File¶ÔÏó =================================
+	// ======================= æ“ä½œFileå¯¹è±¡ =================================
 
 	/**
-	 * ³õÊ¼»¯Ñ¹ËõÅäÖÃ
+	 * åˆå§‹åŒ–å‹ç¼©é…ç½®
 	 * 
 	 * @param file
-	 *            ´«ÈëBitmapµÄFile¶ÔÏó
+	 *            ä¼ å…¥Bitmapçš„Fileå¯¹è±¡
 	 */
 	public BitmapCompressUtils(File file) {
 		this.mFile = file;
@@ -150,12 +150,12 @@ public class BitmapCompressUtils {
 	}
 
 	/**
-	 * ×Ô¶¨ÒåÑ¹ËõBitmap
+	 * è‡ªå®šä¹‰å‹ç¼©Bitmap
 	 * 
 	 * @param sampleSize
-	 *            ²ÉÑù´óĞ¡
+	 *            é‡‡æ ·å¤§å°
 	 * @param config
-	 *            ÑÕÉ«ÅäÖÃ
+	 *            é¢œè‰²é…ç½®
 	 * @return Bitmap
 	 */
 	public Bitmap CompressBitmapFile(int sampleSize, Bitmap.Config config) {
@@ -169,19 +169,19 @@ public class BitmapCompressUtils {
 		mOptions.inJustDecodeBounds = false;
 
 
-		LogUtils.w("BitmapCompressUtils", "ÊÖ¶¯ÉèÖÃÑ¹ËõÑ¡Ïî£¬²ÉÑùÂÊÎª£º"+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "æ‰‹åŠ¨è®¾ç½®å‹ç¼©é€‰é¡¹ï¼Œé‡‡æ ·ç‡ä¸ºï¼š"+mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory.decodeFile(mFile.getPath(), mOptions);
 
 		return bitmap;
 	}
 
 	/**
-	 * ¸ù¾İView¿í¸ß×Ô¶¯Ñ¹ËõÍ¼Æ¬
+	 * æ ¹æ®Viewå®½é«˜è‡ªåŠ¨å‹ç¼©å›¾ç‰‡
 	 * 
 	 * @param viewHeight
-	 *            ViewµÄ¸ß¶È
+	 *            Viewçš„é«˜åº¦
 	 * @param viewWidth
-	 *            ViewµÄ¿í¶È
+	 *            Viewçš„å®½åº¦
 	 * @return Bitmap
 	 */
 	public Bitmap CompressBitmapFile(int viewHeight, int viewWidth) {
@@ -193,7 +193,7 @@ public class BitmapCompressUtils {
 		mOptions.inSampleSize = AutoCalculateSampleSize(viewHeight, viewWidth);
 		mOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
-		LogUtils.w("BitmapCompressUtils", "×Ô¶¯ÉèÖÃÑ¹ËõÑ¡Ïî£¬²ÉÑùÂÊÎª£º"+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "è‡ªåŠ¨è®¾ç½®å‹ç¼©é€‰é¡¹ï¼Œé‡‡æ ·ç‡ä¸ºï¼š"+mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory.decodeFile(mFile.getPath(), mOptions);
 
 		return bitmap;

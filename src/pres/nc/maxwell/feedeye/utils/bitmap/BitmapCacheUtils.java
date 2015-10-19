@@ -10,38 +10,38 @@ import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 /**
- * Í¼Æ¬»º´æ¹¤¾ßÀà£¨Ê¹ÓÃÈı¼¶»º´æ£©
+ * å›¾ç‰‡ç¼“å­˜å·¥å…·ç±»ï¼ˆä½¿ç”¨ä¸‰çº§ç¼“å­˜ï¼‰
  * 
  * @see BitmapThreeLevelsCache
  */
 public class BitmapCacheUtils {
 
 	/**
-	 * Ä¬ÈÏµÄ¼ÓÔØÖĞµÄ×ÊÔ´Í¼Æ¬id
+	 * é»˜è®¤çš„åŠ è½½ä¸­çš„èµ„æºå›¾ç‰‡id
 	 */
 	private static final int LOAD_RESOURCE_ID = R.drawable.listview_refresh_rotate_arrow;
 
 	/**
-	 * Ä¬ÈÏµÄ¼ÓÔØ´íÎóµÄ×ÊÔ´Í¼Æ¬id
+	 * é»˜è®¤çš„åŠ è½½é”™è¯¯çš„èµ„æºå›¾ç‰‡id
 	 */
 	private static final int ERROR_RESOURCE_ID = R.drawable.img_load_error;
 
 	/**
-	 * Ä¬ÈÏµÄExecutorService
+	 * é»˜è®¤çš„ExecutorService
 	 */
 	private static ExecutorService DEFAULT_EXECUTOR_SERVICE = null;
 
 	/**
-	 * ¼òµ¥µÄÏÔÊ¾Í¼Æ¬£¬Ê¹ÓÃÍøÂç»º´æ¡¢Ä¬ÈÏ¼ÓÔØÖĞ¼ÓÔØÊ§°ÜÍ¼Æ¬£¬×Ô¶¯Ñ¹ËõÍ¼Æ¬
+	 * ç®€å•çš„æ˜¾ç¤ºå›¾ç‰‡ï¼Œä½¿ç”¨ç½‘ç»œç¼“å­˜ã€é»˜è®¤åŠ è½½ä¸­åŠ è½½å¤±è´¥å›¾ç‰‡ï¼Œè‡ªåŠ¨å‹ç¼©å›¾ç‰‡
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄ
+	 *            ä¸Šä¸‹æ–‡
 	 * @param imageView
-	 *            ÒªÏÔÊ¾Í¼Æ¬µÄ¿Ø¼ş
+	 *            è¦æ˜¾ç¤ºå›¾ç‰‡çš„æ§ä»¶
 	 * @param url
-	 *            ÒªÏÔÊ¾Í¼Æ¬µÄµØÖ·£¨Ö§³Ö±¾µØÍ¼Æ¬ºÍÍøÂçÍ¼Æ¬£©
+	 *            è¦æ˜¾ç¤ºå›¾ç‰‡çš„åœ°å€ï¼ˆæ”¯æŒæœ¬åœ°å›¾ç‰‡å’Œç½‘ç»œå›¾ç‰‡ï¼‰
 	 * @param threadPool
-	 *            ×Ô¶¨ÒåÏß³Ì³Ø£¬Îª¿ÕÔò²ÉÓÃ5Ïß³ÌµÄÄ¬ÈÏÏß³Ì³Ø
+	 *            è‡ªå®šä¹‰çº¿ç¨‹æ± ï¼Œä¸ºç©ºåˆ™é‡‡ç”¨5çº¿ç¨‹çš„é»˜è®¤çº¿ç¨‹æ± 
 	 * @see BitmapCacheUtils#displayBitmap(Context, ImageView, String, boolean,
 	 *      int, int, int, android.graphics.Bitmap.Config, ExecutorService)
 	 */
@@ -64,7 +64,7 @@ public class BitmapCacheUtils {
 	}
 
 	/**
-	 * ¹Ø±ÕÄ¬ÈÏµÄÏß³Ì³Ø
+	 * å…³é—­é»˜è®¤çš„çº¿ç¨‹æ± 
 	 */
 	public static void shutdownDefalutThreadPool() {
 
@@ -75,26 +75,26 @@ public class BitmapCacheUtils {
 
 	}
 	/**
-	 * ÏÔÊ¾Í¼Æ¬
+	 * æ˜¾ç¤ºå›¾ç‰‡
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄ
+	 *            ä¸Šä¸‹æ–‡
 	 * @param imageView
-	 *            ÒªÏÔÊ¾Í¼Æ¬µÄ¿Ø¼ş
+	 *            è¦æ˜¾ç¤ºå›¾ç‰‡çš„æ§ä»¶
 	 * @param url
-	 *            ÒªÏÔÊ¾Í¼Æ¬µÄµØÖ·£¨Ö§³Ö±¾µØÍ¼Æ¬ºÍÍøÂçÍ¼Æ¬£©
+	 *            è¦æ˜¾ç¤ºå›¾ç‰‡çš„åœ°å€ï¼ˆæ”¯æŒæœ¬åœ°å›¾ç‰‡å’Œç½‘ç»œå›¾ç‰‡ï¼‰
 	 * @param sampleSize
-	 *            ²ÉÑù´óĞ¡£¨-1Îª²»Ê¹ÓÃ£©
+	 *            é‡‡æ ·å¤§å°ï¼ˆ-1ä¸ºä¸ä½¿ç”¨ï¼‰
 	 * @param config
-	 *            ÑÕÉ«ÅäÖÃ£¨nullÎª²»Ê¹ÓÃ£©
+	 *            é¢œè‰²é…ç½®ï¼ˆnullä¸ºä¸ä½¿ç”¨ï¼‰
 	 * @param isEnableNetworkCache
-	 *            ÊÇ·ñÊ¹ÓÃÍøÂç»º´æ
+	 *            æ˜¯å¦ä½¿ç”¨ç½‘ç»œç¼“å­˜
 	 * @param loadResId
-	 *            ¼ÓÔØÖĞµÄ×ÊÔ´Í¼Æ¬id£¨-1Îª²»Ê¹ÓÃ£©
+	 *            åŠ è½½ä¸­çš„èµ„æºå›¾ç‰‡idï¼ˆ-1ä¸ºä¸ä½¿ç”¨ï¼‰
 	 * @param errorResId
-	 *            ¼ÓÔØÊ§°ÜµÄ×ÊÔ´Í¼Æ¬id£¨-1Îª²»Ê¹ÓÃ£©
+	 *            åŠ è½½å¤±è´¥çš„èµ„æºå›¾ç‰‡idï¼ˆ-1ä¸ºä¸ä½¿ç”¨ï¼‰
 	 * @param threadPool
-	 *            ×Ô¶¨ÒåÏß³Ì³Ø
+	 *            è‡ªå®šä¹‰çº¿ç¨‹æ± 
 	 * @see BitmapCacheUtils#displayBitmap(Context, ImageView, String)
 	 */
 	public static void displayBitmap(Context context, ImageView imageView,
@@ -102,14 +102,14 @@ public class BitmapCacheUtils {
 			int errorResId, int sampleSize, Bitmap.Config config,
 			ExecutorService threadPool) {
 
-		// ÉèÖÃ¼ÓÔØÖĞµÄÍ¼Æ¬
+		// è®¾ç½®åŠ è½½ä¸­çš„å›¾ç‰‡
 		if (loadResId != -1) {
 			imageView.setImageResource(loadResId);
 		} else {
 			imageView.setImageResource(LOAD_RESOURCE_ID);
 		}
 
-		// ÉèÖÃ¼ÓÔØÊ§°ÜµÄÍ¼Æ¬
+		// è®¾ç½®åŠ è½½å¤±è´¥çš„å›¾ç‰‡
 		Bitmap errBitmap = null;
 
 		if (errorResId != -1) {
@@ -120,13 +120,13 @@ public class BitmapCacheUtils {
 					ERROR_RESOURCE_ID);
 		}
 
-		// ÉèÖÃÑ¹Ëõ±ÈÀı
-		if (sampleSize == -1 || config == null) {// ×Ô¶¯Ñ¹Ëõ
+		// è®¾ç½®å‹ç¼©æ¯”ä¾‹
+		if (sampleSize == -1 || config == null) {// è‡ªåŠ¨å‹ç¼©
 
 			new BitmapThreeLevelsCache(imageView, url, errBitmap,
 					isEnableNetworkCache, threadPool).displayBitmap();
 
-		} else {// ×Ô¶¨ÒåÑ¹ËõÊôĞÔ
+		} else {// è‡ªå®šä¹‰å‹ç¼©å±æ€§
 			new BitmapThreeLevelsCache(imageView, url, errBitmap,
 					isEnableNetworkCache, threadPool).setCompressOptions(
 					sampleSize, config).displayBitmap();

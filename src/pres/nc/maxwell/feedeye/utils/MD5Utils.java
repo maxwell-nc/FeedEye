@@ -5,14 +5,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5Êı×ÖÕªÒª¹¤¾ß
+ * MD5æ•°å­—æ‘˜è¦å·¥å…·
  */
 public class MD5Utils {
 
 	/**
-	 * »ñµÃ32Î»µÄMD5ÕªÒªÖµ
-	 * @param content Òª¼ÆËãµÄÎÄ±¾ÄÚÈİ 
-	 * @return MD5Öµ
+	 * è·å¾—32ä½çš„MD5æ‘˜è¦å€¼
+	 * @param content è¦è®¡ç®—çš„æ–‡æœ¬å†…å®¹ 
+	 * @return MD5å€¼
 	 */
 	public static String getMD5String(String content) {
 		byte[] digestBytes = null;
@@ -23,7 +23,7 @@ public class MD5Utils {
 			//can not reach
 		}
 		String md5Code = new BigInteger(1, digestBytes).toString(16);
-		//²¹È«²»×ãÎ»Êı
+		//è¡¥å…¨ä¸è¶³ä½æ•°
 		for (int i = 0; i < 32 - md5Code.length(); i++) {
 			md5Code = "0" + md5Code;
 		}

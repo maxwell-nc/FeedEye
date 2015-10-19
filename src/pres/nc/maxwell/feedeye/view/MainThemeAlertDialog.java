@@ -10,12 +10,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 /**
- * Ö÷Ìâ·ç¸ñµÄ¾¯¸æ¿ò
+ * ä¸»é¢˜é£æ ¼çš„è­¦å‘Šæ¡†
  */
 public class MainThemeAlertDialog {
 
 	/**
-	 * ÒÀÀµÏÔÊ¾µÄActivity
+	 * ä¾èµ–æ˜¾ç¤ºçš„Activity
 	 */
 	private Activity mActivity;
 
@@ -24,54 +24,54 @@ public class MainThemeAlertDialog {
 	}
 
 	/**
-	 * Ö÷Ìâ·ç¸ñµÄ¾¯¸æ¿òÊı¾İÊÊÅäÆ÷
+	 * ä¸»é¢˜é£æ ¼çš„è­¦å‘Šæ¡†æ•°æ®é€‚é…å™¨
 	 */
 	public interface MainThemeAlertDialogAdapter {
 
 		/**
-		 * ÉèÖÃ±êÌâ
-		 * @return ±êÌâ
+		 * è®¾ç½®æ ‡é¢˜
+		 * @return æ ‡é¢˜
 		 */
 		public String getTitle();
 
 		/**
-		 * ÉèÖÃContainer
-		 * @return ×Ô¶¨ÒåµÄView
+		 * è®¾ç½®Container
+		 * @return è‡ªå®šä¹‰çš„View
 		 */
 		public View getContentView();
 
 		/**
-		 * ĞŞ¸Ä»ù´¡µÄ¾¯¸æ¿òView
-		 * @param title ±êÌâ
-		 * @param container ÈİÆ÷
-		 * @param confirmButtom È·ÈÏ°´Å¥
-		 * @param cancelButtom È¡Ïû°´Å¥
+		 * ä¿®æ”¹åŸºç¡€çš„è­¦å‘Šæ¡†View
+		 * @param title æ ‡é¢˜
+		 * @param container å®¹å™¨
+		 * @param confirmButtom ç¡®è®¤æŒ‰é’®
+		 * @param cancelButtom å–æ¶ˆæŒ‰é’®
 		 */
 		public void changeViewAtLast(TextView title, FrameLayout container,
 				TextView confirmButtom, TextView cancelButtom);
 		
 		/**
-		 * »ñµÃÈ·ÈÏ°´Å¥µÄµã»÷¼àÌıÆ÷
-		 * @param alertDialog ÏÔÊ¾ÖĞµÄ¾¯¸æ¿ò
-		 * @return ¼àÌıÆ÷
+		 * è·å¾—ç¡®è®¤æŒ‰é’®çš„ç‚¹å‡»ç›‘å¬å™¨
+		 * @param alertDialog æ˜¾ç¤ºä¸­çš„è­¦å‘Šæ¡†
+		 * @return ç›‘å¬å™¨
 		 */
 		public OnClickListener getOnConfirmClickLister(final AlertDialog alertDialog);
 		
 		/**
-		 * »ñµÃÈ¡Ïû°´Å¥µÄµã»÷¼àÌıÆ÷
-		 * @param alertDialog ÏÔÊ¾ÖĞµÄ¾¯¸æ¿ò
-		 * @return ¼àÌıÆ÷
+		 * è·å¾—å–æ¶ˆæŒ‰é’®çš„ç‚¹å‡»ç›‘å¬å™¨
+		 * @param alertDialog æ˜¾ç¤ºä¸­çš„è­¦å‘Šæ¡†
+		 * @return ç›‘å¬å™¨
 		 */
 		public OnClickListener getOnCancelClickLister(final AlertDialog alertDialog);
 	}
 
 	/**
-	 * ÉèÖÃÊÊÅäÆ÷²¢ÏÔÊ¾
-	 * @param adapter Êı¾İÊÊÅäÆ÷
+	 * è®¾ç½®é€‚é…å™¨å¹¶æ˜¾ç¤º
+	 * @param adapter æ•°æ®é€‚é…å™¨
 	 */
 	public void setAdapter(MainThemeAlertDialogAdapter adapter) {
 
-		// »ñµÃ»ù´¡µÄView
+		// è·å¾—åŸºç¡€çš„View
 		View baseView = View.inflate(mActivity,
 				R.layout.alert_dialog_theme_base, null);
 
@@ -81,20 +81,20 @@ public class MainThemeAlertDialog {
 		TextView confirmButtom = (TextView) baseView.findViewById(R.id.tv_yes);
 		TextView cancelButtom = (TextView) baseView.findViewById(R.id.tv_no);
 
-		// Ìí¼ÓÓÃ»§ÉèÖÃµÄView
+		// æ·»åŠ ç”¨æˆ·è®¾ç½®çš„View
 		View userView = adapter.getContentView();
 		if (userView!=null) {
 			container.addView(userView);
 		}
 		
-		// ÉèÖÃ±êÌâ
+		// è®¾ç½®æ ‡é¢˜
 		String customTitle = adapter.getTitle();
 		if(!TextUtils.isEmpty(customTitle)){
 			title.setText(customTitle);
 		}
 		
 
-		// ÓÃ»§×Ô¶¨ÒåÉèÖÃ
+		// ç”¨æˆ·è‡ªå®šä¹‰è®¾ç½®
 		adapter.changeViewAtLast(title, container, confirmButtom, cancelButtom);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
@@ -104,13 +104,13 @@ public class MainThemeAlertDialog {
 		AlertDialog alertDialog = builder.show();
 		
 
-		//ÉèÖÃÈ·ÈÏµã»÷ÊÂ¼ş
+		//è®¾ç½®ç¡®è®¤ç‚¹å‡»äº‹ä»¶
 		OnClickListener customConfirmClickLister = adapter.getOnConfirmClickLister(alertDialog);
 		if (customConfirmClickLister!=null) {
 			confirmButtom.setOnClickListener(customConfirmClickLister);
 		}
 		
-		//ÉèÖÃÈ¡Ïûµã»÷ÊÂ¼ş
+		//è®¾ç½®å–æ¶ˆç‚¹å‡»äº‹ä»¶
 		OnClickListener customCancelClickLister = adapter.getOnCancelClickLister(alertDialog);
 		if (customCancelClickLister!=null) {
 			cancelButtom.setOnClickListener(customCancelClickLister);

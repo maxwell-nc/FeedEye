@@ -3,21 +3,21 @@ package pres.nc.maxwell.feedeye.utils;
 import android.util.Log;
 
 /**
- * ÈÕÖ¾¹ÜÀí¹¤¾ßÀà
+ * æ—¥å¿—ç®¡ç†å·¥å…·ç±»
  */
 public class LogUtils {
 
 	/**
-	 * ¿ØÖÆÈÕÖ¾´òÓ¡µÈ¼¶£¬-1´ú±í²»´òÓ¡ÈÎºÎÈÕÖ¾£¬5´ú±í´òÓ¡ËùÓÐ¼¶±ðµÄÈÕÖ¾
+	 * æŽ§åˆ¶æ—¥å¿—æ‰“å°ç­‰çº§ï¼Œ-1ä»£è¡¨ä¸æ‰“å°ä»»ä½•æ—¥å¿—ï¼Œ5ä»£è¡¨æ‰“å°æ‰€æœ‰çº§åˆ«çš„æ—¥å¿—
 	 */
 	private final static int mlogLevel = 5;
 
 	/**
-	 * »ñÈ¡¶ÔÏóµÄÀàÃû
+	 * èŽ·å–å¯¹è±¡çš„ç±»å
 	 * 
 	 * @param obj
-	 *            Òª»ñÈ¡µÄ¶ÔÏó
-	 * @return ¶ÔÏóµÄÀàÃû
+	 *            è¦èŽ·å–çš„å¯¹è±¡
+	 * @return å¯¹è±¡çš„ç±»å
 	 */
 	private static String getClassName(Object obj) {
 
@@ -31,10 +31,10 @@ public class LogUtils {
 	}
 
 	/**
-	 * µ÷ÓÃSystem.out.println´òÓ¡ÈÕÖ¾
+	 * è°ƒç”¨System.out.printlnæ‰“å°æ—¥å¿—
 	 * 
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void syso(String msg) {
 		if (mlogLevel >= 0) {
@@ -43,12 +43,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * verbose¼¶±ðÈÕÖ¾
+	 * verboseçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param obj
-	 *            µ÷ÓÃ¶ÔÏó£¬Ò»°ã´«Èëthis
+	 *            è°ƒç”¨å¯¹è±¡ï¼Œä¸€èˆ¬ä¼ å…¥this
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void v(Object obj, String msg) {
 		if (mlogLevel >= 1) {
@@ -57,12 +57,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * debug¼¶±ðÈÕÖ¾
+	 * debugçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param obj
-	 *            µ÷ÓÃ¶ÔÏó£¬Ò»°ã´«Èëthis
+	 *            è°ƒç”¨å¯¹è±¡ï¼Œä¸€èˆ¬ä¼ å…¥this
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void d(Object obj, String msg) {
 		if (mlogLevel >= 2) {
@@ -71,12 +71,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * info¼¶±ðÈÕÖ¾
+	 * infoçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param obj
-	 *            µ÷ÓÃ¶ÔÏó£¬Ò»°ã´«Èëthis
+	 *            è°ƒç”¨å¯¹è±¡ï¼Œä¸€èˆ¬ä¼ å…¥this
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void i(Object obj, String msg) {
 		if (mlogLevel >= 3) {
@@ -85,12 +85,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * warning¼¶±ðÈÕÖ¾
+	 * warningçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param obj
-	 *            µ÷ÓÃ¶ÔÏó£¬Ò»°ã´«Èëthis
+	 *            è°ƒç”¨å¯¹è±¡ï¼Œä¸€èˆ¬ä¼ å…¥this
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void w(Object obj, String msg) {
 		if (mlogLevel >= 4) {
@@ -99,12 +99,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * error¼¶±ðÈÕÖ¾
+	 * errorçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param obj
-	 *            µ÷ÓÃ¶ÔÏó£¬Ò»°ã´«Èëthis
+	 *            è°ƒç”¨å¯¹è±¡ï¼Œä¸€èˆ¬ä¼ å…¥this
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void e(Object obj, String msg) {
 		if (mlogLevel >= 5) {
@@ -113,12 +113,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * verbose¼¶±ðÈÕÖ¾
+	 * verboseçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param tag
-	 *            ÈÕÖ¾±ê¼Ç
+	 *            æ—¥å¿—æ ‡è®°
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void v(String tag, String msg) {
 		if (mlogLevel >= 1) {
@@ -127,12 +127,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * debug¼¶±ðÈÕÖ¾
+	 * debugçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param tag
-	 *            ÈÕÖ¾±ê¼Ç
+	 *            æ—¥å¿—æ ‡è®°
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void d(String tag, String msg) {
 		if (mlogLevel >= 2) {
@@ -141,12 +141,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * info¼¶±ðÈÕÖ¾
+	 * infoçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param tag
-	 *            ÈÕÖ¾±ê¼Ç
+	 *            æ—¥å¿—æ ‡è®°
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void i(String tag, String msg) {
 		if (mlogLevel >= 3) {
@@ -155,12 +155,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * warning¼¶±ðÈÕÖ¾
+	 * warningçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param tag
-	 *            ÈÕÖ¾±ê¼Ç
+	 *            æ—¥å¿—æ ‡è®°
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void w(String tag, String msg) {
 		if (mlogLevel >= 4) {
@@ -169,12 +169,12 @@ public class LogUtils {
 	}
 
 	/**
-	 * error¼¶±ðÈÕÖ¾
+	 * errorçº§åˆ«æ—¥å¿—
 	 * 
 	 * @param tag
-	 *            ÈÕÖ¾±ê¼Ç
+	 *            æ—¥å¿—æ ‡è®°
 	 * @param msg
-	 *            ÈÕÖ¾ÐÅÏ¢
+	 *            æ—¥å¿—ä¿¡æ¯
 	 */
 	public static void e(String tag, String msg) {
 		if (mlogLevel >= 5) {

@@ -12,19 +12,19 @@ import android.view.Window;
 import android.widget.TextView;
 
 /**
- * ÉÁÆÁÒ³ÃæµÄActivity
+ * é—ªå±é¡µé¢çš„Activity
  */
 public class SplashActivity extends Activity {
 
 	/**
-	 * °æ±¾ĞÅÏ¢
+	 * ç‰ˆæœ¬ä¿¡æ¯
 	 */
 	private TextView tv_splash_ver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//²»ÏÔÊ¾±êÌâÀ¸
+		//ä¸æ˜¾ç¤ºæ ‡é¢˜æ 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash);
 		
@@ -33,7 +33,7 @@ public class SplashActivity extends Activity {
 
 		new Thread() {
 
-			// TODO: ÒÔºó¿ÉÄÜ»Ø´Ó·şÎñÆ÷¼ì²é¸üĞÂ
+			// TODO: ä»¥åå¯èƒ½å›ä»æœåŠ¡å™¨æ£€æŸ¥æ›´æ–°
 			@Override
 			public void run() {
 				SystemClock.sleep(1500);
@@ -48,14 +48,14 @@ public class SplashActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯View
+	 * åˆå§‹åŒ–View
 	 */
 	private void initView() {
 		tv_splash_ver = (TextView) this.findViewById(R.id.tv_splash_ver);
 	}
 
 	/**
-	 * ÔÚSplash½çÃæÏÔÊ¾°æ±¾ºÅ
+	 * åœ¨Splashç•Œé¢æ˜¾ç¤ºç‰ˆæœ¬å·
 	 */
 	private void showVersionInSplash() {
 
@@ -80,11 +80,11 @@ public class SplashActivity extends Activity {
 	}
 
 	/**
-	 * ÔÚSplashµã»÷·µ»Ø°´Å¥
+	 * åœ¨Splashç‚¹å‡»è¿”å›æŒ‰é’®
 	 */
 	@Override
 	public void onBackPressed() {
-		//²»×÷´¦Àí
+		//ä¸ä½œå¤„ç†
 		//super.onBackPressed();
 	}
 }

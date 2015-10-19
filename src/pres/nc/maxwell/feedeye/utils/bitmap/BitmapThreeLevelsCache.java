@@ -17,64 +17,64 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 /**
- * BitmapµÄÈı¼¶»º´æ¿ØÖÆ£¬°üº¬¿ØÖÆÍøÂç¡¢±¾µØºÍÄÚ´æ»º´æ
+ * Bitmapçš„ä¸‰çº§ç¼“å­˜æ§åˆ¶ï¼ŒåŒ…å«æ§åˆ¶ç½‘ç»œã€æœ¬åœ°å’Œå†…å­˜ç¼“å­˜
  */
 public class BitmapThreeLevelsCache {
 
 	/**
-	 * ĞèÒªÏÔÊ¾µÄImageView
+	 * éœ€è¦æ˜¾ç¤ºçš„ImageView
 	 */
 	public ImageView mImageView;
 
 	/**
-	 * ÒªÏÔÊ¾Í¼Æ¬µÄURL
+	 * è¦æ˜¾ç¤ºå›¾ç‰‡çš„URL
 	 */
 	public String mURL;
 
 	/**
-	 * ¼ÓÔØÊ§°ÜÊ±¼ÓÔØµÄÍ¼Æ¬
+	 * åŠ è½½å¤±è´¥æ—¶åŠ è½½çš„å›¾ç‰‡
 	 */
 	public Bitmap mErrBitmap;
 
 	/**
-	 * ÊÇ·ñÊ¹ÓÃ×Ô¶¯Ñ¹Ëõ²ÎÊı£¬ÈôÒª×Ô¶¨²ÎÊı£¬Çëµ÷ÓÃsetCompressOptions·½·¨
+	 * æ˜¯å¦ä½¿ç”¨è‡ªåŠ¨å‹ç¼©å‚æ•°ï¼Œè‹¥è¦è‡ªå®šå‚æ•°ï¼Œè¯·è°ƒç”¨setCompressOptionsæ–¹æ³•
 	 */
 	private boolean isAutoCompress = true;
 
 	/**
-	 * ²ÉÑù´óĞ¡
+	 * é‡‡æ ·å¤§å°
 	 */
 	private int mSampleSize;
 
 	/**
-	 * ÑÕÉ«ÅäÖÃ
+	 * é¢œè‰²é…ç½®
 	 */
 	private Bitmap.Config mConfig;
 
 	/**
-	 * ÊÇ·ñ¿ªÆôÍøÂç»º´æ
+	 * æ˜¯å¦å¼€å¯ç½‘ç»œç¼“å­˜
 	 */
 	private boolean mIsEnableNetworkCache = true;
 
 	/**
-	 * HTTPÁ´½Ó¹¤¾ßÀà
+	 * HTTPé“¾æ¥å·¥å…·ç±»
 	 */
 	private HTTPUtils mHttpUtils;
 
 	/**
-	 * ÈÎÎñÏß³Ì³Ø
+	 * ä»»åŠ¡çº¿ç¨‹æ± 
 	 */
 	private ExecutorService mThreadPool;
 
 	/**
-	 * Ã¿´ÎÊ¹ÓÃÇë´´½¨ĞÂµÄ¶ÔÏó
+	 * æ¯æ¬¡ä½¿ç”¨è¯·åˆ›å»ºæ–°çš„å¯¹è±¡
 	 * 
 	 * @param imageView
-	 *            ĞèÒªÏÔÊ¾µÄImageView
+	 *            éœ€è¦æ˜¾ç¤ºçš„ImageView
 	 * @param url
-	 *            ÒªÏÔÊ¾Í¼Æ¬µÄURL
+	 *            è¦æ˜¾ç¤ºå›¾ç‰‡çš„URL
 	 * @param threadPool
-	 *            ×Ô¶¨ÒåÏß³Ì³Ø
+	 *            è‡ªå®šä¹‰çº¿ç¨‹æ± 
 	 */
 	public BitmapThreeLevelsCache(ImageView imageView, String url,
 			Bitmap errBitmap, boolean isEnableNetworkCache,
@@ -88,42 +88,42 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ´Ó»º´æÖĞ¶ÁÈ¡²¢ÏÔÊ¾Í¼Æ¬
+	 * ä»ç¼“å­˜ä¸­è¯»å–å¹¶æ˜¾ç¤ºå›¾ç‰‡
 	 */
 	public void displayBitmap() {
 
-		if (isLocalFile()) {// ±¾µØÍ¼Æ¬
+		if (isLocalFile()) {// æœ¬åœ°å›¾ç‰‡
 
-			LogUtils.i("BitmapThreeLevelsCache", "L1:±¾µØÍ¼Æ¬£¬»ñÈ¡ÄÚ´æ»º´æ");
-			if (!getMemoryCache()) {// 1.»ñÈ¡ÄÚ´æ»º´æ
+			LogUtils.i("BitmapThreeLevelsCache", "L1:æœ¬åœ°å›¾ç‰‡ï¼Œè·å–å†…å­˜ç¼“å­˜");
+			if (!getMemoryCache()) {// 1.è·å–å†…å­˜ç¼“å­˜
 
-				LogUtils.i("BitmapThreeLevelsCache", "L1:±¾µØÍ¼Æ¬£¬Ğ´ÈëÄÚ´æ»º´æ");
+				LogUtils.i("BitmapThreeLevelsCache", "L1:æœ¬åœ°å›¾ç‰‡ï¼Œå†™å…¥å†…å­˜ç¼“å­˜");
 				File file = new File(mURL);
-				setMemoryCache(file);// Ğ´µ½ÄÚ´æ»º´æÖĞ
+				setMemoryCache(file);// å†™åˆ°å†…å­˜ç¼“å­˜ä¸­
 
-				// ÖØĞÂ´ÓÄÚ´æ»º´æÖĞ¶ÁÈ¡
-				if (!getMemoryCache()) {// Â·¾¶²»ºÏ·¨»òÕßÎÄ¼şÒÑ¾­±»É¾³ı
+				// é‡æ–°ä»å†…å­˜ç¼“å­˜ä¸­è¯»å–
+				if (!getMemoryCache()) {// è·¯å¾„ä¸åˆæ³•æˆ–è€…æ–‡ä»¶å·²ç»è¢«åˆ é™¤
 					showErrorBitmap();
 				}
 
 			}
 
-		} else {// ÍøÂçÍ¼Æ¬
+		} else {// ç½‘ç»œå›¾ç‰‡
 
-			LogUtils.i("BitmapThreeLevelsCache", "L1:»ñÈ¡ÄÚ´æ»º´æ");
-			if (!getMemoryCache()) {// 1.»ñÈ¡ÄÚ´æ»º´æ
+			LogUtils.i("BitmapThreeLevelsCache", "L1:è·å–å†…å­˜ç¼“å­˜");
+			if (!getMemoryCache()) {// 1.è·å–å†…å­˜ç¼“å­˜
 
-				LogUtils.i("BitmapThreeLevelsCache", "L2:»ñÈ¡±¾µØ»º´æ");
-				if (!getLocalCache()) {// 2.»ñÈ¡±¾µØ»º´æ
+				LogUtils.i("BitmapThreeLevelsCache", "L2:è·å–æœ¬åœ°ç¼“å­˜");
+				if (!getLocalCache()) {// 2.è·å–æœ¬åœ°ç¼“å­˜
 
-					if (mIsEnableNetworkCache) {// ¿ªÆôÍøÂç»º´æ
+					if (mIsEnableNetworkCache) {// å¼€å¯ç½‘ç»œç¼“å­˜
 
-						LogUtils.i("BitmapThreeLevelsCache", "L3:»ñÈ¡ÍøÂ·»º´æ");
-						getNetworkCache();// 3.»ñÈ¡ÍøÂç»º´æ
+						LogUtils.i("BitmapThreeLevelsCache", "L3:è·å–ç½‘è·¯ç¼“å­˜");
+						getNetworkCache();// 3.è·å–ç½‘ç»œç¼“å­˜
 
-					} else {// ²»Ê¹ÓÃÍøÂç»º´æ
+					} else {// ä¸ä½¿ç”¨ç½‘ç»œç¼“å­˜
 
-						LogUtils.i("BitmapThreeLevelsCache", "L2:²»Ê¹ÓÃÍøÂç»º´æ");
+						LogUtils.i("BitmapThreeLevelsCache", "L2:ä¸ä½¿ç”¨ç½‘ç»œç¼“å­˜");
 						showErrorBitmap();
 
 					}
@@ -136,13 +136,13 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÎª±¾µØÎÄ¼ş
+	 * åˆ¤æ–­æ˜¯å¦ä¸ºæœ¬åœ°æ–‡ä»¶
 	 * 
-	 * @return ÈôÊÇ±¾µØÎÄ¼ş·µ»ØÕæ£¬·ñÔò·µ»Ø¼Ù
+	 * @return è‹¥æ˜¯æœ¬åœ°æ–‡ä»¶è¿”å›çœŸï¼Œå¦åˆ™è¿”å›å‡
 	 */
 	private boolean isLocalFile() {
 
-		if (mURL.startsWith("/")) {// Èç£º /sdcard/xxx/xxx.jpg
+		if (mURL.startsWith("/")) {// å¦‚ï¼š /sdcard/xxx/xxx.jpg
 			return true;
 		}
 
@@ -150,18 +150,18 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ÉèÖÃÄÚ´æ»º´æ
+	 * è®¾ç½®å†…å­˜ç¼“å­˜
 	 * 
 	 * @param bitmapFile
-	 *            Í¼Æ¬ÎÄ¼ş¶ÔÏó
+	 *            å›¾ç‰‡æ–‡ä»¶å¯¹è±¡
 	 */
 	private void setMemoryCache(File bitmapFile) {
 
-		// ½âÎöFile¶ÔÏó
+		// è§£æFileå¯¹è±¡
 		Bitmap bitmapCache = decodeFile(bitmapFile);
 
 		if (bitmapCache != null) {
-			// ¼ÓÈëÄÚ´æ»º´æ
+			// åŠ å…¥å†…å­˜ç¼“å­˜
 			BitmapLruCacheDispatcher.getInstance().getmMemoryCache()
 					.put(mURL, bitmapCache);
 		}
@@ -169,20 +169,20 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ÉèÖÃ±¾µØ»º´æ
+	 * è®¾ç½®æœ¬åœ°ç¼“å­˜
 	 * 
 	 * @param bitmapNetworkStream
-	 *            Í¼Æ¬ÍøÂçÁ÷
+	 *            å›¾ç‰‡ç½‘ç»œæµ
 	 */
 	private void setLocalCache(InputStream bitmapNetworkStream) {
 		BufferedOutputStream bufferedOutputStream = getBufferedOutputStream();
 
 		try {
 
-			// Ğ´±¾µØ»º´æ
+			// å†™æœ¬åœ°ç¼“å­˜
 			IOUtils.writeStream(bitmapNetworkStream, bufferedOutputStream);
 
-		} finally {// ¹Ø±ÕÁ÷
+		} finally {// å…³é—­æµ
 
 			IOUtils.closeQuietly(bitmapNetworkStream);
 			IOUtils.closeQuietly(bufferedOutputStream);
@@ -191,7 +191,7 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ÉèÖÃÍøÂç»º´æ£¬²»Òªµ÷ÓÃ
+	 * è®¾ç½®ç½‘ç»œç¼“å­˜ï¼Œä¸è¦è°ƒç”¨
 	 */
 	@SuppressWarnings("unused")
 	private void setNetworkCache() {
@@ -203,30 +203,30 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ¶ÁÈ¡ÄÚ´æ»º´æ
+	 * è¯»å–å†…å­˜ç¼“å­˜
 	 * 
-	 * @return ÊÇ·ñ³É¹¦¶ÁÈ¡
+	 * @return æ˜¯å¦æˆåŠŸè¯»å–
 	 */
 	private boolean getMemoryCache() {
 
 		Bitmap bitmapCache = BitmapLruCacheDispatcher.getInstance()
 				.getmMemoryCache().get(mURL);
 
-		if (bitmapCache != null) {// ÓĞ»º´æ
+		if (bitmapCache != null) {// æœ‰ç¼“å­˜
 			String tagURL = (String) mImageView.getTag();
 
 			// LogUtils.i("BitmapThreeLevelsCache", "tagURL" + tagURL);
 			// LogUtils.i("BitmapThreeLevelsCache", "mURL" + mURL);
 
-			if (mURL.equals(tagURL)) {// ¼ì²éÊÇ·ñÎªĞèÒªÏÔÊ¾µÄImageView
+			if (mURL.equals(tagURL)) {// æ£€æŸ¥æ˜¯å¦ä¸ºéœ€è¦æ˜¾ç¤ºçš„ImageView
 				mImageView.setImageBitmap(bitmapCache);
 				return true;
 			} else {// wrong tag
-					// ²»ÓÃ´¦Àí
+					// ä¸ç”¨å¤„ç†
 				return false;
 			}
 
-		} else {// Ã»ÓĞ»º´æ
+		} else {// æ²¡æœ‰ç¼“å­˜
 
 			return false;
 		}
@@ -234,20 +234,20 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ¶ÁÈ¡±¾µØ»º´æ
+	 * è¯»å–æœ¬åœ°ç¼“å­˜
 	 * 
-	 * @return ÊÇ·ñ³É¹¦¶ÁÈ¡
+	 * @return æ˜¯å¦æˆåŠŸè¯»å–
 	 */
 	private boolean getLocalCache() {
 
 		File cacheFile = getCacheFile();
 
-		if (cacheFile.exists()) {// ±¾µØ»º´æ´æÔÚ
+		if (cacheFile.exists()) {// æœ¬åœ°ç¼“å­˜å­˜åœ¨
 
-			// ÉèÖÃÄÚ´æ»º´æ
+			// è®¾ç½®å†…å­˜ç¼“å­˜
 			setMemoryCache(cacheFile);
 
-			// ÖØĞÂ¶ÁÈ¡»º´æ
+			// é‡æ–°è¯»å–ç¼“å­˜
 			getMemoryCache();
 
 			return true;
@@ -261,32 +261,32 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ¶ÁÈ¡ÍøÂç»º´æ
+	 * è¯»å–ç½‘ç»œç¼“å­˜
 	 */
 	private void getNetworkCache() {
 
 		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onConnect(InputStream inputStream) {// ×ÓÏß³Ì
-				// ÉèÖÃ±¾µØ»º´æ
+			public void onConnect(InputStream inputStream) {// å­çº¿ç¨‹
+				// è®¾ç½®æœ¬åœ°ç¼“å­˜
 				setLocalCache(inputStream);
 				LogUtils.i("BitmapThreeLevelsCache", mURL);
 
 			}
 
 			@Override
-			public void onSuccess() {// Ö÷Ïß³Ì
-				// ÖØĞÂ¶ÁÈ¡»º´æ
+			public void onSuccess() {// ä¸»çº¿ç¨‹
+				// é‡æ–°è¯»å–ç¼“å­˜
 				getLocalCache();
 			}
 
 			@Override
-			public void onFailure() {// Ö÷Ïß³Ì
+			public void onFailure() {// ä¸»çº¿ç¨‹
 
-				// »ñÈ¡Ê§°Ü
+				// è·å–å¤±è´¥
 				String tagURL = (String) mImageView.getTag();
-				if (mURL.equals(tagURL)) {// ¼ì²éÊÇ·ñÎªĞèÒªÏÔÊ¾µÄImageView
+				if (mURL.equals(tagURL)) {// æ£€æŸ¥æ˜¯å¦ä¸ºéœ€è¦æ˜¾ç¤ºçš„ImageView
 
 					showErrorBitmap();
 
@@ -303,15 +303,15 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ±¾µØ£º·µ»ØÓÃÓÚ±£´æÍ¼Æ¬µÄÊä³öÁ÷
+	 * æœ¬åœ°ï¼šè¿”å›ç”¨äºä¿å­˜å›¾ç‰‡çš„è¾“å‡ºæµ
 	 * 
-	 * @return ÓÃÓÚ±£´æÍ¼Æ¬µÄÊä³öÁ÷
+	 * @return ç”¨äºä¿å­˜å›¾ç‰‡çš„è¾“å‡ºæµ
 	 */
 	private BufferedOutputStream getBufferedOutputStream() {
 
 		File file = getCacheFile();
 
-		// ´´½¨ÓÃÓÚ±£´æÍ¼Æ¬µÄÊä³öÁ÷
+		// åˆ›å»ºç”¨äºä¿å­˜å›¾ç‰‡çš„è¾“å‡ºæµ
 		BufferedOutputStream bufferedOutputStream = null;
 		FileOutputStream fileOutputStream = null;
 		try {
@@ -325,17 +325,17 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * ±¾µØ£º·µ»ØCache±£´æµÄFile¶ÔÏó
+	 * æœ¬åœ°ï¼šè¿”å›Cacheä¿å­˜çš„Fileå¯¹è±¡
 	 * 
-	 * @return Òª²Ù×÷µÄFile¶ÔÏó
+	 * @return è¦æ“ä½œçš„Fileå¯¹è±¡
 	 */
 	private File getCacheFile() {
 
-		// ÅĞ¶ÏSD¿¨ÈİÁ¿,Î´ÊµÏÖ
+		// åˆ¤æ–­SDå¡å®¹é‡,æœªå®ç°
 		// File sdFile = Environment.getExternalStorageDirectory();
 		// long freeSpace = sdFile.getFreeSpace();
 
-		// ÒÔURLµÄMD5ÖµÎªÎÄ¼şÃû
+		// ä»¥URLçš„MD5å€¼ä¸ºæ–‡ä»¶å
 		String fileName = MD5Utils.getMD5String(mURL);
 
 		File file = IOUtils.getFileInSdcard("/FeedEye/ImgCache", fileName);
@@ -344,18 +344,18 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * Ñ¹Ëõ£ºÉèÖÃÑ¹ËõÑ¡Ïî£¬Ê¹ÓÃ´Ë·½·¨ºóÔòÄ¬ÈÏ²»Ê¹ÓÃ×Ô¶¯Ñ¹Ëõ
+	 * å‹ç¼©ï¼šè®¾ç½®å‹ç¼©é€‰é¡¹ï¼Œä½¿ç”¨æ­¤æ–¹æ³•ååˆ™é»˜è®¤ä¸ä½¿ç”¨è‡ªåŠ¨å‹ç¼©
 	 * 
 	 * @param sampleSize
-	 *            ²ÉÑù´óĞ¡
+	 *            é‡‡æ ·å¤§å°
 	 * @param config
-	 *            ÑÕÉ«ÅäÖÃ
-	 * @return ·µ»Øthis£¬·½±ãÁ´Ê½µ÷ÓÃ
+	 *            é¢œè‰²é…ç½®
+	 * @return è¿”å›thisï¼Œæ–¹ä¾¿é“¾å¼è°ƒç”¨
 	 */
 	public BitmapThreeLevelsCache setCompressOptions(int sampleSize,
 			Bitmap.Config config) {
 
-		// È¡Ïû×Ô¶¯Ñ¹Ëõ
+		// å–æ¶ˆè‡ªåŠ¨å‹ç¼©
 		isAutoCompress = false;
 
 		this.mSampleSize = sampleSize;
@@ -365,24 +365,24 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * Ñ¹Ëõ£º½âÎöfile¶ÔÏó²¢Ñ¹ËõBitmap
+	 * å‹ç¼©ï¼šè§£æfileå¯¹è±¡å¹¶å‹ç¼©Bitmap
 	 * 
 	 * @param bitmapFile
-	 *            Í¼Æ¬ÎÄ¼ş¶ÔÏó
-	 * @return Ñ¹Ëõ½âÎöºóµÄBitmap
+	 *            å›¾ç‰‡æ–‡ä»¶å¯¹è±¡
+	 * @return å‹ç¼©è§£æåçš„Bitmap
 	 */
 	private Bitmap decodeFile(File bitmapFile) {
 		Bitmap bitmapCache = null;
 
-		// ²âÁ¿ImageView²¼¾Ö¿í¸ß
-		mImageView.measure(0, 0);// Ê¹ÓÃonLayoutListener»á³öÏÖÆæ¹ÖÎÊÌâ
+		// æµ‹é‡ImageViewå¸ƒå±€å®½é«˜
+		mImageView.measure(0, 0);// ä½¿ç”¨onLayoutListenerä¼šå‡ºç°å¥‡æ€ªé—®é¢˜
 		int viewHeight = mImageView.getMeasuredHeight();
 		int viewWidth = mImageView.getMeasuredWidth();
 
-		if (isAutoCompress) {// ×Ô¶¯Ñ¹ËõÍ¼Æ¬
+		if (isAutoCompress) {// è‡ªåŠ¨å‹ç¼©å›¾ç‰‡
 			bitmapCache = new BitmapCompressUtils((File) bitmapFile)
 					.CompressBitmapFile(viewHeight, viewWidth);
-		} else {// ÊÖ¶¯Ñ¹ËõÍ¼Æ¬
+		} else {// æ‰‹åŠ¨å‹ç¼©å›¾ç‰‡
 			bitmapCache = new BitmapCompressUtils((File) bitmapFile)
 					.CompressBitmapFile(mSampleSize, mConfig);
 		}
@@ -391,14 +391,14 @@ public class BitmapThreeLevelsCache {
 	}
 
 	/**
-	 * Ê§°Ü£ºÏÔÊ¾¼ÓÔØÊ§°ÜµÄµÄÍ¼Æ¬
+	 * å¤±è´¥ï¼šæ˜¾ç¤ºåŠ è½½å¤±è´¥çš„çš„å›¾ç‰‡
 	 */
 	private void showErrorBitmap() {
-		// Ê§°ÜºóÉèÖÃÄÚ´æ»º´æÎª¼ÓÔØÊ§°ÜµÄÍ¼Æ¬£¬·ÀÖ¹¶à´Î·ÃÎÊÍøÂç
+		// å¤±è´¥åè®¾ç½®å†…å­˜ç¼“å­˜ä¸ºåŠ è½½å¤±è´¥çš„å›¾ç‰‡ï¼Œé˜²æ­¢å¤šæ¬¡è®¿é—®ç½‘ç»œ
 		if (mErrBitmap != null) {
 
 			mImageView.setImageBitmap(mErrBitmap);
-			// ¼ÓÈëÄÚ´æ»º´æ
+			// åŠ å…¥å†…å­˜ç¼“å­˜
 			BitmapLruCacheDispatcher.getInstance().getmMemoryCache()
 					.put(mURL, mErrBitmap);
 		} else {

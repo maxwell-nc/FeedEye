@@ -7,14 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * ÏµÍ³ĞÅÏ¢»ñÈ¡¹¤¾ßÀà
+ * ç³»ç»Ÿä¿¡æ¯è·å–å·¥å…·ç±»
  */
 public class SystemInfoUtils {
 
 	/**
-	 * »ñÈ¡µ±Ç°ÏµÍ³Ê±¼äÎÄ±¾
+	 * è·å–å½“å‰ç³»ç»Ÿæ—¶é—´æ–‡æœ¬
 	 * 
-	 * @return Ê±¼äÎÄ±¾£¬¸ñÊ½Èç£º15-09-16 22:19:49
+	 * @return æ—¶é—´æ–‡æœ¬ï¼Œæ ¼å¼å¦‚ï¼š15-09-16 22:19:49
 	 */
 	@SuppressLint("SimpleDateFormat")
 	public static String getCurrentTime() {
@@ -23,11 +23,11 @@ public class SystemInfoUtils {
 	}
 
 	/**
-	 * »ñµÃ×´Ì¬À¸µÄ¸ß¶È£¬Ê§°Ü·µ»Ø-1
+	 * è·å¾—çŠ¶æ€æ çš„é«˜åº¦ï¼Œå¤±è´¥è¿”å›-1
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄ
-	 * @return ×´Ì¬À¸¸ß¶È
+	 *            ä¸Šä¸‹æ–‡
+	 * @return çŠ¶æ€æ é«˜åº¦
 	 */
 	public static int getStatusBarHeight(Context context) {
 		int statusBarHeight = -1;

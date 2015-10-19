@@ -3,38 +3,38 @@ package pres.nc.maxwell.feedeye.domain;
 import java.io.Serializable;
 
 /**
- * ´æ´¢¶©ÔÄĞÅÏ¢µÄ¶ÔÏó
+ * å­˜å‚¨è®¢é˜…ä¿¡æ¯çš„å¯¹è±¡
  */
 @SuppressWarnings("serial")
 public class FeedItem implements Serializable {
 
 	/**
-	 * Êı¾İ¿âÉú³ÉµÄidÖ÷¼ü,Ä¬ÈÏµÄ-1´ú±íĞÂÌí¼Ó
+	 * æ•°æ®åº“ç”Ÿæˆçš„idä¸»é”®,é»˜è®¤çš„-1ä»£è¡¨æ–°æ·»åŠ 
 	 */
 	public int itemId = -1;
 
 	/**
-	 * ¶©ÔÄURL
+	 * è®¢é˜…URL
 	 */
 	public String feedURL;
 
 	/**
-	 * Í¼Æ¬URL
+	 * å›¾ç‰‡URL
 	 */
 	public String picURL;
 	
 	/**
-	 * ±àÂë·½Ê½
+	 * ç¼–ç æ–¹å¼
 	 */
 	public String encoding;
 
 	/**
-	 * »ù±¾ĞÅÏ¢£¬Èç±êÌâ¡¢¸üĞÂÊ±¼äµÈ
+	 * åŸºæœ¬ä¿¡æ¯ï¼Œå¦‚æ ‡é¢˜ã€æ›´æ–°æ—¶é—´ç­‰
 	 */
 	public FeedXMLBaseInfo baseInfo = new FeedXMLBaseInfo();
 
 	/**
-	 * É¾³ı±ê¼Ç,²»ÒªÊÖ¶¯ÉèÖÃ ÓÃÓÚÍ¬²½£ºÈç¹ûÎª"1"Ôò±íÊ¾±¾µØÒÑÉ¾³ı£¬µ«Î´Í¬²½£¬²»ÒªÉ¾³ı¼ÇÂ¼
+	 * åˆ é™¤æ ‡è®°,ä¸è¦æ‰‹åŠ¨è®¾ç½® ç”¨äºåŒæ­¥ï¼šå¦‚æœä¸º"1"åˆ™è¡¨ç¤ºæœ¬åœ°å·²åˆ é™¤ï¼Œä½†æœªåŒæ­¥ï¼Œä¸è¦åˆ é™¤è®°å½•
 	 */
 	public String deleteFlag = "0";
 

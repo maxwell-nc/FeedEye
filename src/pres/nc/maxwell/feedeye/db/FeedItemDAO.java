@@ -12,38 +12,38 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * ¶©ÔÄĞÅÏ¢µÄDAOÀà£¬·ÃÎÊfeed_item±í
+ * è®¢é˜…ä¿¡æ¯çš„DAOç±»ï¼Œè®¿é—®feed_itemè¡¨
  */
 public class FeedItemDAO {
 
 	/**
-	 * Êı¾İ¿â´ò¿ª°ïÖúÀà
+	 * æ•°æ®åº“æ‰“å¼€å¸®åŠ©ç±»
 	 */
 	private DatabaseOpenHelper mDatabaseOpenHelper;
 
 	/**
-	 * ²Ù×÷µÄ±íÃû
+	 * æ“ä½œçš„è¡¨å
 	 */
 	private static final String mTableName = "feed_item";
 
 	/**
-	 * ³õÊ¼»¯
+	 * åˆå§‹åŒ–
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄ
+	 *            ä¸Šä¸‹æ–‡
 	 */
 	public FeedItemDAO(Context context) {
 		mDatabaseOpenHelper = new DatabaseOpenHelper(context);
 
-		// ²»±ØÌáÇ°´ò¿ªÊı¾İ¿â£¬¿ÉÄÜÊ¹ÓÃÕß²»Á¢¼´²Ù×÷Êı¾İ¿â
+		// ä¸å¿…æå‰æ‰“å¼€æ•°æ®åº“ï¼Œå¯èƒ½ä½¿ç”¨è€…ä¸ç«‹å³æ“ä½œæ•°æ®åº“
 	}
 
 	/**
-	 * °ÑFeedItem·Å½øMap
+	 * æŠŠFeedItemæ”¾è¿›Map
 	 * 
 	 * @param feedItem
-	 *            ¶©ÔÄĞÅÏ¢
-	 * @return ·µ»Ømap
+	 *            è®¢é˜…ä¿¡æ¯
+	 * @return è¿”å›map
 	 */
 	private ContentValues putFeedItemInMap(FeedItem feedItem) {
 
@@ -65,22 +65,22 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * Ìí¼ÓÒ»Ìõ¶©ÔÄĞÅÏ¢£¬×Ô¶¯ĞŞ¸ÄFeedItemµÄidĞÅÏ¢
+	 * æ·»åŠ ä¸€æ¡è®¢é˜…ä¿¡æ¯ï¼Œè‡ªåŠ¨ä¿®æ”¹FeedItemçš„idä¿¡æ¯
 	 * 
 	 * @param feedItem
-	 *            ¶©ÔÄÏûÏ¢
-	 * @return ÊÇ·ñ³É¹¦Ìí¼Ó
+	 *            è®¢é˜…æ¶ˆæ¯
+	 * @return æ˜¯å¦æˆåŠŸæ·»åŠ 
 	 */
 	public boolean addItem(FeedItem feedItem) {
 
 		int itemId = feedItem.itemId;
-		if (itemId != -1) {// ·ÀÖ¹·Ç·¨²åÈë
+		if (itemId != -1) {// é˜²æ­¢éæ³•æ’å…¥
 			throw new RuntimeException(
 					"Do not set item id if you want to add to database");
 		}
 
 		String isDeleted = feedItem.deleteFlag;
-		if (isDeleted == "-1") {// ÒÑ¾­±ê¼ÇÎªÉ¾³ıµÄ¶ÔÏó
+		if (isDeleted == "-1") {// å·²ç»æ ‡è®°ä¸ºåˆ é™¤çš„å¯¹è±¡
 			throw new RuntimeException("Do not update already deleted id item");
 		}
 
@@ -88,21 +88,21 @@ public class FeedItemDAO {
 
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
-		// ²åÈëÊı¾İ
+		// æ’å…¥æ•°æ®
 		long rowId = db.insert(mTableName, null, map);
 
-		LogUtils.i("FeedPager", "Ìí¼ÓrowId£º" + rowId);
+		LogUtils.i("FeedPager", "æ·»åŠ rowIdï¼š" + rowId);
 
 		db.close();
 		db = null;
 
-		if (rowId == -1) {// ²åÈëÊ§°Ü
+		if (rowId == -1) {// æ’å…¥å¤±è´¥
 
 			return false;
 
-		} else {// ²åÈë³É¹¦
+		} else {// æ’å…¥æˆåŠŸ
 
-			// ¸üĞÂitemµÄid£¬²»Òª°Ñrowidµ±idÊ¹ÓÃ
+			// æ›´æ–°itemçš„idï¼Œä¸è¦æŠŠrowidå½“idä½¿ç”¨
 			feedItem.itemId = queryIdByRowId(rowId);
 
 			return true;
@@ -111,20 +111,20 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * É¾³ıÒ»Ìõ¶©ÔÄĞÅÏ¢£¨Î´ÊµÏÖÍ¬²½£¬·ÇÕæÕıÉ¾³ı£©
+	 * åˆ é™¤ä¸€æ¡è®¢é˜…ä¿¡æ¯ï¼ˆæœªå®ç°åŒæ­¥ï¼ŒéçœŸæ­£åˆ é™¤ï¼‰
 	 * 
 	 * @param feedItem
-	 *            ÒªÉ¾³ıµÄ¶©ÔÄĞÅÏ¢
-	 * @return ÊÇ·ñ³É¹¦É¾³ı
+	 *            è¦åˆ é™¤çš„è®¢é˜…ä¿¡æ¯
+	 * @return æ˜¯å¦æˆåŠŸåˆ é™¤
 	 */
 	public boolean removeItem(FeedItem feedItem) {
 
 		int itemId = feedItem.itemId;
-		if (itemId <= -1) {// ·ÀÖ¹·Ç·¨¸üĞÂ
+		if (itemId <= -1) {// é˜²æ­¢éæ³•æ›´æ–°
 			throw new RuntimeException("Do not delete no-id item");
 		}
 
-		// ÉèÖÃÉ¾³ı±ê¼Ç£¬ÓÃÓÚÍ¬²½É¾³ı
+		// è®¾ç½®åˆ é™¤æ ‡è®°ï¼Œç”¨äºåŒæ­¥åˆ é™¤
 		feedItem.deleteFlag = "-1";
 
 		String idString = String.valueOf(itemId);
@@ -142,21 +142,21 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * ¸üĞÂ¶©ÔÄĞÅÏ¢
+	 * æ›´æ–°è®¢é˜…ä¿¡æ¯
 	 * 
 	 * @param feedItem
-	 *            ¶©ÔÄĞÅÏ¢
-	 * @return ÊÇ·ñ³É¹¦¸üĞÂ
+	 *            è®¢é˜…ä¿¡æ¯
+	 * @return æ˜¯å¦æˆåŠŸæ›´æ–°
 	 */
 	public boolean updateItem(FeedItem feedItem) {
 
 		int itemId = feedItem.itemId;
-		if (itemId <= -1) {// ·ÀÖ¹·Ç·¨¸üĞÂ
+		if (itemId <= -1) {// é˜²æ­¢éæ³•æ›´æ–°
 			throw new RuntimeException("Do not update non-set id item");
 		}
 
 		String isDeleted = feedItem.deleteFlag;
-		if (isDeleted == "-1") {// ÒÑ¾­±ê¼ÇÎªÉ¾³ıµÄ¶ÔÏó
+		if (isDeleted == "-1") {// å·²ç»æ ‡è®°ä¸ºåˆ é™¤çš„å¯¹è±¡
 			throw new RuntimeException("Do not update already deleted id item");
 		}
 
@@ -173,9 +173,9 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * ÎŞÌõ¼ş²éÑ¯ËùÓĞµÄitem£¬²»°üº¬ÒÑ¾­É¾³ıµÄ
+	 * æ— æ¡ä»¶æŸ¥è¯¢æ‰€æœ‰çš„itemï¼Œä¸åŒ…å«å·²ç»åˆ é™¤çš„
 	 * 
-	 * @return FeedItem¼¯ºÏ
+	 * @return FeedItemé›†åˆ
 	 */
 	public ArrayList<FeedItem> queryAllItems() {
 
@@ -184,15 +184,15 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * °´Ìõ¼ş²éÑ¯item£¬ĞÂµÄÊı¾İ·ÅÔÚµÚÒ»
+	 * æŒ‰æ¡ä»¶æŸ¥è¯¢itemï¼Œæ–°çš„æ•°æ®æ”¾åœ¨ç¬¬ä¸€
 	 * 
 	 * @param selection
-	 *            Ñ¡ÔñÌõ¼ş
+	 *            é€‰æ‹©æ¡ä»¶
 	 * @param selectionArgs
-	 *            Ñ¡ÔñÌõ¼ş¶ÔÓ¦µÄ²ÎÊıÊı×é
+	 *            é€‰æ‹©æ¡ä»¶å¯¹åº”çš„å‚æ•°æ•°ç»„
 	 * @param isReturnDeletedData
-	 *            ÊÇ·ñÏÔÊ¾ÒÑ¾­É¾³ıµ«Î´Í¬²½É¾³ıµÄÊı¾İ
-	 * @return ²éÑ¯µÄ½á¹û
+	 *            æ˜¯å¦æ˜¾ç¤ºå·²ç»åˆ é™¤ä½†æœªåŒæ­¥åˆ é™¤çš„æ•°æ®
+	 * @return æŸ¥è¯¢çš„ç»“æœ
 	 */
 	public ArrayList<FeedItem> queryItems(String selection,
 			String[] selectionArgs, boolean isReturnDeletedData) {
@@ -200,19 +200,19 @@ public class FeedItemDAO {
 		SQLiteDatabase db = mDatabaseOpenHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(mTableName, null, selection, selectionArgs,
-				null, null, "id DESC");// ĞÂµÄÊı¾İ·ÅÔÚµÚÒ»
+				null, null, "id DESC");// æ–°çš„æ•°æ®æ”¾åœ¨ç¬¬ä¸€
 
 		ArrayList<FeedItem> retList = new ArrayList<FeedItem>();
 
-		while (cursor.moveToNext()) {// ²éÑ¯ËùÓĞ½á¹û
+		while (cursor.moveToNext()) {// æŸ¥è¯¢æ‰€æœ‰ç»“æœ
 
-			if (!isReturnDeletedData) {// ²»ÏÔÊ¾ÒÑ¾­É¾³ıµÄÊı¾İ
-				if ("-1".equals(cursor.getString(8))) {// Êı¾İÒÑ¾­±»É¾³ı£¬´ıÍ¬²½
+			if (!isReturnDeletedData) {// ä¸æ˜¾ç¤ºå·²ç»åˆ é™¤çš„æ•°æ®
+				if ("-1".equals(cursor.getString(8))) {// æ•°æ®å·²ç»è¢«åˆ é™¤ï¼Œå¾…åŒæ­¥
 					continue;
 				}
 			}
 
-			// Êı¾İÎ´É¾³ı
+			// æ•°æ®æœªåˆ é™¤
 
 			FeedItem feedItem = new FeedItem();
 
@@ -239,11 +239,11 @@ public class FeedItemDAO {
 	}
 
 	/**
-	 * ¸ù¾İrowid²éÑ¯id£¬²»Òª°Ñrowidµ±idÊ¹ÓÃ
+	 * æ ¹æ®rowidæŸ¥è¯¢idï¼Œä¸è¦æŠŠrowidå½“idä½¿ç”¨
 	 * 
 	 * @param rowId
-	 *            ĞĞºÅ
-	 * @return idÖ÷¼üÖµ
+	 *            è¡Œå·
+	 * @return idä¸»é”®å€¼
 	 */
 	public int queryIdByRowId(long rowId) {
 
@@ -254,23 +254,23 @@ public class FeedItemDAO {
 				new String[]{rowIdString}, null, null, null, null);
 
 		String idString = null;
-		if (cursor.moveToNext()) {// Ö»ÓĞÒ»Ìõ¼ÇÂ¼
-			idString = cursor.getString(0);// Êı¾İ¿âÉú³ÉµÄid£¨Ö÷¼ü£¬·ÇrowId£©
+		if (cursor.moveToNext()) {// åªæœ‰ä¸€æ¡è®°å½•
+			idString = cursor.getString(0);// æ•°æ®åº“ç”Ÿæˆçš„idï¼ˆä¸»é”®ï¼ŒérowIdï¼‰
 		}
 
 		db.close();
 		db = null;
 
-		if (idString != null) {// ²éÑ¯µ½Êı¾İ
+		if (idString != null) {// æŸ¥è¯¢åˆ°æ•°æ®
 			return Integer.parseInt(idString);
-		} else {// ²éÑ¯²»µ½Êı¾İ
+		} else {// æŸ¥è¯¢ä¸åˆ°æ•°æ®
 			return -1;
 		}
 
 	}
 
 	/**
-	 * Íê³ÉÍ¬²½£¬É¾³ı±ê¼ÇÎªÉ¾³ıµÄÊı¾İ
+	 * å®ŒæˆåŒæ­¥ï¼Œåˆ é™¤æ ‡è®°ä¸ºåˆ é™¤çš„æ•°æ®
 	 */
 	public void completeSynchronized() {
 

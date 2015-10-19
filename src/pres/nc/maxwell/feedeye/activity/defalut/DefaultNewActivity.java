@@ -10,37 +10,37 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
- * ´øºóÍË°´Å¥Ä¬ÈÏµÄActivity
+ * å¸¦åé€€æŒ‰é’®é»˜è®¤çš„Activity
  */
 public class DefaultNewActivity extends Activity {
 
 	/**
-	 * ºóÍË°´Å¥
+	 * åé€€æŒ‰é’®
 	 */
 	protected ImageView mBack;
 
 	/**
-	 * ¶¥²¿ÈİÆ÷
+	 * é¡¶éƒ¨å®¹å™¨
 	 */
 	protected FrameLayout mBar;
 
 	/**
-	 * ÄÚÈİÈİÆ÷
+	 * å†…å®¹å®¹å™¨
 	 */
 	protected FrameLayout mContainer;
 
 	/**
-	 * ¶¥²¿View
+	 * é¡¶éƒ¨View
 	 */
 	protected View mCustomBarView;
 
 	/**
-	 * ÄÚÈİView
+	 * å†…å®¹View
 	 */
 	protected View mCustomContainerView;
 
 	/**
-	 * ´´½¨Ê±Ö´ĞĞ
+	 * åˆ›å»ºæ—¶æ‰§è¡Œ
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class DefaultNewActivity extends Activity {
 	}
 
 	/**
-	 * Ìí¼Ó×ÓView
+	 * æ·»åŠ å­View
 	 */
 	protected void addView(int barViewId, int containerViewId) {
 		
@@ -71,14 +71,14 @@ public class DefaultNewActivity extends Activity {
 	}
 
 	/**
-	 * °ÑºóÍËÍ¼Æ¬»»³É¹Ø±Õ
+	 * æŠŠåé€€å›¾ç‰‡æ¢æˆå…³é—­
 	 */
 	protected void setAsCloseImage() {
 		mBack.setImageResource(R.drawable.btn_close);
 	}
 
 	/**
-	 * ³õÊ¼»¯View¶ÔÏó
+	 * åˆå§‹åŒ–Viewå¯¹è±¡
 	 */
 	protected void initView() {
 
@@ -89,30 +89,30 @@ public class DefaultNewActivity extends Activity {
 	}
 
 	/**
-	 * ÔÚ¹Ø±Õ½çÃæÇ°´¦ÀíÊÂÇé
+	 * åœ¨å…³é—­ç•Œé¢å‰å¤„ç†äº‹æƒ…
 	 * 
-	 * @return ÊÇ·ñÔÊĞí¹Ø±Õ
+	 * @return æ˜¯å¦å…è®¸å…³é—­
 	 */
 	protected boolean beforeClose() {
 		return true;
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ
+	 * åˆå§‹åŒ–æ•°æ®
 	 */
 	protected void initData() {
 
 		/**
-		 * ºóÍËµã»÷ÊÂ¼ş
+		 * åé€€ç‚¹å‡»äº‹ä»¶
 		 */
 		mBack.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
-				// ÔÚ¹Ø±Õ½çÃæÇ°´¦ÀíÊÂÇé
+				// åœ¨å…³é—­ç•Œé¢å‰å¤„ç†äº‹æƒ…
 				if (beforeClose()) {
-					// ¹Ø±Õµ±Ç°½çÃæ
+					// å…³é—­å½“å‰ç•Œé¢
 					finish();
 				}
 

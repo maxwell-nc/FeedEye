@@ -7,43 +7,43 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 /**
- * Ö÷Ìâ·ç¸ñµÄ³¤°´µ¯³öµÄ¶Ô»°¿ò
+ * ä¸»é¢˜é£æ ¼çš„é•¿æŒ‰å¼¹å‡ºçš„å¯¹è¯æ¡†
  */
 public class MainThemeLongClickDialog {
 
 	/**
-	 * Êı¾İÊÊÅäÆ÷
+	 * æ•°æ®é€‚é…å™¨
 	 */
 	public interface DialogDataAdapter {
 
 		/**
-		 * »ñÈ¡¶Ô»°¿òµÄ²¼¾ÖID
-		 * @return ¶Ô»°¿ò²¼¾ÖID
+		 * è·å–å¯¹è¯æ¡†çš„å¸ƒå±€ID
+		 * @return å¯¹è¯æ¡†å¸ƒå±€ID
 		 */
 		public int getLayoutViewId();
 
 		/**
-		 * »ñÈ¡TextViewµÄidÊı×é
-		 * @return TextViewµÄidÊı×é
+		 * è·å–TextViewçš„idæ•°ç»„
+		 * @return TextViewçš„idæ•°ç»„
 		 */
 		public int[] getTextViewResIds();
 
 		/**
-		 * »ñÈ¡Ã¿¸öÌõÄ¿µÄµã»÷¼àÌıÆ÷Êı×é
-		 * @param alertDialog µ±Ç°ÏÔÊ¾µÄ¶Ô»°¿ò
-		 * @return Ã¿¸öÌõÄ¿µÄµã»÷¼àÌıÆ÷Êı×é
+		 * è·å–æ¯ä¸ªæ¡ç›®çš„ç‚¹å‡»ç›‘å¬å™¨æ•°ç»„
+		 * @param alertDialog å½“å‰æ˜¾ç¤ºçš„å¯¹è¯æ¡†
+		 * @return æ¯ä¸ªæ¡ç›®çš„ç‚¹å‡»ç›‘å¬å™¨æ•°ç»„
 		 */
 		public OnClickListener[] getItemOnClickListener(AlertDialog alertDialog);
 
 	}
 
 	/**
-	 * ÒÀ¸½µÄActivity
+	 * ä¾é™„çš„Activity
 	 */
 	private Activity mActivity;
 	
 	/**
-	 * Êı¾İÊÊÅäÈ¥
+	 * æ•°æ®é€‚é…å»
 	 */
 	private DialogDataAdapter mAdapter;
 
@@ -54,13 +54,13 @@ public class MainThemeLongClickDialog {
 	}
 
 	/**
-	 * ³õÊ¼»¯¸÷¸ö°´Å¥¶ÔÏó
+	 * åˆå§‹åŒ–å„ä¸ªæŒ‰é’®å¯¹è±¡
 	 * 
 	 * @param alertView
-	 *            View¸¸¶ÔÏó
+	 *            Viewçˆ¶å¯¹è±¡
 	 * @param resIds
-	 *            ×ÊÔ´id£¨ÈÎÒâ¸ö£©
-	 * @return ·µ»ØË³ĞòµÄTextView¶ÔÏóÊı¾İ
+	 *            èµ„æºidï¼ˆä»»æ„ä¸ªï¼‰
+	 * @return è¿”å›é¡ºåºçš„TextViewå¯¹è±¡æ•°æ®
 	 */
 	public TextView[] initTextButtonView(View alertView, int... resIds) {
 		TextView[] textViews = new TextView[resIds.length];
@@ -71,11 +71,11 @@ public class MainThemeLongClickDialog {
 	}
 
 	/**
-	 * ÏÔÊ¾¶Ô»°¿ò
+	 * æ˜¾ç¤ºå¯¹è¯æ¡†
 	 */
 	public void show() {
 
-		// Õû¸ö¾¯¸æ¿òµÄ²¼¾Ö
+		// æ•´ä¸ªè­¦å‘Šæ¡†çš„å¸ƒå±€
 		View alertView = View.inflate(mActivity, mAdapter.getLayoutViewId(),
 				null);
 
@@ -95,24 +95,24 @@ public class MainThemeLongClickDialog {
 	}
 
 	/**
-	 * ´«Èë³¤°´µ¯³öµÄÌõÄ¿Î»ÖÃºÍµ±Ç°¶Ô»°¿òµÄ¼àÌıÆ÷
+	 * ä¼ å…¥é•¿æŒ‰å¼¹å‡ºçš„æ¡ç›®ä½ç½®å’Œå½“å‰å¯¹è¯æ¡†çš„ç›‘å¬å™¨
 	 */
 	public static abstract class AlertDialogOnClickListener implements OnClickListener {
 
 		/**
-		 * µã»÷µÄÎ»ÖÃ£¨ListViewÖĞµÄÎ»ÖÃ£©
+		 * ç‚¹å‡»çš„ä½ç½®ï¼ˆListViewä¸­çš„ä½ç½®ï¼‰
 		 */
 		protected int position;
 		
 		/**
-		 * ¶Ô»°¿ò
+		 * å¯¹è¯æ¡†
 		 */
 		protected AlertDialog alertDialog;
 
 		/**
-		 * ´«Èë³¤°´µ¯³öµÄÌõÄ¿Î»ÖÃºÍµ±Ç°¶Ô»°¿ò
-		 * @param position ³¤°´µ¯³öµÄÌõÄ¿Î»ÖÃ
-		 * @param alertDialog µ±Ç°¶Ô»°¿ò
+		 * ä¼ å…¥é•¿æŒ‰å¼¹å‡ºçš„æ¡ç›®ä½ç½®å’Œå½“å‰å¯¹è¯æ¡†
+		 * @param position é•¿æŒ‰å¼¹å‡ºçš„æ¡ç›®ä½ç½®
+		 * @param alertDialog å½“å‰å¯¹è¯æ¡†
 		 */
 		public AlertDialogOnClickListener(int position, AlertDialog alertDialog) {
 			this.position = position;

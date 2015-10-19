@@ -11,26 +11,26 @@ import android.widget.TextView;
 public class BasePager {
 
 	protected Activity mActivity;
-	protected View mBaseView; // Õû¸ö²¼¾Ö
-	protected TextView mTitle; // ±êÌâ
-	protected ImageView mFuncButtonLeft; // ¹¦ÄÜ°´Å¥×ó
-	protected ImageView mFuncButtonRight; // ¹¦ÄÜ°´Å¥ÓÒ
-	protected FrameLayout mContainer; // ²¼¾ÖÈİÆ÷
-	protected ProgressBar mLoadingBar; // ¼ÓÔØÍ¼±ê
+	protected View mBaseView; // æ•´ä¸ªå¸ƒå±€
+	protected TextView mTitle; // æ ‡é¢˜
+	protected ImageView mFuncButtonLeft; // åŠŸèƒ½æŒ‰é’®å·¦
+	protected ImageView mFuncButtonRight; // åŠŸèƒ½æŒ‰é’®å³
+	protected FrameLayout mContainer; // å¸ƒå±€å®¹å™¨
+	protected ProgressBar mLoadingBar; // åŠ è½½å›¾æ ‡
 
 	public TextView getTitleView() {
 		return mTitle;
 	}
 
 	/**
-	 * ±ØĞëÏÈµ÷ÓÃuseFunctionButton()·½·¨³õÊ¼»¯¹¦ÄÜ°´Å¥
+	 * å¿…é¡»å…ˆè°ƒç”¨useFunctionButton()æ–¹æ³•åˆå§‹åŒ–åŠŸèƒ½æŒ‰é’®
 	 */
 	public ImageView getFuncButtonLeftView() {
 		return mFuncButtonLeft;
 	}
 
 	/**
-	 * ±ØĞëÏÈµ÷ÓÃuseFunctionButton()·½·¨³õÊ¼»¯¹¦ÄÜ°´Å¥
+	 * å¿…é¡»å…ˆè°ƒç”¨useFunctionButton()æ–¹æ³•åˆå§‹åŒ–åŠŸèƒ½æŒ‰é’®
 	 */
 	public ImageView getFuncButtonRightView() {
 		return mFuncButtonRight;
@@ -45,7 +45,7 @@ public class BasePager {
 	}
 
 	/**
-	 * ¹¹Ôìº¯Êı£¬´«ÈëÊ¹ÓÃViewPagerµÄActivity
+	 * æ„é€ å‡½æ•°ï¼Œä¼ å…¥ä½¿ç”¨ViewPagerçš„Activity
 	 * 
 	 * @param mActivity
 	 */
@@ -56,12 +56,12 @@ public class BasePager {
 	}
 
 	/**
-	 * ³õÊ¼»¯²¼¾ÖÖĞÏàÍ¬µÄ²¿·Ö
+	 * åˆå§‹åŒ–å¸ƒå±€ä¸­ç›¸åŒçš„éƒ¨åˆ†
 	 */
 	protected void initView() {
 		mBaseView = View.inflate(mActivity, R.layout.pager_base, null);
 		
-		// ¼ì²éView¶ÔÏóÊÇ·ñÎªnull
+		// æ£€æŸ¥Viewå¯¹è±¡æ˜¯å¦ä¸ºnull
 		// LogUtils.v("BasePager", mBaseView == null ? "BaseView null":
 		// "BaseView not null");
 
@@ -71,7 +71,7 @@ public class BasePager {
 	}
 
 	/**
-	 * ×ÓÀàÊ¹ÓÃFunctionButton¹¦ÄÜ£¬³õÊ¼»¯¹¦ÄÜ°´Å¥View£¬²»Ö÷¶¯µ÷ÓÃ
+	 * å­ç±»ä½¿ç”¨FunctionButtonåŠŸèƒ½ï¼Œåˆå§‹åŒ–åŠŸèƒ½æŒ‰é’®Viewï¼Œä¸ä¸»åŠ¨è°ƒç”¨
 	 */
 	protected void useFunctionButton() {
 		mFuncButtonLeft = (ImageView) mBaseView
@@ -81,26 +81,26 @@ public class BasePager {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ£¬×ÓÀàÊµÏÖ
+	 * åˆå§‹åŒ–æ•°æ®ï¼Œå­ç±»å®ç°
 	 */
 	protected void initData() {
 	}
 
 	/**
-	 * ·µ»ØPagerµÄView¶ÔÏó
+	 * è¿”å›Pagerçš„Viewå¯¹è±¡
 	 * 
-	 * @return ÓÃÓÚÌî³äµÄPager
+	 * @return ç”¨äºå¡«å……çš„Pager
 	 */
 	public View getView() {
 		return mBaseView;
 	}
 
 	/**
-	 * Ìî³äFrameLayout²¿·Ö£¬ÓÉ¼Ì³ĞµÄ×ÓÀàµ÷ÓÃ
+	 * å¡«å……FrameLayoutéƒ¨åˆ†ï¼Œç”±ç»§æ‰¿çš„å­ç±»è°ƒç”¨
 	 * 
 	 * @param resourceId
-	 *            ×ÊÔ´id
-	 * @return ·µ»ØÌî³äµÄ¶ÔÏóÒıÓÃ
+	 *            èµ„æºid
+	 * @return è¿”å›å¡«å……çš„å¯¹è±¡å¼•ç”¨
 	 */
 	protected View setContainerContent(int resourceId) {
 		return View.inflate(mActivity, resourceId, mContainer);

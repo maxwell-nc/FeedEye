@@ -20,27 +20,27 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 /**
- * Ö÷Ò³ÃæµÄActivity
+ * ä¸»é¡µé¢çš„Activity
  */
 public class MainActivity extends Activity {
 
 	/**
-	 * Ö÷½çÃæÒ³ÃæÄÚÈİ
+	 * ä¸»ç•Œé¢é¡µé¢å†…å®¹
 	 */
 	private NoScrollViewPager mContentPager;
 
 	/**
-	 * µ¼º½°´Å¥×éView
+	 * å¯¼èˆªæŒ‰é’®ç»„View
 	 */
 	private NavigationButtonGroupView mNaviBtnGroup;
 
 	/**
-	 * ËùÓĞPagerµÄÁĞ±í
+	 * æ‰€æœ‰Pagerçš„åˆ—è¡¨
 	 */
 	private List<BasePager> mPagerList;
 
 	/**
-	 * ¶©ÔÄÒ³Ãæ
+	 * è®¢é˜…é¡µé¢
 	 */
 	private FeedPager mFeedPager;
 
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯View¶ÔÏó
+	 * åˆå§‹åŒ–Viewå¯¹è±¡
 	 */
 	private void initView() {
 		mContentPager = (NoScrollViewPager) findViewById(R.id.vp_content);
@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ
+	 * åˆå§‹åŒ–æ•°æ®
 	 */
 	private void initData() {
 
@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 
 		mPagerList = new ArrayList<BasePager>();
 
-		// Ìí¼Ó²¼¾Ö½øViewPager
+		// æ·»åŠ å¸ƒå±€è¿›ViewPager
 		mFeedPager = new FeedPager(this);
 
 		mPagerList.add(mFeedPager);
@@ -85,14 +85,14 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * ·µ»ØActivityÊ±´¦Àí·µ»ØÊı¾İ
+	 * è¿”å›Activityæ—¶å¤„ç†è¿”å›æ•°æ®
 	 * 
-	 * ÇëÇóÂëÎª1Ê±£º
+	 * è¯·æ±‚ç ä¸º1æ—¶ï¼š
 	 * 
-	 * @See ÇëÇó·µ»ØÊı¾İ{@link FeedPager#addNewFeedItem()}
-	 * @See ·µ»ØÊı¾İ£º
+	 * @See è¯·æ±‚è¿”å›æ•°æ®{@link FeedPager#addNewFeedItem()}
+	 * @See è¿”å›æ•°æ®ï¼š
 	 *      {@link pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity#addItem()}
-	 * @See ½ÓÊÕ·µ»ØÊı¾İ{@link FeedPager#finishedAddItem()}
+	 * @See æ¥æ”¶è¿”å›æ•°æ®{@link FeedPager#finishedAddItem()}
 	 * 
 	 */
 	@Override
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
-			case 1 :// Ìí¼Ó½çÃæ
+			case 1 :// æ·»åŠ ç•Œé¢
 
 				if (resultCode != -1) {
 
@@ -120,7 +120,7 @@ public class MainActivity extends Activity {
 }
 
 /**
- * µ¼º½°´Å¥µã»÷ÊÂ¼ş¼àÌıÆ÷
+ * å¯¼èˆªæŒ‰é’®ç‚¹å‡»äº‹ä»¶ç›‘å¬å™¨
  */
 class CheckedChange implements OnCheckedChangeListener {
 
@@ -132,21 +132,21 @@ class CheckedChange implements OnCheckedChangeListener {
 	}
 
 	/**
-	 * µã»÷ÇĞ»»½çÃæ£¬È¥µôViewPagerµÄÇĞ»»Ğ§¹û
+	 * ç‚¹å‡»åˆ‡æ¢ç•Œé¢ï¼Œå»æ‰ViewPagerçš„åˆ‡æ¢æ•ˆæœ
 	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch (checkedId) {
-			case R.id.rb_feed :// ¶©ÔÄ
+			case R.id.rb_feed :// è®¢é˜…
 				mContentPager.setCurrentItem(0, false);
 				break;
-			case R.id.rb_discover :// ·¢ÏÖ
+			case R.id.rb_discover :// å‘ç°
 				mContentPager.setCurrentItem(1, false);
 				break;
-			case R.id.rb_favor :// ÊÕ²Ø
+			case R.id.rb_favor :// æ”¶è—
 				mContentPager.setCurrentItem(2, false);
 				break;
-			case R.id.rb_setting :// ÉèÖÃ
+			case R.id.rb_setting :// è®¾ç½®
 				mContentPager.setCurrentItem(3, false);
 				break;
 		}
@@ -154,7 +154,7 @@ class CheckedChange implements OnCheckedChangeListener {
 }
 
 /**
- * ViewPagerÌî³äÒ³ÃæÊÊÅäÆ÷
+ * ViewPagerå¡«å……é¡µé¢é€‚é…å™¨
  */
 class PagerInflateAdapter extends PagerAdapter {
 
@@ -178,7 +178,7 @@ class PagerInflateAdapter extends PagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		BasePager pager = mPagerList.get(position);
-		// pager.getTitleView().setText("²âÊÔÁĞ±í" + position);
+		// pager.getTitleView().setText("æµ‹è¯•åˆ—è¡¨" + position);
 
 		View view = pager.getView();
 		container.addView(view);

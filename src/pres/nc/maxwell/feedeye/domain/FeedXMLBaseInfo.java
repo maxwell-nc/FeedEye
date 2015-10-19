@@ -4,43 +4,43 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * ¶©ÔÄµÄXMLµÄ»ù±¾ĞÅÏ¢
+ * è®¢é˜…çš„XMLçš„åŸºæœ¬ä¿¡æ¯
  */
 @SuppressWarnings("serial")
 public class FeedXMLBaseInfo implements Serializable {
 
 	/**
-	 * @see #type ATOMµÄXML¸ñÊ½
+	 * @see #type ATOMçš„XMLæ ¼å¼
 	 */
 	public static final String TYPE_ATOM = "ATOM";
 
 	/**
-	 * @see #type RSSµÄXML¸ñÊ½
+	 * @see #type RSSçš„XMLæ ¼å¼
 	 */
 	public static final String TYPE_RSS = "RSS";
 
 	/**
-	 * @see #type Î»ÖÃÀàĞÍ
+	 * @see #type ä½ç½®ç±»å‹
 	 */
 	public  static final String TYPE_UNKNOWN = "UNKNOWN";
 	
 	/**
-	 * ¶©ÔÄÀàĞÍ
+	 * è®¢é˜…ç±»å‹
 	 */
 	public String type;
 
 	/**
-	 * ¶©ÔÄ±êÌâ
+	 * è®¢é˜…æ ‡é¢˜
 	 */
 	public String title;
 
 	/**
-	 * ¶©ÔÄ¸ÅÒª
+	 * è®¢é˜…æ¦‚è¦
 	 */
 	public String summary;
 
 	/**
-	 * ¶©ÔÄÊ±¼ä
+	 * è®¢é˜…æ—¶é—´
 	 */
 	public Timestamp time;
 

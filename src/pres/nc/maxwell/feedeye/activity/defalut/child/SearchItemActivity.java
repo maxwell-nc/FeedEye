@@ -30,58 +30,58 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
- * ËÑË÷¶©ÔÄÁĞ±íÒ³ÃæµÄActivity
+ * æœç´¢è®¢é˜…åˆ—è¡¨é¡µé¢çš„Activity
  */
 @SuppressLint("DefaultLocale")
 public class SearchItemActivity extends DefaultNewActivity {
 
 	/**
-	 * ´ú±íµ±Ç°Activity£¬ÓÃÓÚÌø×ªActivity
+	 * ä»£è¡¨å½“å‰Activityï¼Œç”¨äºè·³è½¬Activity
 	 */
 	private Activity mThisActivity;
 
 	/**
-	 * ËÑË÷¹Ø¼ü×ÖÊäÈë¿ò
+	 * æœç´¢å…³é”®å­—è¾“å…¥æ¡†
 	 */
 	private EditText mSearchText;
 
 	/**
-	 * ¼ÓÔØÖĞµÄÍ¼Æ¬
+	 * åŠ è½½ä¸­çš„å›¾ç‰‡
 	 */
 	private ProgressBar mLoading;
 
 	/**
-	 * ½á¹ûÁĞ±í
+	 * ç»“æœåˆ—è¡¨
 	 */
 	private ListView mResultListView;
 
 	/**
-	 * Ê²Ã´¶¼Ã»ÕÒµ½µÄÎÄ±¾
+	 * ä»€ä¹ˆéƒ½æ²¡æ‰¾åˆ°çš„æ–‡æœ¬
 	 */
 	private TextView mNothingFound;
 
 	/**
-	 * ÒÑ¾­ÏÔÊ¾µÄÁĞ±í
+	 * å·²ç»æ˜¾ç¤ºçš„åˆ—è¡¨
 	 */
 	private ArrayList<FeedItem> mShowedList;
 
 	/**
-	 * Î´ÏÔÊ¾µÄÁĞ±í
+	 * æœªæ˜¾ç¤ºçš„åˆ—è¡¨
 	 */
 	private ArrayList<FeedItem> mUnShowList;
 
 	/**
-	 * ËÑË÷½á¹ûµÄÁĞ±í
+	 * æœç´¢ç»“æœçš„åˆ—è¡¨
 	 */
 	private ArrayList<FeedItem> mResultList;
 
 	/**
-	 * ½á¹ûListViewµÄÊÊÅäÆ÷
+	 * ç»“æœListViewçš„é€‚é…å™¨
 	 */
 	private ResultListAdapter mListViewAdapter;
 
 	/**
-	 * ³õÊ¼»¯View¶ÔÏó
+	 * åˆå§‹åŒ–Viewå¯¹è±¡
 	 */
 	@Override
 	protected void initView() {
@@ -103,7 +103,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İ
+	 * åˆå§‹åŒ–æ•°æ®
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -111,19 +111,19 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 		super.initData();
 
-		// »ñµÃÊı¾İ
+		// è·å¾—æ•°æ®
 		mShowedList = (ArrayList<FeedItem>) getIntent()
 				.getSerializableExtra("ShowedList");
 		mUnShowList = (ArrayList<FeedItem>) getIntent()
 				.getSerializableExtra("UnShowList");
 		mResultList = new ArrayList<FeedItem>();
 
-		// ÉèÖÃÊÊÅäÆ÷
+		// è®¾ç½®é€‚é…å™¨
 		mListViewAdapter = new ResultListAdapter();
 		mResultListView.setAdapter(mListViewAdapter);
 
 		/**
-		 * ¼àÌıÊäÈë±ä»¯
+		 * ç›‘å¬è¾“å…¥å˜åŒ–
 		 */
 		mSearchText.addTextChangedListener(new TextWatcher() {
 
@@ -142,17 +142,17 @@ public class SearchItemActivity extends DefaultNewActivity {
 			@Override
 			public void afterTextChanged(Editable s) {
 
-				if (!TextUtils.isEmpty(mSearchText.getText())) {// ²»ËÑË÷¿Õ×Ö´®
-					// ¿ªÊ¼ËÑË÷£¬ÏÔÊ¾¼ÓÔØÖĞ¶¯»­
+				if (!TextUtils.isEmpty(mSearchText.getText())) {// ä¸æœç´¢ç©ºå­—ä¸²
+					// å¼€å§‹æœç´¢ï¼Œæ˜¾ç¤ºåŠ è½½ä¸­åŠ¨ç”»
 					mLoading.setVisibility(View.VISIBLE);
 					mResultListView.setVisibility(View.INVISIBLE);
 					mNothingFound.setVisibility(View.INVISIBLE);
 
-					// ËÑË÷
+					// æœç´¢
 					new SearchTask().execute();
-				} else {// ¹Ø¼ü×ÖÎª¿Õ£¬Çå¿ÕËÑË÷½á¹û
+				} else {// å…³é”®å­—ä¸ºç©ºï¼Œæ¸…ç©ºæœç´¢ç»“æœ
 					if (mResultList != null) {
-						mResultList.clear();// Çå¿ÕËÑË÷½á¹û
+						mResultList.clear();// æ¸…ç©ºæœç´¢ç»“æœ
 						// mListViewAdapter.notifyDataSetChanged();
 					}
 					mLoading.setVisibility(View.INVISIBLE);
@@ -163,42 +163,42 @@ public class SearchItemActivity extends DefaultNewActivity {
 			}
 		});
 
-		// ËÑË÷ºóÌø×ªµ½½á¹ûÒ³Ãæ
+		// æœç´¢åè·³è½¬åˆ°ç»“æœé¡µé¢
 		mResultListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				
-				//×ª»»Îª´Ó0¿ªÊ¼µÄÎ»ÖÃ
+				//è½¬æ¢ä¸ºä»0å¼€å§‹çš„ä½ç½®
 				position = position- mResultListView.getHeaderViewsCount();
 				
 				int clickItem = mResultList.get(position).itemId;
 
 				for (int i = 0; i < mShowedList.size(); i++) {
 
-					// ËÑË÷ÒÑÏÔÊ¾µÄÁĞ±í
+					// æœç´¢å·²æ˜¾ç¤ºçš„åˆ—è¡¨
 					if (mShowedList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
 								ItemDetailListActivity.class);
 						intent.putExtra("FeedItem", mShowedList.get(i));
 						mThisActivity.startActivity(intent);
 
-						finish();// ²»ĞèÒªËÑË÷½çÃæ£¿
+						finish();// ä¸éœ€è¦æœç´¢ç•Œé¢ï¼Ÿ
 					}
 
 				}
 
 				for (int i = 0; i < mUnShowList.size(); i++) {
 
-					// ËÑË÷Î´ÏÔÊ¾µÄÁĞ±í
+					// æœç´¢æœªæ˜¾ç¤ºçš„åˆ—è¡¨
 					if (mUnShowList.get(i).itemId == clickItem) {
 						Intent intent = new Intent(mThisActivity,
 								ItemDetailListActivity.class);
 						intent.putExtra("FeedItem", mUnShowList.get(i));
 						mThisActivity.startActivity(intent);
 
-						finish();// ²»ĞèÒªËÑË÷½çÃæ£¿
+						finish();// ä¸éœ€è¦æœç´¢ç•Œé¢ï¼Ÿ
 					}
 				}
 
@@ -207,16 +207,16 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 	}
 	/**
-	 * Òì²½ËÑË÷ÈÎÎñ
+	 * å¼‚æ­¥æœç´¢ä»»åŠ¡
 	 */
 	class SearchTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) {// ×ÓÏß³Ì
+		protected Void doInBackground(Void... params) {// å­çº¿ç¨‹
 
 			String keyword = mSearchText.getText().toString();
 
-			LogUtils.e("SearchItemActivity", "ËÑË÷" + keyword);
+			LogUtils.e("SearchItemActivity", "æœç´¢" + keyword);
 
 			searchLists(keyword);
 
@@ -224,17 +224,17 @@ public class SearchItemActivity extends DefaultNewActivity {
 		}
 
 		@Override
-		protected void onProgressUpdate(Void... values) {// Ö÷Ïß³Ì
+		protected void onProgressUpdate(Void... values) {// ä¸»çº¿ç¨‹
 
 			super.onProgressUpdate(values);
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {// Ö÷Ïß³Ì
+		protected void onPostExecute(Void result) {// ä¸»çº¿ç¨‹
 
-			// ËÑË÷Íê³É£¬ÏÔÊ¾¼ÓÔØ½á¹û
+			// æœç´¢å®Œæˆï¼Œæ˜¾ç¤ºåŠ è½½ç»“æœ
 
-			if (mResultList.size() == 0) {// ÕÒ²»µ½
+			if (mResultList.size() == 0) {// æ‰¾ä¸åˆ°
 
 				mLoading.setVisibility(View.INVISIBLE);
 				mResultListView.setVisibility(View.INVISIBLE);
@@ -254,22 +254,22 @@ public class SearchItemActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * °´¹Ø¼ü×ÖÀ´ËÑË÷
+	 * æŒ‰å…³é”®å­—æ¥æœç´¢
 	 * 
 	 * @param keyword
-	 *            ¹Ø¼ü×Ö
+	 *            å…³é”®å­—
 	 */
 	private void searchLists(String keyword) {
 
 		keyword = keyword.toLowerCase();
 
 		if (mResultList != null) {
-			mResultList.clear();// Çå¿ÕÉÏ´ÎµÄËÑË÷½á¹û
+			mResultList.clear();// æ¸…ç©ºä¸Šæ¬¡çš„æœç´¢ç»“æœ
 		}
 
 		for (int i = 0; i < mShowedList.size(); i++) {
 
-			// ËÑË÷ÒÑÏÔÊ¾µÄÁĞ±í
+			// æœç´¢å·²æ˜¾ç¤ºçš„åˆ—è¡¨
 			if (mShowedList.get(i).baseInfo.title.toLowerCase().contains(
 					keyword)) {
 				mResultList.add(mShowedList.get(i));
@@ -277,7 +277,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 		}
 		for (int i = 0; i < mUnShowList.size(); i++) {
 
-			// ËÑË÷Î´ÏÔÊ¾µÄÁĞ±í,´óĞ¡Ğ´²»Ã÷¸Ğ
+			// æœç´¢æœªæ˜¾ç¤ºçš„åˆ—è¡¨,å¤§å°å†™ä¸æ˜æ„Ÿ
 			if (mUnShowList.get(i).baseInfo.title.toLowerCase().contains(
 					keyword)) {
 				mResultList.add(mUnShowList.get(i));
@@ -287,7 +287,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 	}
 
 	/**
-	 * ListViewµÄÊÊÅäÆ÷
+	 * ListViewçš„é€‚é…å™¨
 	 */
 	class ResultListAdapter extends BaseAdapter {
 
@@ -318,7 +318,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 				itemView.setTag(holder);
 			}
 
-			// Ê¹ÓÃÈı¼¶»º´æ¼ÓÔØÍ¼Æ¬
+			// ä½¿ç”¨ä¸‰çº§ç¼“å­˜åŠ è½½å›¾ç‰‡
 			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
 					mResultList.get(position).picURL,null);
 
@@ -332,12 +332,12 @@ public class SearchItemActivity extends DefaultNewActivity {
 
 				holder.title.setText(title);
 
-			} else {// Í»³ö½á¹ûÖĞµÄ¹Ø¼ü×Ö
+			} else {// çªå‡ºç»“æœä¸­çš„å…³é”®å­—
 
 				SpannableStringBuilder builder = new SpannableStringBuilder(
 						title);
 
-				// ForegroundColorSpan ÎªÎÄ×ÖÇ°¾°É«
+				// ForegroundColorSpan ä¸ºæ–‡å­—å‰æ™¯è‰²
 				ForegroundColorSpan redSpan = new ForegroundColorSpan(
 						getResources().getColor(R.color.red));
 

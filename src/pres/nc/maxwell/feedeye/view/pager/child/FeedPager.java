@@ -49,47 +49,47 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * ¶©ÔÄÒ³ÃæµÄPager
+ * è®¢é˜…é¡µé¢çš„Pager
  */
 public class FeedPager extends BasePager {
 
 	/**
-	 * Ìî³äµ½¸¸²¼¾ÖÖĞµÄFrameLayoutÖĞµÄView¶ÔÏó
+	 * å¡«å……åˆ°çˆ¶å¸ƒå±€ä¸­çš„FrameLayoutä¸­çš„Viewå¯¹è±¡
 	 */
 	private View mViewContent;
 
 	/**
-	 * ¶©ÔÄÁĞ±í
+	 * è®¢é˜…åˆ—è¡¨
 	 */
 	private DragRefreshListView mListView;
 
 	/**
-	 * ±£´æÎ´ÏÔÊ¾µÄItemĞÅÏ¢
+	 * ä¿å­˜æœªæ˜¾ç¤ºçš„Itemä¿¡æ¯
 	 */
 	private ArrayList<FeedItem> mItemInfoUnshowList;
 
 	/**
-	 * ±£´æÒÑ¾­ÏÔÊ¾µÄĞÅÏ¢
+	 * ä¿å­˜å·²ç»æ˜¾ç¤ºçš„ä¿¡æ¯
 	 */
 	private ArrayList<FeedItem> mItemInfoShowedList;
 
 	/**
-	 * Ò»´ÎÕ¹Ê¾µÄItemÊıÁ¿
+	 * ä¸€æ¬¡å±•ç¤ºçš„Itemæ•°é‡
 	 */
 	private final int SHOW_ITEM_COUNT = 20;
 
 	/**
-	 * ListViewÎª¿ÕÏÔÊ¾µÄÌáÊ¾Í¼Æ¬
+	 * ListViewä¸ºç©ºæ˜¾ç¤ºçš„æç¤ºå›¾ç‰‡
 	 */
 	private ImageView mNothingImg;
 
 	/**
-	 * BitmapÈı¼¶»º´æ
+	 * Bitmapä¸‰çº§ç¼“å­˜
 	 */
 	BitmapCacheUtils mCacheUtils = new BitmapCacheUtils();
 
 	/**
-	 * ListViewÊı¾İÊÊÅäÆ÷
+	 * ListViewæ•°æ®é€‚é…å™¨
 	 */
 	private FeedPagerListViewAdapter mListViewAdapter;
 
@@ -98,12 +98,12 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * µ¯³ö´°¿Ú
+	 * å¼¹å‡ºçª—å£
 	 */
 	private PopupWindow mPopupWindow;
 
 	/**
-	 * ¹¹Ôì·½·¨
+	 * æ„é€ æ–¹æ³•
 	 * 
 	 * @param mActivity
 	 *            Activity
@@ -113,18 +113,18 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * ³õÊ¼»¯½çÃæÏÔÊ¾
+	 * åˆå§‹åŒ–ç•Œé¢æ˜¾ç¤º
 	 */
 	@Override
 	protected void initView() {
 		super.initView();
 
-		mTitle.setText("ÎÒµÄ¶©ÔÄ");
+		mTitle.setText("æˆ‘çš„è®¢é˜…");
 		mViewContent = setContainerContent(R.layout.pager_feed);
 		mListView = (DragRefreshListView) mViewContent
 				.findViewById(R.id.lv_feed_list);
 
-		// ListViewÎª¿ÕÊ±ÏÔÊ¾µÄÍ¼Æ¬
+		// ListViewä¸ºç©ºæ—¶æ˜¾ç¤ºçš„å›¾ç‰‡
 		mNothingImg = (ImageView) mViewContent.findViewById(R.id.iv_nothing);
 
 		mItemInfoUnshowList = new ArrayList<FeedItem>();
@@ -137,12 +137,12 @@ public class FeedPager extends BasePager {
 	protected void initData() {
 		super.initData();
 
-		// Ê×ÏÈÒì²½²éÑ¯Êı¾İ¿â
+		// é¦–å…ˆå¼‚æ­¥æŸ¥è¯¢æ•°æ®åº“
 		new ReadItemInfoDBTask().execute();
 
-		// ÔÚÉÏÃæµÄAsyncTaskÖ´ĞĞºó»áÖ´ĞĞdoWhenFinishedReadDB()
+		// åœ¨ä¸Šé¢çš„AsyncTaskæ‰§è¡Œåä¼šæ‰§è¡ŒdoWhenFinishedReadDB()
 
-		// ÉèÖÃµã»÷Ã»ÓĞ¶©ÔÄĞÅÏ¢µÄÍ¼Æ¬Ìí¼Ó¶©ÔÄ
+		// è®¾ç½®ç‚¹å‡»æ²¡æœ‰è®¢é˜…ä¿¡æ¯çš„å›¾ç‰‡æ·»åŠ è®¢é˜…
 		mNothingImg.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -154,19 +154,19 @@ public class FeedPager extends BasePager {
 
 		});
 
-		// Í¬²½Íê³ÉÖ´ĞĞ
-		// TODO£ºÍ¬²½Î´ÊµÏÖ
+		// åŒæ­¥å®Œæˆæ‰§è¡Œ
+		// TODOï¼šåŒæ­¥æœªå®ç°
 		// new FeedItemDAO(mActivity).completeSynchronized();
 
 	}
 
 	/**
-	 * ¶ÁÈ¡FeedItemĞÅÏ¢µÄÒì²½ÈÎÎñ
+	 * è¯»å–FeedItemä¿¡æ¯çš„å¼‚æ­¥ä»»åŠ¡
 	 */
 	class ReadItemInfoDBTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) {// ×ÓÏß³Ì
+		protected Void doInBackground(Void... params) {// å­çº¿ç¨‹
 
 			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 			mItemInfoUnshowList = feedItemDAO.queryAllItems();
@@ -176,45 +176,45 @@ public class FeedPager extends BasePager {
 		}
 
 		@Override
-		protected void onProgressUpdate(Void... values) {// Ö÷Ïß³Ì
+		protected void onProgressUpdate(Void... values) {// ä¸»çº¿ç¨‹
 			super.onProgressUpdate(values);
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {// Ö÷Ïß³Ì
+		protected void onPostExecute(Void result) {// ä¸»çº¿ç¨‹
 
-			// Êı¾İ¿â¶ÁÈ¡Íê³É
+			// æ•°æ®åº“è¯»å–å®Œæˆ
 			doWhenFinishedReadDB();
 
 		}
 	}
 
 	/**
-	 * Íê³ÉÊı¾İ¿â¶ÁÈ¡ºóÖ´ĞĞµÄ²Ù×÷
+	 * å®Œæˆæ•°æ®åº“è¯»å–åæ‰§è¡Œçš„æ“ä½œ
 	 */
 	private void doWhenFinishedReadDB() {
 
-		// ²åÈëÒª¼ÓÔØµÄItem
+		// æ’å…¥è¦åŠ è½½çš„Item
 		insertMoreItem();
 
-		// ÉèÖÃListViewÊÊÅäÆ÷£¬Ìí¼ÓÊı¾İ
-		if (mItemInfoShowedList.size() == 0) {// ÎŞÊı¾İ
-			// ²»ÏÔÊ¾¼ÓÔØÌõ
+		// è®¾ç½®ListViewé€‚é…å™¨ï¼Œæ·»åŠ æ•°æ®
+		if (mItemInfoShowedList.size() == 0) {// æ— æ•°æ®
+			// ä¸æ˜¾ç¤ºåŠ è½½æ¡
 			getLoadingBarView().setVisibility(View.INVISIBLE);
-			mListView.setVisibility(View.INVISIBLE);// ·ÀÖ¹ÏÂÀ­BUG
+			mListView.setVisibility(View.INVISIBLE);// é˜²æ­¢ä¸‹æ‹‰BUG
 
-			// ÌáÊ¾Ã»ÓĞÊı¾İ£¬ĞèÒªÌí¼Ó
+			// æç¤ºæ²¡æœ‰æ•°æ®ï¼Œéœ€è¦æ·»åŠ 
 			mNothingImg.setVisibility(View.VISIBLE);
-		} else {// ÓĞÊı¾İ
+		} else {// æœ‰æ•°æ®
 			setListViewData(500);
 		}
 
-		// Ìí¼Ó¼àÌıÆ÷
+		// æ·»åŠ ç›‘å¬å™¨
 		addListViewListener();
 	}
 
 	/**
-	 * Ê¹ÓÃ¹¦ÄÜ°´Å¥£¬³õÊ¼»¯°´Å¥
+	 * ä½¿ç”¨åŠŸèƒ½æŒ‰é’®ï¼Œåˆå§‹åŒ–æŒ‰é’®
 	 */
 	@Override
 	protected void useFunctionButton() {
@@ -222,16 +222,16 @@ public class FeedPager extends BasePager {
 		super.useFunctionButton();
 
 		mFuncButtonLeft.setImageDrawable(mActivity.getResources().getDrawable(
-				R.drawable.btn_title_search));// ËÑË÷°´Å¥
+				R.drawable.btn_title_search));// æœç´¢æŒ‰é’®
 		mFuncButtonLeft.setVisibility(View.VISIBLE);
 
-		// ËÑË÷°´Å¥ÊÂ¼ş
+		// æœç´¢æŒ‰é’®äº‹ä»¶
 		mFuncButtonLeft.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(mActivity, SearchItemActivity.class);
-				// ´«µİÊı¾İ
+				// ä¼ é€’æ•°æ®
 				intent.putExtra("ShowedList", mItemInfoShowedList);
 				intent.putExtra("UnShowList", mItemInfoUnshowList);
 				mActivity.startActivity(intent);
@@ -240,25 +240,25 @@ public class FeedPager extends BasePager {
 		});
 
 		mFuncButtonRight.setImageDrawable(mActivity.getResources().getDrawable(
-				R.drawable.btn_title_add));// Ìí¼Ó°´Å¥
+				R.drawable.btn_title_add));// æ·»åŠ æŒ‰é’®
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 
-		// Ìí¼Ó°´Å¥ÊÂ¼ş
+		// æ·»åŠ æŒ‰é’®äº‹ä»¶
 		mFuncButtonRight.setOnClickListener(new AddFeedOnClickListener());
 
 	};
 
 	/**
-	 * ÉèÖÃListViewÊÊÅäÆ÷,¼ÓÔØÊı¾İ
+	 * è®¾ç½®ListViewé€‚é…å™¨,åŠ è½½æ•°æ®
 	 * 
 	 * @param delayTime
-	 *            ÑÓ³ÙÊ±¼ä
+	 *            å»¶è¿Ÿæ—¶é—´
 	 */
 	private void setListViewData(final int delayTime) {
 		new Thread() {
 			public void run() {
 
-				// ÑÓ³Ù¼ÓÔØ£¬·ÀÖ¹½øÈëÊ±¿¨ÆÁ
+				// å»¶è¿ŸåŠ è½½ï¼Œé˜²æ­¢è¿›å…¥æ—¶å¡å±
 				try {
 					Thread.sleep(delayTime);
 				} catch (InterruptedException e) {
@@ -269,10 +269,10 @@ public class FeedPager extends BasePager {
 					public void run() {
 
 						mListViewAdapter = new FeedPagerListViewAdapter();
-						// ÉèÖÃListViewÊÊÅäÆ÷
+						// è®¾ç½®ListViewé€‚é…å™¨
 						mListView.setAdapter(mListViewAdapter);
 
-						// ²»ÏÔÊ¾¼ÓÔØÌõ
+						// ä¸æ˜¾ç¤ºåŠ è½½æ¡
 						getLoadingBarView().setVisibility(View.INVISIBLE);
 					}
 				});
@@ -282,28 +282,28 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * Èç¹ûÓĞ¸ü¶àÊı¾İÔò²åÈë¸ü¶àÊı¾İ
+	 * å¦‚æœæœ‰æ›´å¤šæ•°æ®åˆ™æ’å…¥æ›´å¤šæ•°æ®
 	 * 
-	 * @return Ìí¼ÓÁËµÄÌõÄ¿Êı
+	 * @return æ·»åŠ äº†çš„æ¡ç›®æ•°
 	 */
 	private int insertMoreItem() {
-		int addCount = 0;// ÒªÌí¼ÓµÄÊıÁ¿
+		int addCount = 0;// è¦æ·»åŠ çš„æ•°é‡
 
-		if (mItemInfoUnshowList.size() == 0) {// Ã»Êı¾İ¿ÉÒÔ¼ÓÔØÁË
+		if (mItemInfoUnshowList.size() == 0) {// æ²¡æ•°æ®å¯ä»¥åŠ è½½äº†
 			return 0;
 		}
 
-		// ÓĞÊ£ÓàÊı¾İ
+		// æœ‰å‰©ä½™æ•°æ®
 		if (mItemInfoUnshowList.size() > SHOW_ITEM_COUNT) {
 			addCount = SHOW_ITEM_COUNT;
-		} else {// Ê£ÏÂÊı¾İÈ«²¿¼ÓÔØ
+		} else {// å‰©ä¸‹æ•°æ®å…¨éƒ¨åŠ è½½
 			addCount = mItemInfoUnshowList.size();
 
-			// Ã»ÓĞ¸ü¶àÊı¾İ£¬½ûÖ¹ÉÏÀ­¼ÓÔØ¸ü¶à
+			// æ²¡æœ‰æ›´å¤šæ•°æ®ï¼Œç¦æ­¢ä¸Šæ‹‰åŠ è½½æ›´å¤š
 			mListView.isAllowLoadingMore = false;
 		}
 
-		// Ìí¼Óµ½ÏÔÊ¾ÁĞ±í
+		// æ·»åŠ åˆ°æ˜¾ç¤ºåˆ—è¡¨
 		for (int i = 0; i < addCount; i++) {
 			mItemInfoShowedList.add(mItemInfoUnshowList.get(i));
 		}
@@ -315,18 +315,18 @@ public class FeedPager extends BasePager {
 	};
 
 	/**
-	 * ÀûÓÃViewHolderÓÅ»¯ListView£¬¼õÉÙfindViewByIdµÄ´ÎÊı
+	 * åˆ©ç”¨ViewHolderä¼˜åŒ–ListViewï¼Œå‡å°‘findViewByIdçš„æ¬¡æ•°
 	 */
 	static class ViewHolder {
-		public ImageView mItemPic; // Í¼Æ¬
-		public TextView mItemTitle; // ¶©ÔÄ±êÌâ
-		public TextView mItemPreview; // ¶©ÔÄÔ¤ÀÀ
-		public TextView mItemTime; // Ê±¼ä
-		public ImageView mItemCount; // Î´¶ÁÊı
+		public ImageView mItemPic; // å›¾ç‰‡
+		public TextView mItemTitle; // è®¢é˜…æ ‡é¢˜
+		public TextView mItemPreview; // è®¢é˜…é¢„è§ˆ
+		public TextView mItemTime; // æ—¶é—´
+		public ImageView mItemCount; // æœªè¯»æ•°
 	}
 
 	/**
-	 * ¶©ÔÄÁĞ±íµÄÊÊÅäÆ÷
+	 * è®¢é˜…åˆ—è¡¨çš„é€‚é…å™¨
 	 */
 	class FeedPagerListViewAdapter extends BaseAdapter {
 
@@ -335,10 +335,10 @@ public class FeedPager extends BasePager {
 
 			int itemCount = mItemInfoShowedList.size();
 
-			if (mItemInfoUnshowList.size() == 0) {// Ã»ÓĞ¸ü¶àÁË
-				mTitle.setText("ÎÒµÄ¶©ÔÄ(" + itemCount + ")");
+			if (mItemInfoUnshowList.size() == 0) {// æ²¡æœ‰æ›´å¤šäº†
+				mTitle.setText("æˆ‘çš„è®¢é˜…(" + itemCount + ")");
 			} else {
-				mTitle.setText("ÎÒµÄ¶©ÔÄ(" + itemCount + "+)");
+				mTitle.setText("æˆ‘çš„è®¢é˜…(" + itemCount + "+)");
 			}
 
 			return itemCount;
@@ -350,34 +350,34 @@ public class FeedPager extends BasePager {
 			RelativeLayout view;
 			ViewHolder holder;
 
-			// ¸´ÓÃConvertView
+			// å¤ç”¨ConvertView
 			if (convertView != null && convertView instanceof RelativeLayout) {
-				// ¸´ÓÃView²¢È¡³öholder
+				// å¤ç”¨Viewå¹¶å–å‡ºholder
 				view = (RelativeLayout) convertView;
 				holder = (ViewHolder) view.getTag();
 
-				// ¼ì²éÊÇ·ñ¸´ÓÃConvertView£¬Æ½Ê±²»ĞèÒª´òÓ¡£¬·ÑÊ±
-				// LogUtils.v("FeedPager", "¸´ÓÃView");
+				// æ£€æŸ¥æ˜¯å¦å¤ç”¨ConvertViewï¼Œå¹³æ—¶ä¸éœ€è¦æ‰“å°ï¼Œè´¹æ—¶
+				// LogUtils.v("FeedPager", "å¤ç”¨View");
 
 			} else {
-				// ²»¿É¸´ÓÃ
+				// ä¸å¯å¤ç”¨
 
 				view = (RelativeLayout) View.inflate(mActivity,
 						R.layout.view_lv_item_feed, null);
 
-				// ÀûÓÃViewHolder¼ÇÂ¼×Óº¢×ÓView¶ÔÏó
+				// åˆ©ç”¨ViewHolderè®°å½•å­å­©å­Viewå¯¹è±¡
 				holder = new ViewHolder();
 
 				holder.mItemPic = (ImageView) view
-						.findViewById(R.id.iv_item_feed_pic);// Í¼Æ¬
+						.findViewById(R.id.iv_item_feed_pic);// å›¾ç‰‡
 				holder.mItemTitle = (TextView) view
-						.findViewById(R.id.tv_item_feed_title);// ±êÌâ
+						.findViewById(R.id.tv_item_feed_title);// æ ‡é¢˜
 				holder.mItemPreview = (TextView) view
-						.findViewById(R.id.tv_item_feed_preview);// Ô¤ÀÀ
+						.findViewById(R.id.tv_item_feed_preview);// é¢„è§ˆ
 				holder.mItemTime = (TextView) view
-						.findViewById(R.id.tv_item_feed_time);// Ê±¼ä
+						.findViewById(R.id.tv_item_feed_time);// æ—¶é—´
 				// holder.mItemCount = (ImageView) view
-				// .findViewById(R.id.iv_item_feed_count);// ÊıÁ¿
+				// .findViewById(R.id.iv_item_feed_count);// æ•°é‡
 
 				view.setTag(holder);
 
@@ -400,7 +400,7 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * ListViewË¢ĞÂ¼àÌıÆ÷£¬ÓÃÓÚĞ´ÏÂÀ­Ë¢ĞÂÂß¼­ºÍÉÏÀ­¼ÓÔØÂß¼­
+	 * ListViewåˆ·æ–°ç›‘å¬å™¨ï¼Œç”¨äºå†™ä¸‹æ‹‰åˆ·æ–°é€»è¾‘å’Œä¸Šæ‹‰åŠ è½½é€»è¾‘
 	 */
 	class ListViewRefreshListener implements OnRefreshListener {
 
@@ -413,18 +413,18 @@ public class FeedPager extends BasePager {
 			FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 			mItemInfoUnshowList = feedItemDAO.queryAllItems();
 
-			// ²åÈëÒª¼ÓÔØµÄItem
+			// æ’å…¥è¦åŠ è½½çš„Item
 			insertMoreItem();
 
-			// ĞŞ¸ÄUI±ØĞëÔÚÖ÷Ïß³ÌÖ´ĞĞ
+			// ä¿®æ”¹UIå¿…é¡»åœ¨ä¸»çº¿ç¨‹æ‰§è¡Œ
 			mListViewAdapter.notifyDataSetChanged();
 
 			if (mItemInfoUnshowList.size() > 0) {
-				// ÔÊĞíÔÙ¼ÓÔØ¸ü¶à
+				// å…è®¸å†åŠ è½½æ›´å¤š
 				mListView.isAllowLoadingMore = true;
 			}
 
-			Toast.makeText(mActivity, "Ë¢ĞÂ³É¹¦", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mActivity, "åˆ·æ–°æˆåŠŸ", Toast.LENGTH_SHORT).show();
 
 			mListView.completeRefresh();
 
@@ -433,20 +433,20 @@ public class FeedPager extends BasePager {
 		@Override
 		public void onLoadingMore() {
 
-			// ³É¹¦²åÈëµÄÊı¾İÌõÊı
+			// æˆåŠŸæ’å…¥çš„æ•°æ®æ¡æ•°
 			final int addCount = insertMoreItem();
 
-			// ĞŞ¸ÄUI±ØĞëÔÚÖ÷Ïß³ÌÖ´ĞĞ
+			// ä¿®æ”¹UIå¿…é¡»åœ¨ä¸»çº¿ç¨‹æ‰§è¡Œ
 			mListViewAdapter.notifyDataSetChanged();
 
 			if (addCount == 0) {
-				Toast.makeText(mActivity, "Ã»ÓĞ¸ü¶àÊı¾İÁË", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mActivity, "æ²¡æœ‰æ›´å¤šæ•°æ®äº†", Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(mActivity, "³É¹¦¼ÓÔØÁË" + addCount + "ÌõÊı¾İ",
+				Toast.makeText(mActivity, "æˆåŠŸåŠ è½½äº†" + addCount + "æ¡æ•°æ®",
 						Toast.LENGTH_SHORT).show();
 			}
 			if (mItemInfoUnshowList.size() <= 0) {
-				// ½ûÖ¹ÔÙ¼ÓÔØ¸ü¶à
+				// ç¦æ­¢å†åŠ è½½æ›´å¤š
 				mListView.isAllowLoadingMore = false;
 			}
 			mListView.completeRefresh();
@@ -454,13 +454,13 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * ½âÎöFeedItem²¢ÏÔÊ¾
+	 * è§£æFeedItemå¹¶æ˜¾ç¤º
 	 * 
 	 * @param feedItem
-	 *            ¶©ÔÄĞÅÏ¢
+	 *            è®¢é˜…ä¿¡æ¯
 	 * @param viewHolder
-	 *            view¼¯ºÏ
-	 * @return ÊÇ·ñ³É¹¦½âÎö
+	 *            viewé›†åˆ
+	 * @return æ˜¯å¦æˆåŠŸè§£æ
 	 */
 	private boolean parseFeedItem(FeedItem feedItem, ViewHolder viewHolder) {
 
@@ -468,7 +468,7 @@ public class FeedPager extends BasePager {
 			return false;
 		}
 
-		// Ê¹ÓÃÈı¼¶»º´æ¼ÓÔØÍ¼Æ¬
+		// ä½¿ç”¨ä¸‰çº§ç¼“å­˜åŠ è½½å›¾ç‰‡
 		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
 				feedItem.picURL,null);
 
@@ -481,17 +481,17 @@ public class FeedPager extends BasePager {
 
 	}
 	/**
-	 * Ìí¼ÓListViewµÄ¸÷ÖÖ¼àÌıÆ÷
+	 * æ·»åŠ ListViewçš„å„ç§ç›‘å¬å™¨
 	 */
 	private void addListViewListener() {
 
-		// ÉèÖÃÃ¿ÏîItemµÄµã»÷ÊÂ¼ş
+		// è®¾ç½®æ¯é¡¹Itemçš„ç‚¹å‡»äº‹ä»¶
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// ×ª»»Îª´Ó0¿ªÊ¼µÄÎ»ÖÃ
+				// è½¬æ¢ä¸ºä»0å¼€å§‹çš„ä½ç½®
 				position = position - mListView.getHeaderViewsCount();
 
 				Intent intent = new Intent(mActivity,
@@ -503,22 +503,22 @@ public class FeedPager extends BasePager {
 		});
 
 		/**
-		 * ³¤°´µã»÷ÊÂ¼ş
+		 * é•¿æŒ‰ç‚¹å‡»äº‹ä»¶
 		 */
 		mListView.setOnItemLongClickListener(new ItemLongClickListener());
 
-		// Ìí¼ÓË¢ĞÂ¼àÌı
+		// æ·»åŠ åˆ·æ–°ç›‘å¬
 		mListView.setOnRefreshListener(new ListViewRefreshListener());
 
 	}
 
 	/**
-	 * ³¤°´µã»÷¼àÌıÆ÷
+	 * é•¿æŒ‰ç‚¹å‡»ç›‘å¬å™¨
 	 */
 	class ItemLongClickListener implements OnItemLongClickListener {
 
 		/**
-		 * µã»÷ÊÂ¼ş
+		 * ç‚¹å‡»äº‹ä»¶
 		 */
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
@@ -542,13 +542,13 @@ public class FeedPager extends BasePager {
 						final AlertDialog alertDialog) {
 
 					OnClickListener[] listeners = {
-							new ModifyClickListener(position, alertDialog),// ĞŞ¸Ä±êÌâ
-							new DeleteClickListener(position, alertDialog), // É¾³ı
-							new OnClickListener() {// È¡Ïû
+							new ModifyClickListener(position, alertDialog),// ä¿®æ”¹æ ‡é¢˜
+							new DeleteClickListener(position, alertDialog), // åˆ é™¤
+							new OnClickListener() {// å–æ¶ˆ
 
 								@Override
 								public void onClick(View v) {
-									alertDialog.dismiss();// ¶Ô»°¿ò¹Ø±Õ
+									alertDialog.dismiss();// å¯¹è¯æ¡†å…³é—­
 								}
 
 							}};
@@ -561,7 +561,7 @@ public class FeedPager extends BasePager {
 		}
 
 		/**
-		 * ĞŞ¸Ä±êÌâµã»÷¼àÌıÆ÷
+		 * ä¿®æ”¹æ ‡é¢˜ç‚¹å‡»ç›‘å¬å™¨
 		 */
 		class ModifyClickListener extends AlertDialogOnClickListener {
 
@@ -572,14 +572,14 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				alertDialog.dismiss();// ¶Ô»°¿ò¹Ø±Õ
+				alertDialog.dismiss();// å¯¹è¯æ¡†å…³é—­
 
-				// ÏÔÊ¾ĞŞ¸ÄµÄ¶Ô»°¿ò
+				// æ˜¾ç¤ºä¿®æ”¹çš„å¯¹è¯æ¡†
 				new MainThemeAlertDialog(mActivity)
 						.setAdapter(new MainThemeAlertDialogAdapter() {
 
 							/**
-							 * ÊäÈë¿ò
+							 * è¾“å…¥æ¡†
 							 */
 							private EditText mTitleView;
 
@@ -588,7 +588,7 @@ public class FeedPager extends BasePager {
 								return null;
 							}
 
-							// È·ÈÏ°´Å¥ÊÂ¼ş
+							// ç¡®è®¤æŒ‰é’®äº‹ä»¶
 							@Override
 							public OnClickListener getOnConfirmClickLister(
 									final AlertDialog alertDialog) {
@@ -599,7 +599,7 @@ public class FeedPager extends BasePager {
 										String newTitle = mTitleView.getText()
 												.toString();
 
-										if (TextUtils.isEmpty(newTitle)) {// ÌáÊ¾²»ÄÜÎª¿Õ
+										if (TextUtils.isEmpty(newTitle)) {// æç¤ºä¸èƒ½ä¸ºç©º
 											mTitleView
 													.startAnimation(AnimationUtils
 															.loadAnimation(
@@ -607,7 +607,7 @@ public class FeedPager extends BasePager {
 																	R.anim.edit_text_translate));
 
 										} else {
-											// ĞŞ¸Ä±êÌâ
+											// ä¿®æ”¹æ ‡é¢˜
 											modifyFeedItemTitle(position,
 													newTitle);
 											alertDialog.dismiss();
@@ -617,7 +617,7 @@ public class FeedPager extends BasePager {
 								};
 							}
 
-							// È¡Ïûµã»÷ÊÂ¼ş
+							// å–æ¶ˆç‚¹å‡»äº‹ä»¶
 							@Override
 							public OnClickListener getOnCancelClickLister(
 									final AlertDialog alertDialog) {
@@ -625,7 +625,7 @@ public class FeedPager extends BasePager {
 
 									@Override
 									public void onClick(View v) {
-										// ¹Ø±Õ¶Ô»°¿ò
+										// å…³é—­å¯¹è¯æ¡†
 										alertDialog.dismiss();
 									}
 								};
@@ -649,7 +649,7 @@ public class FeedPager extends BasePager {
 									TextView confirmButtom,
 									TextView cancelButtom) {
 
-								// »ñÈ¡Ô­À´µÄ±êÌâ
+								// è·å–åŸæ¥çš„æ ‡é¢˜
 								String orgTitle = ((ViewHolder) mListView
 										.getChildAt(
 												position
@@ -667,7 +667,7 @@ public class FeedPager extends BasePager {
 		}
 
 		/**
-		 * É¾³ıµã»÷¼àÌıÆ÷
+		 * åˆ é™¤ç‚¹å‡»ç›‘å¬å™¨
 		 */
 		class DeleteClickListener extends AlertDialogOnClickListener {
 
@@ -678,18 +678,18 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				alertDialog.dismiss();// ¶Ô»°¿ò¹Ø±Õ
+				alertDialog.dismiss();// å¯¹è¯æ¡†å…³é—­
 
-				// ÔÙ´ÎÈ·ÈÏÉ¾³ı
+				// å†æ¬¡ç¡®è®¤åˆ é™¤
 				new MainThemeAlertDialog(mActivity)
 						.setAdapter(new MainThemeAlertDialogAdapter() {
 
 							@Override
 							public String getTitle() {
-								return "ÊÇ·ñÈ·¶¨É¾³ı£¿";
+								return "æ˜¯å¦ç¡®å®šåˆ é™¤ï¼Ÿ";
 							}
 
-							// µã»÷Ê±É¾³ıÌõÄ¿
+							// ç‚¹å‡»æ—¶åˆ é™¤æ¡ç›®
 							@Override
 							public OnClickListener getOnConfirmClickLister(
 									final AlertDialog alertDialog) {
@@ -700,14 +700,14 @@ public class FeedPager extends BasePager {
 									public void onClick(View v) {
 
 										deleteFeedItem(position);
-										// ¹Ø±ÕĞÅÏ¢¿ò
+										// å…³é—­ä¿¡æ¯æ¡†
 										alertDialog.dismiss();
 									}
 								};
 
 							}
 
-							// µã»÷È¡ÏûÉ¾³ı
+							// ç‚¹å‡»å–æ¶ˆåˆ é™¤
 							@Override
 							public OnClickListener getOnCancelClickLister(
 									final AlertDialog alertDialog) {
@@ -716,14 +716,14 @@ public class FeedPager extends BasePager {
 
 									@Override
 									public void onClick(View v) {
-										// ¹Ø±ÕĞÅÏ¢¿ò
+										// å…³é—­ä¿¡æ¯æ¡†
 										alertDialog.dismiss();
 									}
 								};
 
 							}
 
-							// ÏÔÊ¾±»É¾³ıµÄ±êÌâ
+							// æ˜¾ç¤ºè¢«åˆ é™¤çš„æ ‡é¢˜
 							@Override
 							public View getContentView() {
 
@@ -733,7 +733,7 @@ public class FeedPager extends BasePager {
 												R.layout.alert_dialog_container_delete_title,
 												null);
 
-								// »ñÈ¡Ô­À´µÄ±êÌâ
+								// è·å–åŸæ¥çš„æ ‡é¢˜
 								String deleteItemTitle = mItemInfoShowedList
 										.get(position
 												- mListView
@@ -762,26 +762,26 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * ĞŞ¸ÄÁĞ±íÖĞµÄItem±êÌâ£¬²¢ÇÒË¢ĞÂÊı¾İ¿â
+	 * ä¿®æ”¹åˆ—è¡¨ä¸­çš„Itemæ ‡é¢˜ï¼Œå¹¶ä¸”åˆ·æ–°æ•°æ®åº“
 	 * 
 	 * @param position
-	 *            ÒªĞŞ¸ÄµÄItemµÄÎ»ÖÃ
+	 *            è¦ä¿®æ”¹çš„Itemçš„ä½ç½®
 	 * @param newTitle
-	 *            ĞÂµÄ±êÌâ
+	 *            æ–°çš„æ ‡é¢˜
 	 */
 	private void modifyFeedItemTitle(int position, String newTitle) {
 
-		int dbPosition = position - mListView.getHeaderViewsCount();// ×ª³ÉÕıÈ·µÄÏÂ±ê£¬Ïà¶ÔÓÚÊı¾İ¿â
+		int dbPosition = position - mListView.getHeaderViewsCount();// è½¬æˆæ­£ç¡®çš„ä¸‹æ ‡ï¼Œç›¸å¯¹äºæ•°æ®åº“
 
 		FeedItem feedItem = mItemInfoShowedList.get(dbPosition);
 
 		feedItem.baseInfo.title = newTitle;
 
-		// ´ÓÊı¾İ¿âÖĞ¸üĞÂ
+		// ä»æ•°æ®åº“ä¸­æ›´æ–°
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.updateItem(feedItem);
 
-		// ²»ÍêÈ«¸üĞÂ½çÃæ
+		// ä¸å®Œå…¨æ›´æ–°ç•Œé¢
 		if (mListView.getFirstVisiblePosition() <= position
 				&& position <= mListView.getLastVisiblePosition()) {
 			((ViewHolder) mListView.getChildAt(
@@ -792,26 +792,26 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * É¾³ıÁĞ±íÖĞµÄItem£¬²¢ÇÒË¢ĞÂÊı¾İ¿â
+	 * åˆ é™¤åˆ—è¡¨ä¸­çš„Itemï¼Œå¹¶ä¸”åˆ·æ–°æ•°æ®åº“
 	 * 
 	 * @param position
-	 *            ÒªÉ¾³ıµÄItemµÄÎ»ÖÃ
+	 *            è¦åˆ é™¤çš„Itemçš„ä½ç½®
 	 */
 	private void deleteFeedItem(int position) {
 
-		position = position - mListView.getHeaderViewsCount();// ×ª³ÉÕıÈ·µÄÏÂ±ê£¬Ïà¶ÔÓÚÊı¾İ¿â
+		position = position - mListView.getHeaderViewsCount();// è½¬æˆæ­£ç¡®çš„ä¸‹æ ‡ï¼Œç›¸å¯¹äºæ•°æ®åº“
 
-		// ´ÓÊı¾İ¿âÖĞÉ¾³ı
+		// ä»æ•°æ®åº“ä¸­åˆ é™¤
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.removeItem(mItemInfoShowedList.get(position));
 
-		// ´ÓÊÊÅäÆ÷Êı¾İÖĞÉ¾³ı²¢Í¨ÖªÊı¾İ¸üĞÂ
+		// ä»é€‚é…å™¨æ•°æ®ä¸­åˆ é™¤å¹¶é€šçŸ¥æ•°æ®æ›´æ–°
 		mItemInfoShowedList.remove(position);
 		mListViewAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Ìí¼Ó¶©ÔÄ°´Å¥µÄµã»÷¼àÌıÆ÷
+	 * æ·»åŠ è®¢é˜…æŒ‰é’®çš„ç‚¹å‡»ç›‘å¬å™¨
 	 */
 	class AddFeedOnClickListener implements OnClickListener {
 
@@ -826,7 +826,7 @@ public class FeedPager extends BasePager {
 			View popupView = View.inflate(mActivity,
 					R.layout.popup_window_add_feed, null);
 
-			// ²âÁ¿¿í¸ß
+			// æµ‹é‡å®½é«˜
 			popupView.measure(0, 0);
 			int popupViewWidth = popupView.getMeasuredWidth();
 			int popupViewHeight = popupView.getMeasuredHeight();
@@ -834,23 +834,23 @@ public class FeedPager extends BasePager {
 			mPopupWindow = new PopupWindow(popupView, popupViewWidth,
 					popupViewHeight);
 
-			// Í¸Ã÷±³¾°
+			// é€æ˜èƒŒæ™¯
 			mPopupWindow.setBackgroundDrawable(new ColorDrawable(
 					Color.TRANSPARENT));
 
-			// ÉèÖÃ¶¯»­
+			// è®¾ç½®åŠ¨ç”»
 			mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
 
-			// ÉèÖÃ½¹µã
+			// è®¾ç½®ç„¦ç‚¹
 			mPopupWindow.setFocusable(true);
 
-			// ÏÔÊ¾
+			// æ˜¾ç¤º
 			mPopupWindow.showAtLocation(mContainer, Gravity.TOP + Gravity.LEFT,
 					(int) mFuncButtonRight.getRight() - popupViewWidth,
 					(int) (mFuncButtonRight.getBottom() + SystemInfoUtils
 							.getStatusBarHeight(mActivity)));
 
-			// Ìí¼Ó¶©ÔÄ
+			// æ·»åŠ è®¢é˜…
 			popupView.findViewById(R.id.pwiv_add).setOnClickListener(
 					new OnClickListener() {
 
@@ -863,32 +863,32 @@ public class FeedPager extends BasePager {
 
 					});
 
-			// ·ÖÏíÓ¦ÓÃ
+			// åˆ†äº«åº”ç”¨
 			popupView.findViewById(R.id.pwiv_share).setOnClickListener(
 					new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
-							// ·ÖÏí
+							// åˆ†äº«
 							Intent intent = new Intent();
 							intent.setAction("android.intent.action.SEND");
 							intent.addCategory(Intent.CATEGORY_DEFAULT);
 							intent.setType("text/plain");
 							intent.putExtra(Intent.EXTRA_TEXT,
-									"ÎÒ·¢ÏÖÁËÒ»¸öºÃÍæµÄÓ¦ÓÃ£¬ËûµÄÃû×Ö½Ğ×öFeedEye£¬¸Ï½ôÀ´ÏÂÔØ°É£¡µØÖ·ÊÇ£ºhttps://github.com/maxwell-nc/FeedEye");
+									"æˆ‘å‘ç°äº†ä¸€ä¸ªå¥½ç©çš„åº”ç”¨ï¼Œä»–çš„åå­—å«åšFeedEyeï¼Œèµ¶ç´§æ¥ä¸‹è½½å§ï¼åœ°å€æ˜¯ï¼šhttps://github.com/maxwell-nc/FeedEye");
 							mActivity.startActivity(intent);
 
 							closePopupWindow();
 						}
 					});
 
-			// °ïÖúºÍ·´À¡
+			// å¸®åŠ©å’Œåé¦ˆ
 			popupView.findViewById(R.id.pwiv_help).setOnClickListener(
 					new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
-							// ´ò¿ªÏîÄ¿Ò³Ãæ
+							// æ‰“å¼€é¡¹ç›®é¡µé¢
 							Intent intent = new Intent(
 									Intent.ACTION_VIEW,
 									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
@@ -901,9 +901,9 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * ¹Ø±ÕpopupWindow
+	 * å…³é—­popupWindow
 	 * 
-	 * @return ÊÇ·ñ³É¹¦¹Ø±Õ
+	 * @return æ˜¯å¦æˆåŠŸå…³é—­
 	 */
 	private boolean closePopupWindow() {
 		if (mPopupWindow != null && mPopupWindow.isShowing()) {
@@ -914,7 +914,7 @@ public class FeedPager extends BasePager {
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öĞÂµÄ¶©ÔÄĞÅÏ¢
+	 * æ·»åŠ ä¸€ä¸ªæ–°çš„è®¢é˜…ä¿¡æ¯
 	 * 
 	 * @see MainActivity#onActivityResult
 	 */
@@ -924,17 +924,17 @@ public class FeedPager extends BasePager {
 
 		Intent intent = new Intent(mActivity, AddFeedActivity.class);
 
-		// ´ò¿ª²¢»ñµÃÌí¼Ó½á¹û
+		// æ‰“å¼€å¹¶è·å¾—æ·»åŠ ç»“æœ
 		mActivity.startActivityForResult(intent, 1);
 
 	}
 
 	/**
-	 * Íê³ÉÌí¼Ó¶©ÔÄĞÅÏ¢
+	 * å®Œæˆæ·»åŠ è®¢é˜…ä¿¡æ¯
 	 * 
-	 * @See Ìí¼Ó²âÊÔÊı¾İ£º{@link #addTestData()}
+	 * @See æ·»åŠ æµ‹è¯•æ•°æ®ï¼š{@link #addTestData()}
 	 * @param feedItem
-	 *            Ìí¼ÓÁËµÄFeedItem
+	 *            æ·»åŠ äº†çš„FeedItem
 	 */
 	public void finishedAddItem(FeedItem feedItem) {
 
@@ -942,21 +942,21 @@ public class FeedPager extends BasePager {
 			return;
 		}
 
-		if (mItemInfoShowedList.size() == 0) {// ÎŞÊı¾İÊ±£¬³õÊ¼»¯adapter·ÀÖ¹¿ÕÖ¸ÕëÒì³£
-			mListViewAdapter = new FeedPagerListViewAdapter(); // ÉèÖÃListViewÊÊÅäÆ÷
+		if (mItemInfoShowedList.size() == 0) {// æ— æ•°æ®æ—¶ï¼Œåˆå§‹åŒ–adapteré˜²æ­¢ç©ºæŒ‡é’ˆå¼‚å¸¸
+			mListViewAdapter = new FeedPagerListViewAdapter(); // è®¾ç½®ListViewé€‚é…å™¨
 			mListView.setAdapter(mListViewAdapter);
 			mListView.setVisibility(View.VISIBLE);
 			mNothingImg.setVisibility(View.INVISIBLE);
 		}
 
-		mItemInfoShowedList.add(0, feedItem);// ²åµ½µÚÒ»¸ö
+		mItemInfoShowedList.add(0, feedItem);// æ’åˆ°ç¬¬ä¸€ä¸ª
 
-		mListViewAdapter.notifyDataSetChanged();// Ë¢ĞÂÊÊÅäÆ÷
-		mListView.setSelection(mListView.getHeaderViewsCount());// ÏÔÊ¾µÚÒ»¸ö·ÇHeaderView
+		mListViewAdapter.notifyDataSetChanged();// åˆ·æ–°é€‚é…å™¨
+		mListView.setSelection(mListView.getHeaderViewsCount());// æ˜¾ç¤ºç¬¬ä¸€ä¸ªéHeaderView
 	}
 
 	/**
-	 * TODO:É¾³ı´Ë¶Î´úÂë Ìí¼Ó²âÊÔÊı¾İ
+	 * TODO:åˆ é™¤æ­¤æ®µä»£ç  æ·»åŠ æµ‹è¯•æ•°æ®
 	 */
 	@SuppressWarnings("unused")
 	private void addTestData() {
@@ -964,14 +964,14 @@ public class FeedPager extends BasePager {
 		FeedItem feedItem = new FeedItem();
 		feedItem.feedURL = "http://blog.csdn.net/maxwell_nc/rss/list";
 		feedItem.picURL = "https://avatars3.githubusercontent.com/u/14196813?v=3&s=1";
-		feedItem.baseInfo.title = "ÎÒµÄGitHub"
+		feedItem.baseInfo.title = "æˆ‘çš„GitHub"
 				+ new Random().nextInt(Integer.MAX_VALUE);
-		feedItem.baseInfo.summary = "×î½üÓÖÌá½»ÁËºÜ¶à´úÂë£¬»¶Ó­ä¯ÀÀÎÒµÄGitHub²Ö¿â";
+		feedItem.baseInfo.summary = "æœ€è¿‘åˆæäº¤äº†å¾ˆå¤šä»£ç ï¼Œæ¬¢è¿æµè§ˆæˆ‘çš„GitHubä»“åº“";
 		feedItem.baseInfo.time = new Timestamp(System.currentTimeMillis());
 		feedItem.encoding = "utf-8";
 		FeedItemDAO feedItemDAO = new FeedItemDAO(mActivity);
 		feedItemDAO.addItem(feedItem);
 
-		mItemInfoShowedList.add(0, feedItem);// ²åµ½µÚÒ»¸ö
+		mItemInfoShowedList.add(0, feedItem);// æ’åˆ°ç¬¬ä¸€ä¸ª
 	}
 }

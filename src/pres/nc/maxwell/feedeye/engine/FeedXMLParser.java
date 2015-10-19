@@ -21,42 +21,42 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 /**
- * ¶©ÔÄĞÅÏ¢½âÎöÆ÷£¬Ö§³ÖÍøÂçXML
+ * è®¢é˜…ä¿¡æ¯è§£æå™¨ï¼Œæ”¯æŒç½‘ç»œXML
  */
 public class FeedXMLParser {
 
 	/**
-	 * ¶©ÔÄµØÖ·
+	 * è®¢é˜…åœ°å€
 	 */
 	private String mFeedUrl;
 
 	/**
-	 * ±àÂë·½Ê½
+	 * ç¼–ç æ–¹å¼
 	 */
 	private String mEncodingString;
 
 	/**
-	 * »ù±¾ĞÅÏ¢¼¯ºÏ
+	 * åŸºæœ¬ä¿¡æ¯é›†åˆ
 	 */
 	private FeedXMLBaseInfo mBaseInfo;
 
 	/**
-	 * ÄÚÈİĞÅÏ¢¼¯ºÏ
+	 * å†…å®¹ä¿¡æ¯é›†åˆ
 	 */
 	private ArrayList<FeedXMLContentInfo> mContentInfoList;
 
 	/**
-	 * HttpÁ¬½Ó¹¤¾ßÀà¶ÔÏó
+	 * Httpè¿æ¥å·¥å…·ç±»å¯¹è±¡
 	 */
 	private HTTPUtils mHttpUtils;
 
 	/**
-	 * Íê³É½âÎöXML¼àÌıÆ÷
+	 * å®Œæˆè§£æXMLç›‘å¬å™¨
 	 */
 	private OnFinishParseXMLListener mOnFinishParseListener;
 
 	/**
-	 * Íê³É½âÎöXML¼àÌıÆ÷
+	 * å®Œæˆè§£æXMLç›‘å¬å™¨
 	 * 
 	 * @see SimpleOnFinishParseXMLListener
 	 */
@@ -68,7 +68,7 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * Ìá¹©¸øÖ»ĞèÒª½âÎö»ù±¾ĞÅÏ¢»òÕßÏêÏ¸µÄÄ¬ÈÏÊµÏÖ
+	 * æä¾›ç»™åªéœ€è¦è§£æåŸºæœ¬ä¿¡æ¯æˆ–è€…è¯¦ç»†çš„é»˜è®¤å®ç°
 	 * 
 	 * @see OnFinishParseXMLListener
 	 */
@@ -91,10 +91,10 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ÉèÖÃÍê³É½âÎöXMLµÄ¼àÌıÆ÷
+	 * è®¾ç½®å®Œæˆè§£æXMLçš„ç›‘å¬å™¨
 	 * 
 	 * @param onFinishParseXMLListener
-	 *            ¼àÌıÆ÷
+	 *            ç›‘å¬å™¨
 	 */
 	public void setOnFinishedParseXMLListener(
 			OnFinishParseXMLListener onFinishParseXMLListener) {
@@ -102,28 +102,28 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * Ö»½âÎö»ù±¾ĞÅÏ¢
+	 * åªè§£æåŸºæœ¬ä¿¡æ¯
 	 * 
 	 * @see #parse(String, String, int)
 	 */
 	public static final int TYPE_PARSE_BASE_INFO = 1;
 
 	/**
-	 * ½âÎöÄÚÈİ
+	 * è§£æå†…å®¹
 	 * 
 	 * @see #parse(String, String, int)
 	 */
 	public static final int TYPE_PARSE_CONTENT = 2;
 
 	/**
-	 * ½âÎöµÄ¶©ÔÄµØÖ·
+	 * è§£æçš„è®¢é˜…åœ°å€
 	 * 
 	 * @param feedUrl
-	 *            ¶©ÔÄµØÖ·
+	 *            è®¢é˜…åœ°å€
 	 * @param encodingString
-	 *            ±àÂë·½Ê½
+	 *            ç¼–ç æ–¹å¼
 	 * @param parseType
-	 *            ½âÎöÀàĞÍ£¬¿ÉÑ¡£º{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}»òÕß
+	 *            è§£æç±»å‹ï¼Œå¯é€‰ï¼š{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}æˆ–è€…
 	 *            {@link FeedXMLParser#TYPE_PARSE_CONTENT}
 	 */
 	public void parse(String feedUrl, String encodingString, int parseType) {
@@ -131,7 +131,7 @@ public class FeedXMLParser {
 		this.mFeedUrl = feedUrl;
 		this.mEncodingString = encodingString;
 
-		// ÅĞ¶Ï½âÎöÀàĞÍ
+		// åˆ¤æ–­è§£æç±»å‹
 		if (parseType == TYPE_PARSE_BASE_INFO) {
 
 			this.mBaseInfo = new FeedXMLBaseInfo();
@@ -148,14 +148,14 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ½âÎö±¾µØXMLÁ÷
+	 * è§£ææœ¬åœ°XMLæµ
 	 * 
 	 * @param localStream
-	 *            ±¾µØXMLÁ÷
+	 *            æœ¬åœ°XMLæµ
 	 * @param encodingString
-	 *            ±àÂë·½Ê½
+	 *            ç¼–ç æ–¹å¼
 	 * @param parseType
-	 *            ½âÎöÀàĞÍ £¬¿ÉÑ¡£º{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}»òÕß
+	 *            è§£æç±»å‹ ï¼Œå¯é€‰ï¼š{@link FeedXMLParser#TYPE_PARSE_BASE_INFO}æˆ–è€…
 	 *            {@link FeedXMLParser#TYPE_PARSE_CONTENT}
 	 */
 	public void parse(InputStream localStream, String encodingString,
@@ -163,7 +163,7 @@ public class FeedXMLParser {
 
 		this.mEncodingString = encodingString;
 
-		// ÅĞ¶Ï½âÎöÀàĞÍ
+		// åˆ¤æ–­è§£æç±»å‹
 		if (parseType == TYPE_PARSE_BASE_INFO) {
 
 			this.mBaseInfo = new FeedXMLBaseInfo();
@@ -179,7 +179,7 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * È¡Ïû½âÎöXML
+	 * å–æ¶ˆè§£æXML
 	 */
 	public void cancelParse() {
 
@@ -190,18 +190,18 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ±¾µØ½âÎö»ù±¾ĞÅÏ¢ÈÎÎñ
+	 * æœ¬åœ°è§£æåŸºæœ¬ä¿¡æ¯ä»»åŠ¡
 	 */
 	class getLocalBaseInfoTask extends AsyncTask<InputStream, Void, Void> {
 
 		@Override
-		protected Void doInBackground(InputStream... params) {// ×ÓÏß³Ì
+		protected Void doInBackground(InputStream... params) {// å­çº¿ç¨‹
 			parseXMLBaseInfo(params[0]);
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {// Ö÷Ïß³Ì
+		protected void onPostExecute(Void result) {// ä¸»çº¿ç¨‹
 
 			if (mOnFinishParseListener != null) {
 				mOnFinishParseListener.onFinishParseBaseInfo(true, mBaseInfo);
@@ -212,7 +212,7 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ´Ó±¾µØ¶ÁÈ¡XMLµÄÄÚÈİ²¢½âÎö
+	 * ä»æœ¬åœ°è¯»å–XMLçš„å†…å®¹å¹¶è§£æ
 	 * 
 	 * @param localStream
 	 */
@@ -221,19 +221,19 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ´ÓÍøÂç¶ÁÈ¡XMLµÄ»ù±¾ĞÅÏ¢²¢½âÎö
+	 * ä»ç½‘ç»œè¯»å–XMLçš„åŸºæœ¬ä¿¡æ¯å¹¶è§£æ
 	 */
 	private void getXMLBaseInfo() {
 
 		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onConnect(InputStream inputStream) {// ×ÓÏß³Ì
+			public void onConnect(InputStream inputStream) {// å­çº¿ç¨‹
 				parseXMLBaseInfo(inputStream);
 			}
 
 			@Override
-			public void onSuccess() {// Ö÷Ïß³Ì
+			public void onSuccess() {// ä¸»çº¿ç¨‹
 				if (mOnFinishParseListener != null) {
 					mOnFinishParseListener.onFinishParseBaseInfo(true,
 							mBaseInfo);
@@ -242,7 +242,7 @@ public class FeedXMLParser {
 			}
 
 			@Override
-			public void onFailure() {// Ö÷Ïß³Ì
+			public void onFailure() {// ä¸»çº¿ç¨‹
 				if (mOnFinishParseListener != null) {
 					mOnFinishParseListener.onFinishParseBaseInfo(false,
 							mBaseInfo);
@@ -256,10 +256,10 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ½âÎöXMLÊäÈëÁ÷»ù±¾ĞÅÏ¢
+	 * è§£æXMLè¾“å…¥æµåŸºæœ¬ä¿¡æ¯
 	 * 
 	 * @param inputStream
-	 *            XMLÊäÈëÁ÷
+	 *            XMLè¾“å…¥æµ
 	 */
 	private void parseXMLBaseInfo(InputStream inputStream) {
 
@@ -273,27 +273,27 @@ public class FeedXMLParser {
 
 				// LogUtils.w("FeedXMLParser", name);
 
-				// ¼ì²éXMLÀàĞÍ
+				// æ£€æŸ¥XMLç±»å‹
 				if (TextUtils.isEmpty(mBaseInfo.type)) {
 
-					if ("rss".equals(name)) {// rssÀàĞÍ
+					if ("rss".equals(name)) {// rssç±»å‹
 						mBaseInfo.type = FeedXMLBaseInfo.TYPE_RSS;
-					} else if ("feed".equals(name)) {// atomÀàĞÍ
+					} else if ("feed".equals(name)) {// atomç±»å‹
 						mBaseInfo.type = FeedXMLBaseInfo.TYPE_ATOM;
 					}
 
 				}
 
-				// ¼ì²éXML±êÌâ
+				// æ£€æŸ¥XMLæ ‡é¢˜
 				if (TextUtils.isEmpty(mBaseInfo.title)) {
 
-					if ("title".equals(name)) {// ±êÌâ
+					if ("title".equals(name)) {// æ ‡é¢˜
 						mBaseInfo.title = parser.nextText();
 					}
 
 				}
 
-				// ¼ì²éXMLÊ±¼ä
+				// æ£€æŸ¥XMLæ—¶é—´
 				if (mBaseInfo.time == null) {
 
 					if ("updated".equals(name)) {// ATOM
@@ -314,7 +314,7 @@ public class FeedXMLParser {
 
 				}
 
-				// ¼ì²éXML¸ÅÒª
+				// æ£€æŸ¥XMLæ¦‚è¦
 				if (TextUtils.isEmpty(mBaseInfo.summary)) {
 
 					if ("subtitle".equals(name)) {// ATOM
@@ -334,7 +334,7 @@ public class FeedXMLParser {
 			@Override
 			public boolean isInterruptParse(XmlPullParser parser) {
 
-				// µÚÒ»¸öÔªËØÍË³ö½âÎö,²»±Ø½âÎöÈ«²¿
+				// ç¬¬ä¸€ä¸ªå…ƒç´ é€€å‡ºè§£æ,ä¸å¿…è§£æå…¨éƒ¨
 				if ("item".equals(parser.getName())) {// RSS
 					return true;
 				}
@@ -348,25 +348,25 @@ public class FeedXMLParser {
 			@Override
 			public void doWhenFinishedParse() {
 
-				// ´¦ÀíÊı¾İÎª¿ÕµÄÇé¿ö
+				// å¤„ç†æ•°æ®ä¸ºç©ºçš„æƒ…å†µ
 
-				// ½âÎö²»µ½ÀàĞÍ
+				// è§£æä¸åˆ°ç±»å‹
 				if (TextUtils.isEmpty(mBaseInfo.type)) {
 					mBaseInfo.type = FeedXMLBaseInfo.TYPE_UNKNOWN;
 				}
 
-				// ÎŞÍøÂçÊı¾İ
+				// æ— ç½‘ç»œæ•°æ®
 				if (TextUtils.isEmpty(mBaseInfo.title)) {
 
-					mBaseInfo.title = "ÎŞ±êÌâ";
+					mBaseInfo.title = "æ— æ ‡é¢˜";
 				}
 
-				// ÎŞÔ¤ÀÀÄÚÈİ
+				// æ— é¢„è§ˆå†…å®¹
 				if (TextUtils.isEmpty(mBaseInfo.summary)) {
-					mBaseInfo.summary = "Ã»ÓĞ½ÓÊÕµ½Êı¾İ";
+					mBaseInfo.summary = "æ²¡æœ‰æ¥æ”¶åˆ°æ•°æ®";
 				}
 
-				// ÎŞ»ñÈ¡µ½Ê±¼ä£¬ÉèÖÃÎªµ±Ç°Ê±¼ä
+				// æ— è·å–åˆ°æ—¶é—´ï¼Œè®¾ç½®ä¸ºå½“å‰æ—¶é—´
 				if (mBaseInfo.time == null) {
 					mBaseInfo.time = new Timestamp(System.currentTimeMillis());
 				}
@@ -380,18 +380,18 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ±¾µØ½âÎöÄÚÈİÈÎÎñ
+	 * æœ¬åœ°è§£æå†…å®¹ä»»åŠ¡
 	 */
 	class getLocalContentInfoTask extends AsyncTask<InputStream, Void, Void> {
 
 		@Override
-		protected Void doInBackground(InputStream... params) {// ×ÓÏß³Ì
+		protected Void doInBackground(InputStream... params) {// å­çº¿ç¨‹
 			parseXMLContent(params[0]);
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {// Ö÷Ïß³Ì
+		protected void onPostExecute(Void result) {// ä¸»çº¿ç¨‹
 
 			if (mOnFinishParseListener != null) {
 				mOnFinishParseListener.onFinishParseContent(true,
@@ -403,7 +403,7 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ´Ó±¾µØ¶ÁÈ¡XMLµÄÄÚÈİ²¢½âÎö
+	 * ä»æœ¬åœ°è¯»å–XMLçš„å†…å®¹å¹¶è§£æ
 	 * 
 	 * @param localStream
 	 */
@@ -412,19 +412,19 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ´ÓÍøÂç¶ÁÈ¡XMLµÄÄÚÈİ²¢½âÎö
+	 * ä»ç½‘ç»œè¯»å–XMLçš„å†…å®¹å¹¶è§£æ
 	 */
 	private void getXMLContentInfo() {
 
 		mHttpUtils = new HTTPUtils(new OnConnectListener() {
 
 			@Override
-			public void onConnect(InputStream inputStream) {// ×ÓÏß³Ì
+			public void onConnect(InputStream inputStream) {// å­çº¿ç¨‹
 				parseXMLContent(inputStream);
 			}
 
 			@Override
-			public void onSuccess() {// Ö÷Ïß³Ì
+			public void onSuccess() {// ä¸»çº¿ç¨‹
 				if (mOnFinishParseListener != null) {
 					mOnFinishParseListener.onFinishParseContent(true,
 							mContentInfoList);
@@ -433,7 +433,7 @@ public class FeedXMLParser {
 			}
 
 			@Override
-			public void onFailure() {// Ö÷Ïß³Ì
+			public void onFailure() {// ä¸»çº¿ç¨‹
 				if (mOnFinishParseListener != null) {
 					mOnFinishParseListener.onFinishParseContent(false,
 							mContentInfoList);
@@ -446,14 +446,14 @@ public class FeedXMLParser {
 	}
 
 	/**
-	 * ½âÎöXMLÊäÈëÁ÷ÄÚÈİ
+	 * è§£æXMLè¾“å…¥æµå†…å®¹
 	 * 
 	 * @param inputStream
-	 *            XMLÊäÈëÁ÷
+	 *            XMLè¾“å…¥æµ
 	 */
 	private void parseXMLContent(InputStream inputStream) {
 
-		// ¼ÆÊıÇåÁã
+		// è®¡æ•°æ¸…é›¶
 		mContentInfoList.clear();
 
 		XMLParseUtils xmlUtils = new XMLParseUtils();
@@ -471,36 +471,36 @@ public class FeedXMLParser {
 				// ----------------RSS---------------
 
 				if ("item".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSSÄÚÈİ¿ªÊ¼
+						&& eventType == XmlPullParser.START_TAG) {// RSSå†…å®¹å¼€å§‹
 					contentInfo = new FeedXMLContentInfo();
 					startRssItemFlag = true;
 				}
 
 				if (startRssItemFlag == true
 						&& "title".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSSÄÚÈİ±êÌâ
+						&& eventType == XmlPullParser.START_TAG) {// RSSå†…å®¹æ ‡é¢˜
 					contentInfo.title = parser.nextText();
 				}
 
 				if (startRssItemFlag == true
 						&& "description".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSSÄÚÈİÃèÊö
+						&& eventType == XmlPullParser.START_TAG) {// RSSå†…å®¹æè¿°
 					contentInfo.description = parser.nextText();
 				}
 
 				if (startRssItemFlag == true
 						&& "pubDate".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSSÄÚÈİÊ±¼ä
+						&& eventType == XmlPullParser.START_TAG) {// RSSå†…å®¹æ—¶é—´
 					contentInfo.pubDate = parser.nextText();
 				}
 
 				if (startRssItemFlag == true && "link".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSSÁ¬½Ó
+						&& eventType == XmlPullParser.START_TAG) {// RSSè¿æ¥
 					contentInfo.link = parser.nextText();
 				}
 
 				if (startRssItemFlag == true && "item".equals(parser.getName())
-						&& eventType == XmlPullParser.END_TAG) {// RSSÄÚÈİ½áÊø
+						&& eventType == XmlPullParser.END_TAG) {// RSSå†…å®¹ç»“æŸ
 					mContentInfoList.add(contentInfo);
 					startRssItemFlag = false;
 				}
@@ -508,32 +508,32 @@ public class FeedXMLParser {
 				// ----------------ATOM---------------
 
 				if ("entry".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÄÚÈİ¿ªÊ¼
+						&& eventType == XmlPullParser.START_TAG) {// ATOMå†…å®¹å¼€å§‹
 					contentInfo = new FeedXMLContentInfo();
 					startAtomEntryFlag = true;
 				}
 
 				if (startAtomEntryFlag == true
 						&& "title".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÄÚÈİ±êÌâ
+						&& eventType == XmlPullParser.START_TAG) {// ATOMå†…å®¹æ ‡é¢˜
 					contentInfo.title = parser.nextText();
 				}
 
 				if (startAtomEntryFlag == true
 						&& "summary".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÄÚÈİÃèÊö
+						&& eventType == XmlPullParser.START_TAG) {// ATOMå†…å®¹æè¿°
 					contentInfo.description = parser.nextText();
 				}
 
 				if (startAtomEntryFlag == true
 						&& "updated".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÄÚÈİÊ±¼ä
+						&& eventType == XmlPullParser.START_TAG) {// ATOMå†…å®¹æ—¶é—´
 					contentInfo.pubDate = parser.nextText();
 				}
 
 				if (startAtomEntryFlag == true
 						&& "link".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÁ¬½Ó
+						&& eventType == XmlPullParser.START_TAG) {// ATOMè¿æ¥
 
 					if (TextUtils.isEmpty(contentInfo.link)
 							|| "alternate".equals(parser.getAttributeValue(
@@ -546,7 +546,7 @@ public class FeedXMLParser {
 
 				if (startAtomEntryFlag == true
 						&& "content".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// ATOMÄÚÈİ
+						&& eventType == XmlPullParser.START_TAG) {// ATOMå†…å®¹
 					contentInfo.contentType = parser.getAttributeValue(null,
 							"type");
 					contentInfo.content = parser.nextText();
@@ -554,7 +554,7 @@ public class FeedXMLParser {
 
 				if (startAtomEntryFlag == true
 						&& "entry".equals(parser.getName())
-						&& eventType == XmlPullParser.END_TAG) {// RSSÄÚÈİ½áÊø
+						&& eventType == XmlPullParser.END_TAG) {// RSSå†…å®¹ç»“æŸ
 					mContentInfoList.add(contentInfo);
 					startAtomEntryFlag = false;
 				}
@@ -574,26 +574,26 @@ public class FeedXMLParser {
 			@Override
 			public void doWhenFinishedParse() {
 
-				// ´¦ÀíÊı¾İÎª¿ÕµÄÇé¿ö
+				// å¤„ç†æ•°æ®ä¸ºç©ºçš„æƒ…å†µ
 				for (FeedXMLContentInfo info : mContentInfoList) {
 
-					// ÎŞ±êÌâ
+					// æ— æ ‡é¢˜
 					if (TextUtils.isEmpty(info.title)) {
-						info.title = "ÎŞ±êÌâ";
+						info.title = "æ— æ ‡é¢˜";
 					}
 
-					// ÎŞÃèÊö
+					// æ— æè¿°
 					if (TextUtils.isEmpty(info.description)) {
 
-						if (info.content != null) {// ÀûÓÃcontent´úÌæ
+						if (info.content != null) {// åˆ©ç”¨contentä»£æ›¿
 							info.description = info.content;
 						} else {
-							info.description = "Ã»ÓĞ½ÓÊÕµ½Êı¾İ";
+							info.description = "æ²¡æœ‰æ¥æ”¶åˆ°æ•°æ®";
 						}
 
 					}
 
-					// ÎŞ»ñÈ¡µ½Ê±¼ä£¬ÉèÖÃÎªµ±Ç°Ê±¼ä
+					// æ— è·å–åˆ°æ—¶é—´ï¼Œè®¾ç½®ä¸ºå½“å‰æ—¶é—´
 					if (info.pubDate == null) {
 
 						info.pubDate = TimeUtils.timestamp2String(
@@ -603,17 +603,17 @@ public class FeedXMLParser {
 
 					}
 
-					// ÎŞÈ«ÎÄÁ´½Ó
+					// æ— å…¨æ–‡é“¾æ¥
 					if (info.link == null) {
 						info.link = "";
 					}
 
-					// ÎŞATOMÄÚÈİÀàĞÍ
+					// æ— ATOMå†…å®¹ç±»å‹
 					if (info.contentType == null) {
 						info.contentType = "";
 					}
 
-					// ÎŞATOMÄÚÈİ
+					// æ— ATOMå†…å®¹
 					if (info.content == null) {
 						info.content = "";
 					}

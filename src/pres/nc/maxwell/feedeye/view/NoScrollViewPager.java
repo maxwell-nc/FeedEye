@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * 无法左右滑动的ViewPager 
+ * 鏃犳硶宸﹀彸婊戝姩鐨刅iewPager 
  */
 public class NoScrollViewPager extends ViewPager {
 
@@ -20,7 +20,7 @@ public class NoScrollViewPager extends ViewPager {
 
 	
 	/**
-	 * 禁止拦截触摸事件
+	 * 绂佹鎷︽埅瑙︽懜浜嬩欢
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -30,7 +30,7 @@ public class NoScrollViewPager extends ViewPager {
 	
 	
 	/**
-	 * 禁止响应触摸事件
+	 * 绂佹鍝嶅簲瑙︽懜浜嬩欢
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {

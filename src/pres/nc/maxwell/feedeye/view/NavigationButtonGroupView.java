@@ -9,7 +9,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 /**
- * µ×²¿µ¼º½À¸
+ * åº•éƒ¨å¯¼èˆªæ 
  */
 public class NavigationButtonGroupView extends FrameLayout {
 
@@ -56,11 +56,11 @@ public class NavigationButtonGroupView extends FrameLayout {
 
 	
 	/**
-	 * ³õÊ¼»¯²¼¾ÖºÍ×ÓView¶ÔÏó
-	 * @param context ÉÏÏÂÎÄ
+	 * åˆå§‹åŒ–å¸ƒå±€å’Œå­Viewå¯¹è±¡
+	 * @param context ä¸Šä¸‹æ–‡
 	 */
 	private void initView(Context context) {
-		//Ìî³äµ½ViewGroupÖĞ
+		//å¡«å……åˆ°ViewGroupä¸­
 		mView = View.inflate(context, R.layout.view_mavi_button_group, this);
 		
 		mNaviBtnGroup = (RadioGroup)mView.findViewById(R.id.rg_navi);

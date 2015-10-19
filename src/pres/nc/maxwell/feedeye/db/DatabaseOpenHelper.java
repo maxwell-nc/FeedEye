@@ -5,15 +5,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Êı¾İ¿â´ò¿ª°ïÖúÀà£¬´´½¨¶©ÔÄÁĞ±íµÄÊı¾İ¿â£¬ÓÃÓÚÍ¬²½(Î´À´ÊµÏÖ)
+ * æ•°æ®åº“æ‰“å¼€å¸®åŠ©ç±»ï¼Œåˆ›å»ºè®¢é˜…åˆ—è¡¨çš„æ•°æ®åº“ï¼Œç”¨äºåŒæ­¥(æœªæ¥å®ç°)
  */
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 	/**
-	 * ´´½¨Êı¾İ¿â
+	 * åˆ›å»ºæ•°æ®åº“
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄ
+	 *            ä¸Šä¸‹æ–‡
 	 */
 	public DatabaseOpenHelper(Context context) {
 
@@ -22,21 +22,21 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ³õÊ¼»¯±í½á¹¹
+	 * åˆå§‹åŒ–è¡¨ç»“æ„
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
 		String sqlString = "CREATE TABLE feed_item ("
-				+ "id integer primary key autoincrement,"// id×ÔÔö³¤
-				+ "feed_url text not null,"// ¶©ÔÄµÄµØÖ·
-				+ "pic_url text not null,"// Í¼Æ¬URL
-				+ "encoding varchar(10) not null,"// ±àÂë·½Ê½
-				+ "type varchar(10) not null,"// ÀàĞÍ
-				+ "title varchar(100) not null,"// ±êÌâ
-				+ "summary varchar(100),"// ¸ÅÒªÄÚÈİ
-				+ "pub_date timeStamp not null DEFAULT (datetime('now','localtime')),"// Ê±¼ä
-				+ "delete_flag char(1) DEFAULT '0'"// É¾³ı±ê¼Ç£¬ÓÃÓÚÍ¬²½
+				+ "id integer primary key autoincrement,"// idè‡ªå¢é•¿
+				+ "feed_url text not null,"// è®¢é˜…çš„åœ°å€
+				+ "pic_url text not null,"// å›¾ç‰‡URL
+				+ "encoding varchar(10) not null,"// ç¼–ç æ–¹å¼
+				+ "type varchar(10) not null,"// ç±»å‹
+				+ "title varchar(100) not null,"// æ ‡é¢˜
+				+ "summary varchar(100),"// æ¦‚è¦å†…å®¹
+				+ "pub_date timeStamp not null DEFAULT (datetime('now','localtime')),"// æ—¶é—´
+				+ "delete_flag char(1) DEFAULT '0'"// åˆ é™¤æ ‡è®°ï¼Œç”¨äºåŒæ­¥
 				+ ");";
 
 		db.execSQL(sqlString);
@@ -44,11 +44,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ¸üĞÂÊ±Ê¹ÓÃ
+	 * æ›´æ–°æ—¶ä½¿ç”¨
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// ÎŞĞè¸üĞÂ
+		// æ— éœ€æ›´æ–°
 	}
 
 }

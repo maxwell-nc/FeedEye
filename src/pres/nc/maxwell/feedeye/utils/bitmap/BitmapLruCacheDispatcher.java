@@ -5,18 +5,18 @@ import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
 /**
- * ·ÖÅäBitmpaµÄLruÄÚ´æÇø£¬µ¥Àı
+ * åˆ†é…Bitmpaçš„Lruå†…å­˜åŒºï¼Œå•ä¾‹
  */
 public class BitmapLruCacheDispatcher {
 
 	/**
-	 * µ¥Àı
+	 * å•ä¾‹
 	 */
 	private final static BitmapLruCacheDispatcher dispatcher = new BitmapLruCacheDispatcher();
 	
 
 	/**
-	 * LruCache,´æ·ÅBitmapµÄ¼¯ºÏ
+	 * LruCache,å­˜æ”¾Bitmapçš„é›†åˆ
 	 */
 	private LruCache<String, Bitmap> mMemoryCache;
 
@@ -28,37 +28,37 @@ public class BitmapLruCacheDispatcher {
 	}
 	
 	/**
-	 * ½ûÖ¹´´½¨ÊµÀı¶ÔÏó£¬Çë²»ÒªÊ¹ÓÃ·´Éä´´½¨ÊµÀı
+	 * ç¦æ­¢åˆ›å»ºå®ä¾‹å¯¹è±¡ï¼Œè¯·ä¸è¦ä½¿ç”¨åå°„åˆ›å»ºå®ä¾‹
 	 */
 	private BitmapLruCacheDispatcher(){
 	
 
-		long maxCacheMemory = Runtime.getRuntime().maxMemory() / 8;// ÉèÖÃ×î´óCacheÕ¼ÓÃÓ¦ÓÃ×ÜÄÚ´æ1/8
+		long maxCacheMemory = Runtime.getRuntime().maxMemory() / 8;// è®¾ç½®æœ€å¤§Cacheå ç”¨åº”ç”¨æ€»å†…å­˜1/8
 		mMemoryCache = new LruCache<String, Bitmap>((int) maxCacheMemory) {
 
 			/**
-			 * ¼ÆËã·µ»ØÃ¿Ò»¸öBitmapµÄÕ¼ÓÃµÄÄÚ´æ´óĞ¡
+			 * è®¡ç®—è¿”å›æ¯ä¸€ä¸ªBitmapçš„å ç”¨çš„å†…å­˜å¤§å°
 			 */
 			@Override
 			protected int sizeOf(String key, Bitmap value) {
 
-				//¼ÆËãÍ¼Æ¬Õ¼ÓÃ¿Õ¼ä
+				//è®¡ç®—å›¾ç‰‡å ç”¨ç©ºé—´
 				int bytes = value.getRowBytes() * value.getHeight();
-				LogUtils.e("BitmapLruCacheDispatcher", "Í¼Æ¬´óĞ¡" + bytes / 1024 + "KB");
+				LogUtils.e("BitmapLruCacheDispatcher", "å›¾ç‰‡å¤§å°" + bytes / 1024 + "KB");
 
 				return bytes;
 			}
 
 		};
 
-		LogUtils.e("BitmapMemoryCache", "ÄÚ´æ»º´æ´óĞ¡" + maxCacheMemory / 1024 + "KB");
+		LogUtils.e("BitmapMemoryCache", "å†…å­˜ç¼“å­˜å¤§å°" + maxCacheMemory / 1024 + "KB");
 		
 		
 	}
 	
 	/**
-	 * »ñµÃÊµÀı¶ÔÏó
-	 * @return µ¥Àı
+	 * è·å¾—å®ä¾‹å¯¹è±¡
+	 * @return å•ä¾‹
 	 */
 	public static BitmapLruCacheDispatcher getInstance(){
 		return dispatcher;

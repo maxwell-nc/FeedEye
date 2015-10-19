@@ -8,38 +8,38 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Í¨ÓÃµÄ¼òµ¥Ê±¼ä´¦Àí¹¤¾ßÀà
+ * é€šç”¨çš„ç®€å•æ—¶é—´å¤„ç†å·¥å…·ç±»
  */
 public class TimeUtils {
 
 	/**
-	 * ±¾Ó¦ÓÃÊ¹ÓÃµÄ±ê×¼¸ñÊ½
+	 * æœ¬åº”ç”¨ä½¿ç”¨çš„æ ‡å‡†æ ¼å¼
 	 */
 	public static final String STANDARD_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
 	/**
-	 * ÈÎÒâÊ±¼ä×ª»»Îª±¾µØÊÂ¼ş
+	 * ä»»æ„æ—¶é—´è½¬æ¢ä¸ºæœ¬åœ°äº‹ä»¶
 	 * 
 	 * @param orgTime
-	 *            Ô­À´µÄÊ±¼äÎÄ±¾
+	 *            åŸæ¥çš„æ—¶é—´æ–‡æœ¬
 	 * @param orgPattern
-	 *            Ô­À´µÄÊ±¼äÎÄ±¾¸ñÊ½
+	 *            åŸæ¥çš„æ—¶é—´æ–‡æœ¬æ ¼å¼
 	 * @param orgLocale
-	 *            Ô­À´µÄÊ±¼äÓïÑÔ
+	 *            åŸæ¥çš„æ—¶é—´è¯­è¨€
 	 * @param orgTimeZone
-	 *            Ô­À´µÄÊ±¼äµÄµØÇø£¬ÈçGMT¡¢GMT-8:00£¬¿ÉÒÔ×Ô¶¯È·¶¨Ê±ÇøµÄ¸ñÊ½¿ÉÒÔ´«Èënull
+	 *            åŸæ¥çš„æ—¶é—´çš„åœ°åŒºï¼Œå¦‚GMTã€GMT-8:00ï¼Œå¯ä»¥è‡ªåŠ¨ç¡®å®šæ—¶åŒºçš„æ ¼å¼å¯ä»¥ä¼ å…¥null
 	 * @param outPattern
-	 *            Êä³öµÄÄ£Ê½
-	 * @return ³É¹¦×ª»»Ôò·µ»Ø±¾µØÊ±¼ä£¬·ñÔò·µ»Ønull
+	 *            è¾“å‡ºçš„æ¨¡å¼
+	 * @return æˆåŠŸè½¬æ¢åˆ™è¿”å›æœ¬åœ°æ—¶é—´ï¼Œå¦åˆ™è¿”å›null
 	 * @throws ParseException
-	 *             ½âÎöÒì³££¬Ä£Ê½²»Æ¥Åä
+	 *             è§£æå¼‚å¸¸ï¼Œæ¨¡å¼ä¸åŒ¹é…
 	 */
 	public static String formatTimeToLocal(String orgTime, String orgPattern,
 			Locale orgLocale, TimeZone orgTimeZone, String outPattern) {
 
 		String outTime = null;
 		try {
-			// ¸ñÊ½»¯Ô­À´µÄÊ±¼ä
+			// æ ¼å¼åŒ–åŸæ¥çš„æ—¶é—´
 			SimpleDateFormat format = new SimpleDateFormat(orgPattern,
 					orgLocale);
 			if (orgTimeZone != null) {
@@ -47,23 +47,23 @@ public class TimeUtils {
 			}
 			Date orginDate = format.parse(orgTime);
 
-			// ×ª»»Îª±¾µØµÄÊ±¼ä
+			// è½¬æ¢ä¸ºæœ¬åœ°çš„æ—¶é—´
 			format = new SimpleDateFormat(outPattern, Locale.getDefault());
 			format.setTimeZone(TimeZone.getDefault());
 			outTime = format.format(orginDate);
 
 		} catch (ParseException e) {
-			// ºöÂÔ´íÎó£¬²»´òÈÕÖ¾
+			// å¿½ç•¥é”™è¯¯ï¼Œä¸æ‰“æ—¥å¿—
 		}
 		return outTime;
 	}
 
 	/**
-	 * ÈÎÒâÎÄ±¾×ª±¾µØÊ±¼ä£¬Æ¥Åä²»µ½Ôò·µ»ØÏµÍ³Ê±¼ä
+	 * ä»»æ„æ–‡æœ¬è½¬æœ¬åœ°æ—¶é—´ï¼ŒåŒ¹é…ä¸åˆ°åˆ™è¿”å›ç³»ç»Ÿæ—¶é—´
 	 * 
 	 * @param orgTime
-	 *            Ê±¼äÎÄ±¾£¬´«Èë"getCurrentTime"Îª»ñÈ¡µ±Ç°Ê±¼ä
-	 * @return "yyyy-MM-dd HH:mm:ss"¸ñÊ½µÄÊ±¼ä
+	 *            æ—¶é—´æ–‡æœ¬ï¼Œä¼ å…¥"getCurrentTime"ä¸ºè·å–å½“å‰æ—¶é—´
+	 * @return "yyyy-MM-dd HH:mm:ss"æ ¼å¼çš„æ—¶é—´
 	 */
 	public static String LoopToTransTime(String orgTime) {
 
@@ -72,13 +72,13 @@ public class TimeUtils {
 	}
 
 	/**
-	 * ÈÎÒâÎÄ±¾×ª±¾µØÊ±¼ä£¬Æ¥Åä²»µ½Ôò·µ»ØÏµÍ³Ê±¼ä
+	 * ä»»æ„æ–‡æœ¬è½¬æœ¬åœ°æ—¶é—´ï¼ŒåŒ¹é…ä¸åˆ°åˆ™è¿”å›ç³»ç»Ÿæ—¶é—´
 	 * 
 	 * @param orgTime
-	 *            Ê±¼äÎÄ±¾£¬´«Èë"getCurrentTime"Îª»ñÈ¡µ±Ç°Ê±¼ä
+	 *            æ—¶é—´æ–‡æœ¬ï¼Œä¼ å…¥"getCurrentTime"ä¸ºè·å–å½“å‰æ—¶é—´
 	 * @param pattern
-	 *            Êä³öµÄÊ±¼ä¸ñÊ½
-	 * @return Ê±¼ä
+	 *            è¾“å‡ºçš„æ—¶é—´æ ¼å¼
+	 * @return æ—¶é—´
 	 */
 	public static String LoopToTransTime(String orgTime, String pattern) {
 
@@ -88,27 +88,27 @@ public class TimeUtils {
 
 		String resultTime = null;
 
-		if (orgTime != "getCurrentTime") {// ²»ÊÇÈ¡µ±Ç°Ê±¼ä
+		if (orgTime != "getCurrentTime") {// ä¸æ˜¯å–å½“å‰æ—¶é—´
 
 			/**
-			 * UTC/GMTÊ±¼ä
+			 * UTC/GMTæ—¶é—´
 			 */
 
-			// ATOM 1.0±ê×¼£¬Èç£º2003-12-13T18:30:02Z
+			// ATOM 1.0æ ‡å‡†ï¼Œå¦‚ï¼š2003-12-13T18:30:02Z
 			resultTime = formatTimeToLocal(orgTime, "yyyy-MM-dd'T'HH:mm:ss'Z'",
 					Locale.US, TimeZone.getTimeZone("GMT"), pattern);
 			if (resultTime != null) {
 				return resultTime;
 			}
 
-			// ×Ô´øÊ±ÇøµÄ¸ñÊ½£¬Èç£ºSat, 03 Oct 2005 12:58:04 GMT
+			// è‡ªå¸¦æ—¶åŒºçš„æ ¼å¼ï¼Œå¦‚ï¼šSat, 03 Oct 2005 12:58:04 GMT
 			resultTime = formatTimeToLocal(orgTime,
 					"EEE, dd MMM yyyy HH:mm:ss z", Locale.US, null, pattern);
 			if (resultTime != null) {
 				return resultTime;
 			}
 
-			// RSS 2.0±ê×¼£¬Èç£ºMon, 06 Sep 2010 00:01:00 +0000
+			// RSS 2.0æ ‡å‡†ï¼Œå¦‚ï¼šMon, 06 Sep 2010 00:01:00 +0000
 			resultTime = formatTimeToLocal(orgTime,
 					"EEE, dd MMM yyyy HH:mm:ss ZZZZ", Locale.US,
 					TimeZone.getTimeZone("GMT"), pattern);
@@ -117,16 +117,16 @@ public class TimeUtils {
 			}
 
 			/**
-			 * ±¾µØÊ±¼ä
+			 * æœ¬åœ°æ—¶é—´
 			 */
-			// ³£ÓÃ¸ñÊ½£¬Èç£º2005/12/25 11:08:04
+			// å¸¸ç”¨æ ¼å¼ï¼Œå¦‚ï¼š2005/12/25 11:08:04
 			resultTime = formatTimeToLocal(orgTime, "yyyy/MM/dd HH:mm:ss",
 					Locale.US, TimeZone.getDefault(), pattern);
 			if (resultTime != null) {
 				return resultTime;
 			}
 			
-			// ³£ÓÃ¸ñÊ½£¬Èç£º2005-12-25 11:08:04
+			// å¸¸ç”¨æ ¼å¼ï¼Œå¦‚ï¼š2005-12-25 11:08:04
 			resultTime = formatTimeToLocal(orgTime, "yyyy-MM-dd HH:mm:ss",
 					Locale.US, TimeZone.getDefault(), pattern);
 			if (resultTime != null) {
@@ -136,7 +136,7 @@ public class TimeUtils {
 		}
 
 		/**
-		 * ÉÏÊö²»´æÔÚÔò·µ»Øµ±Ç°Ê±¼ä
+		 * ä¸Šè¿°ä¸å­˜åœ¨åˆ™è¿”å›å½“å‰æ—¶é—´
 		 */
 		Date nowTime = new Date(System.currentTimeMillis());
 		SimpleDateFormat formater = new SimpleDateFormat(pattern,
@@ -148,15 +148,15 @@ public class TimeUtils {
 	}
 
 	/**
-	 * Ê±¼ä´Á×ª»»³ÉÌØ¶¨¸ñÊ½µÄ×Ö·û´®
+	 * æ—¶é—´æˆ³è½¬æ¢æˆç‰¹å®šæ ¼å¼çš„å­—ç¬¦ä¸²
 	 * 
 	 * @param timestamp
-	 *            Ê±¼ä´Á
+	 *            æ—¶é—´æˆ³
 	 * @param pattern
-	 *            Ê±¼äµÄ¸ñÊ½
+	 *            æ—¶é—´çš„æ ¼å¼
 	 * @param locale
-	 *            Ê±¼äµÄÓïÑÔ
-	 * @return ±¾µØÊ±¼ä×Ö·û´®
+	 *            æ—¶é—´çš„è¯­è¨€
+	 * @return æœ¬åœ°æ—¶é—´å­—ç¬¦ä¸²
 	 */
 	public static String timestamp2String(Timestamp timestamp, String pattern,
 			Locale locale) {
@@ -169,11 +169,11 @@ public class TimeUtils {
 	}
 
 	/**
-	 * String×ªTimestamp
+	 * Stringè½¬Timestamp
 	 * 
 	 * @param timeString
-	 *            Ê±¼äÎÄ±¾
-	 * @return TimestampÀàĞÍ£¬Ê§°Ü·µ»Ønull
+	 *            æ—¶é—´æ–‡æœ¬
+	 * @return Timestampç±»å‹ï¼Œå¤±è´¥è¿”å›null
 	 */
 	public static Timestamp string2Timestamp(String timeString) {
 
