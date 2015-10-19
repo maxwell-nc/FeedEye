@@ -142,7 +142,9 @@ public class BitmapThreeLevelsCache {
 	 */
 	private boolean isLocalFile() {
 
-		if (mURL.startsWith("/")) {// 如： /sdcard/xxx/xxx.jpg
+		if (mURL.startsWith("//")) {// 如： //xxx.com/xx
+			return false;
+		} else if (mURL.startsWith("/")) {// 如： /sdcard/xxx/xxx.jpg
 			return true;
 		}
 

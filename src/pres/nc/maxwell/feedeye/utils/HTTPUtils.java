@@ -113,12 +113,11 @@ public class HTTPUtils {
 	public void connect(String url, int connectTimeout, int readTimeout,
 			ExecutorService threadPool) {
 		
-		LogUtils.i("HTTPUtils", "Link:" + url);
-		
 		mThreadPool = threadPool;
 		mCurrentTask = new ConnectTask();
 		mCurrentTask.executeOnExecutor(threadPool, new ConnectInfo(url,
 				connectTimeout, readTimeout));
+		
 	}
 
 	/**
@@ -147,7 +146,9 @@ public class HTTPUtils {
 			HttpURLConnection connection = null;
 			try {
 
-				if (params[0].url.startsWith("https://")) {
+				String fixUrl = params[0].url;
+				
+				if (fixUrl.startsWith("https://")) {
 					// 信任所有HTTPS连接
 					HttpsURLConnection
 							.setDefaultHostnameVerifier(new HostnameVerifier() {
@@ -157,14 +158,21 @@ public class HTTPUtils {
 								}
 							});
 					connection = null;
-					connection = (HttpsURLConnection) new URL(params[0].url)
+					connection = (HttpsURLConnection) new URL(fixUrl)
 							.openConnection();
 				} else {// 非HTTPS
 					connection = null;
-					connection = (HttpURLConnection) new URL(params[0].url)
+					
+					if (fixUrl.startsWith("//")) {// 如： //xxx.com/xx
+						fixUrl = "http:" + fixUrl;
+					}
+					
+					connection = (HttpURLConnection) new URL(fixUrl)
 							.openConnection();
 				}
 
+				LogUtils.i("HTTPUtils", "Link:" + fixUrl);
+				
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
 

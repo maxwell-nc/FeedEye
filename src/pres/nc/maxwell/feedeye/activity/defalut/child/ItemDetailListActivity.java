@@ -479,6 +479,15 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	class ItemDetailListAdapter extends BaseAdapter {
 
 		/**
+		 * 清空缓存
+		 */
+		@Override
+		public void notifyDataSetChanged() {
+			listItemCaches.clear();// 清空缓存
+			super.notifyDataSetChanged();
+		}
+
+		/**
 		 * 用于加载文本
 		 * 
 		 * @see showHtmlTextTask
@@ -508,9 +517,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		@Override
 		public int getCount() {
 
-			int count = mContentInfoList.size();
+			return mContentInfoList.size();
 
-			return count;
 		}
 
 		@Override
@@ -549,18 +557,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			ListItemCache itemCache = listItemCaches.get(position);
 
-			holder.preview.setText("加载中...");
-
-			holder.previewPic1.setVisibility(View.GONE);
-			holder.previewPic2.setVisibility(View.GONE);
-			holder.previewPic3.setVisibility(View.GONE);
-
 			if (itemCache != null) {// 使用缓存
 
 				holder.preview.setText(itemCache.previewString);
 				holder.previewPic1.setVisibility(itemCache.pic1Visibility);
 				holder.previewPic2.setVisibility(itemCache.pic2Visibility);
 				holder.previewPic3.setVisibility(itemCache.pic3Visibility);
+
 				if (itemCache.link1 != null) {
 					BitmapCacheUtils.displayBitmap(mThisActivity,
 							holder.previewPic1, itemCache.link1, null);
@@ -576,9 +579,16 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			} else {
 
+				holder.preview.setText("加载中...");
+
+				holder.previewPic1.setVisibility(View.GONE);
+				holder.previewPic2.setVisibility(View.GONE);
+				holder.previewPic3.setVisibility(View.GONE);
+
 				// 异步加载文本信息
 				new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
 						position, holder, listItemCaches);
+
 			}
 
 			holder.time

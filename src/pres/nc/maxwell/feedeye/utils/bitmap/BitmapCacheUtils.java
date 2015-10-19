@@ -41,7 +41,7 @@ public class BitmapCacheUtils {
 	 * @param url
 	 *            要显示图片的地址（支持本地图片和网络图片）
 	 * @param threadPool
-	 *            自定义线程池，为空则采用5线程的默认线程池
+	 *            自定义线程池，为空则采用默认线程池
 	 * @see BitmapCacheUtils#displayBitmap(Context, ImageView, String, boolean,
 	 *      int, int, int, android.graphics.Bitmap.Config, ExecutorService)
 	 */
@@ -51,7 +51,7 @@ public class BitmapCacheUtils {
 		if (threadPool == null) {
 
 			if (DEFAULT_EXECUTOR_SERVICE == null) {
-				DEFAULT_EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
+				DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 			}
 			displayBitmap(context, imageView, url, true, -1, -1, -1, null,
 					DEFAULT_EXECUTOR_SERVICE);
