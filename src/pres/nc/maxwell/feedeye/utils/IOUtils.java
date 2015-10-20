@@ -159,11 +159,16 @@ public class IOUtils {
 		String[] projection = {MediaStore.Images.Media.DATA};
 		Cursor cursor = activity.getContentResolver().query(uri, projection,
 				null, null, null);
-		if (cursor.moveToFirst()) {
+		try {
+			if (cursor.moveToFirst()) {
 
-			int index = cursor
-					.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			absPath = cursor.getString(index);
+				int index = cursor
+						.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				absPath = cursor.getString(index);
+			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return "请使用图库选择图片";
 		}
 		cursor.close();
 		return absPath;

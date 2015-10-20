@@ -99,8 +99,8 @@ public class SummaryBodyActivity extends Activity {
 
 		// 提供源
 		String source = "";
-		if (feedItem.baseInfo.title.length() > 20) {
-			source = feedItem.baseInfo.title.substring(0, 17) + "...";
+		if (feedItem.baseInfo.title.length() > 15) {
+			source = feedItem.baseInfo.title.substring(0, 12) + "...";
 		} else {
 			source = feedItem.baseInfo.title;
 		}

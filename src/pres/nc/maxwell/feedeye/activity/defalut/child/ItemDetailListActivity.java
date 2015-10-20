@@ -173,7 +173,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 		// 设置数据适配器
 		mListViewAdapter = new ItemDetailListAdapter(mContentInfoUnshowList,
-				mContentInfoShowedList, 8);
+				mContentInfoShowedList, 20);
 		// 设置适配器
 		mListView.setAdapter(mListViewAdapter);
 

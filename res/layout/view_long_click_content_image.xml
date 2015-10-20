@@ -7,20 +7,20 @@
     <TextView
         android:id="@+id/tv_link"
         style="@style/item_long_click"
-        android:text="复制图片链接" />
+        android:text="@string/copy_img_link" />
 
     <View style="@style/hr_line" />
 
     <TextView
         android:id="@+id/tv_reload"
         style="@style/item_long_click"
-        android:text="重新加载" />
+        android:text="@string/reload" />
 
     <View style="@style/hr_line" />
 
     <TextView
         android:id="@+id/tv_view"
         style="@style/item_long_click"
-        android:text="查看大图" />
+        android:text="@string/view_big_img" />
 
 </LinearLayout>

@@ -22,13 +22,13 @@ public class BitmapCacheUtils {
 	/**
 	 * 默认的加载中的资源图片id
 	 */
-	public static final int LOAD_RESOURCE_ID = R.drawable.listview_refresh_rotate_arrow;
+	public static final int LOAD_RESOURCE_ID = R.drawable.img_loading_image;
 
 	/**
 	 * 默认的加载错误的资源图片id
 	 */
-	public static final int ERROR_RESOURCE_ID = R.drawable.img_load_error;
-
+	public static final int ERROR_RESOURCE_ID = R.drawable.img_load_image_failed;
+	
 	/**
 	 * 默认的ExecutorService
 	 */
@@ -120,7 +120,7 @@ public class BitmapCacheUtils {
 			String url, boolean isEnableNetworkCache, int loadResId,
 			int errorResId, int sampleSize, Bitmap.Config config,
 			ExecutorService threadPool) {
-
+		
 		if (threadPool == null) {
 
 			if (DEFAULT_EXECUTOR_SERVICE == null) {

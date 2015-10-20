@@ -314,7 +314,8 @@ public class HTTPUtils {
 		} else {
 			longText = Html.fromHtml(html).toString();
 		}
-
+		
+		longText = longText.replace("\ufffc", "\ufffc\u0020");//添加空格，防止两个图片连续出现的问题
 		String[] textFragments = longText.split("\ufffc");
 
 		return textFragments;

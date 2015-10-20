@@ -17,5 +17,8 @@
     <string name="cancel">取消</string>
     <string name="share_to_friends">分享给朋友</string>
     <string name="copy_link">复制链接</string>
+    <string name="copy_img_link">复制图片链接</string>
+    <string name="reload">重新加载</string>
+    <string name="view_big_img">查看大图</string>
     
 </resources>

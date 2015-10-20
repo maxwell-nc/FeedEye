@@ -100,7 +100,14 @@ public class TimeUtils {
 			if (resultTime != null) {
 				return resultTime;
 			}
-
+			
+			// 如：2015-09-24T22:42:09+08:00
+			resultTime = formatTimeToLocal(orgTime, "yyyy-MM-dd'T'HH:mm:sszzz",
+					Locale.US, TimeZone.getTimeZone("GMT"), pattern);
+			if (resultTime != null) {
+				return resultTime;
+			}
+			
 			// 自带时区的格式，如：Sat, 03 Oct 2005 12:58:04 GMT
 			resultTime = formatTimeToLocal(orgTime,
 					"EEE, dd MMM yyyy HH:mm:ss z", Locale.US, null, pattern);
@@ -125,14 +132,14 @@ public class TimeUtils {
 			if (resultTime != null) {
 				return resultTime;
 			}
-			
+
 			// 常用格式，如：2005-12-25 11:08:04
 			resultTime = formatTimeToLocal(orgTime, "yyyy-MM-dd HH:mm:ss",
 					Locale.US, TimeZone.getDefault(), pattern);
 			if (resultTime != null) {
 				return resultTime;
 			}
-			
+
 		}
 
 		/**
