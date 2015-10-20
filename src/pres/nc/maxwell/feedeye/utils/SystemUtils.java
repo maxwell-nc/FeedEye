@@ -1,25 +1,25 @@
 package pres.nc.maxwell.feedeye.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.text.ClipboardManager;
+import android.widget.Toast;
 
 /**
  * 系统信息获取工具类
  */
-public class SystemInfoUtils {
+@SuppressWarnings("deprecation")
+public class SystemUtils {
 
 	/**
-	 * 获取当前系统时间文本
-	 * 
-	 * @return 时间文本，格式如：15-09-16 22:19:49
+	 * 复制文本到粘贴板
+	 * @param text 文本
 	 */
-	@SuppressLint("SimpleDateFormat")
-	public static String getCurrentTime() {
-		SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-		return format.format(new Date());
+	public static void copyTextToClipBoard(Context context,String text) {
+		
+		ClipboardManager clipManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+		clipManager.setText(text);
+		Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show();
+		
 	}
 
 	/**

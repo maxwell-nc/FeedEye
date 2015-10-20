@@ -7,6 +7,7 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.DensityUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
+import pres.nc.maxwell.feedeye.utils.SystemUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
@@ -18,7 +19,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,9 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-@SuppressWarnings("deprecation")
+/**
+ * 正文内容的Activity
+ */
 public class SummaryBodyActivity extends Activity {
 
 	/**
@@ -58,6 +59,11 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private ScrollView mBodyWrapper;
 
+	/**
+	 * 此Activity，方便匿名内部类调用
+	 */
+	private Activity mThisActivity;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -72,6 +78,8 @@ public class SummaryBodyActivity extends Activity {
 	 * 初始化View
 	 */
 	private void initView() {
+
+		mThisActivity = this;
 
 		mBodyWrapper = (ScrollView) findViewById(R.id.sv_wrapper);
 		mBodyContainer = (LinearLayout) mBodyWrapper
@@ -117,6 +125,12 @@ public class SummaryBodyActivity extends Activity {
 		// 设置连接
 		mHeaderLink.setText(feedXMLContentInfo.link);
 
+		// 设置点击监听器
+		HeaderOnClickListener listener = new HeaderOnClickListener();
+		mHeaderTitle.setOnClickListener(listener);
+		mHeaderSouceTime.setOnClickListener(listener);
+		mHeaderLink.setOnClickListener(listener);
+
 		String[] texts;// 存放各段文本
 		final ArrayList<String> imgList = new ArrayList<String>();// 存放图片链接的集合
 
@@ -155,7 +169,6 @@ public class SummaryBodyActivity extends Activity {
 		}
 
 	}
-
 	/**
 	 * 获得正文样式的LayoutImageView
 	 * 
@@ -178,12 +191,13 @@ public class SummaryBodyActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				MainThemeOnClickDialog dialog = new MainThemeOnClickDialog(
-						SummaryBodyActivity.this, new DialogDataAdapter() {
+				new MainThemeOnClickDialog(SummaryBodyActivity.this,
+						new DialogDataAdapter() {
 
 							@Override
 							public int[] getItemNames() {
-								int[] strings = {R.string.copy_img_link,R.string.reload,R.string.view_big_img};
+								int[] strings = {R.string.copy_img_link,
+										R.string.reload, R.string.view_big_img};
 								return strings;
 							}
 
@@ -205,9 +219,8 @@ public class SummaryBodyActivity extends Activity {
 								return listeners;
 
 							}
-						});
+						}).show();
 
-				dialog.show();
 			}
 		});
 
@@ -229,6 +242,62 @@ public class SummaryBodyActivity extends Activity {
 		tv.setText(text);
 
 		return tv;
+	}
+
+	/**
+	 * 正文头部的点击监听器
+	 */
+	private class HeaderOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+
+			new MainThemeOnClickDialog(SummaryBodyActivity.this,
+					new DialogDataAdapter() {
+
+						@Override
+						public int[] getItemNames() {
+							int[] strings = {R.string.copy_title,
+									R.string.copy_link};
+							return strings;
+						}
+
+						@Override
+						public OnClickListener[] getItemOnClickListeners(
+								final AlertDialog alertDialog) {
+
+							OnClickListener[] listeners = {
+
+							new OnClickListener() {// 复制标题
+
+										@Override
+										public void onClick(View v) {
+											SystemUtils.copyTextToClipBoard(
+													mThisActivity, mHeaderTitle
+															.getText()
+															.toString());
+											alertDialog.dismiss();
+										}
+
+									}, new OnClickListener() {// 复制链接
+
+										@Override
+										public void onClick(View v) {
+											SystemUtils.copyTextToClipBoard(
+													mThisActivity, mHeaderLink
+															.getText()
+															.toString());
+											alertDialog.dismiss();
+										}
+
+									}};
+
+							return listeners;
+						}
+
+					}).show();
+
+		}
 	}
 
 	/**
@@ -301,11 +370,7 @@ public class SummaryBodyActivity extends Activity {
 		@Override
 		public void onClick(View v) {// 复制图片链接
 
-			ClipboardManager clipManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipManager.setText(imgLink);
-
-			Toast.makeText(SummaryBodyActivity.this, "复制成功", Toast.LENGTH_SHORT)
-					.show();
+			SystemUtils.copyTextToClipBoard(mThisActivity, imgLink);
 
 			super.onClick(v);
 		}

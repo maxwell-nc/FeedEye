@@ -10,7 +10,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.child.SearchItemActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
-import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
+import pres.nc.maxwell.feedeye.utils.SystemUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
@@ -794,7 +794,7 @@ public class FeedPager extends BasePager {
 			// 显示
 			mPopupWindow.showAtLocation(mContainer, Gravity.TOP + Gravity.LEFT,
 					(int) mFuncButtonRight.getRight() - popupViewWidth,
-					(int) (mFuncButtonRight.getBottom() + SystemInfoUtils
+					(int) (mFuncButtonRight.getBottom() + SystemUtils
 							.getStatusBarHeight(mActivity)));
 
 			// 添加订阅

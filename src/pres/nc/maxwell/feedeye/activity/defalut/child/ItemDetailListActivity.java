@@ -15,6 +15,7 @@ import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
+import pres.nc.maxwell.feedeye.utils.SystemUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
@@ -30,7 +31,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.text.ClipboardManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,7 +46,6 @@ import android.widget.Toast;
 /**
  * 详细信息列表的页面的Activity
  */
-@SuppressWarnings("deprecation")
 public class ItemDetailListActivity extends DefaultNewActivity {
 
 	/**
@@ -867,11 +866,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				// 获取链接
 				String link = mContentInfoShowedList.get(realPosition).link;
 
-				ClipboardManager clipManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-				clipManager.setText(link);
-
-				Toast.makeText(mThisActivity, "复制成功", Toast.LENGTH_SHORT)
-						.show();
+				SystemUtils.copyTextToClipBoard(mThisActivity,link);
 
 				alertDialog.dismiss();// 对话框关闭
 			}

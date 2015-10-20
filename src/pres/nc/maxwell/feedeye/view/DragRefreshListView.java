@@ -3,7 +3,7 @@ package pres.nc.maxwell.feedeye.view;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
-import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -282,7 +282,7 @@ public class DragRefreshListView extends ListView {
 			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
 
 			mHeaderTipsText.setText("下拉刷新");
-			mHeaderTimeText.setText("上次刷新：" + SystemInfoUtils.getCurrentTime());
+			mHeaderTimeText.setText("上次刷新：" + TimeUtils.LoopToTransTime("getCurrentTime"));
 
 		}
 

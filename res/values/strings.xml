@@ -20,5 +20,6 @@
     <string name="copy_img_link">复制图片链接</string>
     <string name="reload">重新加载</string>
     <string name="view_big_img">查看大图</string>
-    
+    <string name="copy_title">复制标题</string>
+
 </resources>
