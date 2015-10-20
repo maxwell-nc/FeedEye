@@ -33,7 +33,7 @@ public class MainThemeLongClickDialog {
 		 * @param alertDialog 当前显示的对话框
 		 * @return 每个条目的点击监听器数组
 		 */
-		public OnClickListener[] getItemOnClickListener(AlertDialog alertDialog);
+		public OnClickListener[] getItemOnClickListener(final AlertDialog alertDialog);
 
 	}
 

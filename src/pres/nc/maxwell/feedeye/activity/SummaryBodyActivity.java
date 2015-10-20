@@ -10,37 +10,52 @@ import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.ClipboardManager;
 import android.text.TextUtils;
-import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class SummaryBodyActivity extends Activity {
 
 	/**
 	 * 正文头部的标题
 	 */
 	private TextView mHeaderTitle;
-	
+
 	/**
 	 * 正文头部的提供源和时间
 	 */
 	private TextView mHeaderSouceTime;
-	
+
 	/**
 	 * 正文头部的链接
 	 */
 	private TextView mHeaderLink;
-	
+
 	/**
 	 * 正文内容容器
 	 */
 	private LinearLayout mBodyContainer;
+
+	/**
+	 * 滑动包装布局
+	 */
+	private ScrollView mBodyWrapper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +72,9 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private void initView() {
 
-		mBodyContainer = (LinearLayout) findViewById(R.id.ll_container);
+		mBodyWrapper = (ScrollView) findViewById(R.id.sv_wrapper);
+		mBodyContainer = (LinearLayout) mBodyWrapper
+				.findViewById(R.id.ll_container);
 
 		mHeaderTitle = (TextView) mBodyContainer.findViewById(R.id.tv_title);
 		mHeaderSouceTime = (TextView) mBodyContainer
@@ -117,19 +134,20 @@ public class SummaryBodyActivity extends Activity {
 		int size = imgList.size();
 		for (int i = 0; i < size; i++) {
 
-			//如果有图片则显示
-			if (!TextUtils.isEmpty(imgList.get(i))) {
+			final String imgLink = imgList.get(i);
 
-				LayoutImageView imageView = getContentStyleImageView();
+			// 如果有图片则显示
+			if (!TextUtils.isEmpty(imgLink)) {
+
+				LayoutImageView imageView = getContentStyleImageView(imgLink);
 				mBodyContainer.addView(imageView);
 
-				BitmapCacheUtils.removeCache(imgList.get(i));// 清除内存缓存，重新采样
+				BitmapCacheUtils.removeCacheFromMem(imgLink);// 清除内存缓存，重新采样
 				BitmapCacheUtils.displayBitmapOnLayoutChange(
-						SummaryBodyActivity.this, imageView, imgList.get(i),
-						null);
+						SummaryBodyActivity.this, imageView, imgLink, null);
 			}
 
-			//显示下一段文本
+			// 显示下一段文本
 			textFragment = getContentStyleTextView(texts[i + 1]);// 已经有一条文本
 			mBodyContainer.addView(textFragment);
 
@@ -140,16 +158,63 @@ public class SummaryBodyActivity extends Activity {
 	/**
 	 * 获得正文样式的LayoutImageView
 	 * 
+	 * @param imgLink
+	 *            图片显示的网址
 	 * @return LayoutImageView
 	 */
-	private LayoutImageView getContentStyleImageView() {
+	private LayoutImageView getContentStyleImageView(final String imgLink) {
 
 		final LayoutParams imageViewParams = new LayoutParams(
 				LayoutParams.MATCH_PARENT, DensityUtils.dp2px(this, 200));
 
-		LayoutImageView layoutImageView = new LayoutImageView(this);
+		final LayoutImageView layoutImageView = new LayoutImageView(this);
 		layoutImageView.setLayoutParams(imageViewParams);
 		layoutImageView.setScaleType(ScaleType.FIT_CENTER);
+
+		// 点击查看图片
+		layoutImageView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				MainThemeLongClickDialog dialog = new MainThemeLongClickDialog(
+						SummaryBodyActivity.this, new DialogDataAdapter() {
+
+							@Override
+							public int[] getTextViewResIds() {
+								int[] ids = {R.id.tv_link, R.id.tv_reload,
+										R.id.tv_view};
+								return ids;
+							}
+
+							@Override
+							public int getLayoutViewId() {
+								return R.layout.view_long_click_content_image;
+							}
+
+							@Override
+							public OnClickListener[] getItemOnClickListener(
+									final AlertDialog alertDialog) {
+
+								OnClickListener[] listeners = {
+
+										new CopyImgLinkOnClickListener(// 复制图像链接
+												alertDialog, imgLink),
+										new ReloadImageOnClickListener(
+												// 重新加载
+												alertDialog, imgLink,
+												layoutImageView),
+										new ViewImageOnClickListener(// 查看大图
+												alertDialog, imgLink)};
+
+								return listeners;
+
+							}
+						});
+
+				dialog.show();
+			}
+		});
 
 		return layoutImageView;
 	}
@@ -163,18 +228,130 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private TextView getContentStyleTextView(String text) {
 
-		final LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-
-		TextView tv = new TextView(this);
-		tv.setLayoutParams(params);
-		tv.setGravity(Gravity.LEFT);
-		tv.setTextColor(getResources().getColor(R.color.drak_grey));
-		tv.setSelected(true);
-		tv.setTextSize(14);// dp值
-
+		// textIsSelectable在低版本中只能由布局设置
+		TextView tv = (TextView) View.inflate(this,
+				R.layout.textview_summary_body_content_fragment, null);
 		tv.setText(text);
 
 		return tv;
 	}
+
+	/**
+	 * 默认的图片点击监听器
+	 */
+	private class ImageClickListener implements OnClickListener {
+
+		/**
+		 * 消息对话框
+		 */
+		protected final AlertDialog alertDialog;
+
+		/**
+		 * 图片链接
+		 */
+		protected final String imgLink;
+
+		/**
+		 * 初始化
+		 * 
+		 * @param alertDialog
+		 *            消息对话框
+		 * @param imgLink
+		 *            图片链接
+		 */
+		protected ImageClickListener(AlertDialog alertDialog, String imgLink) {
+			this.alertDialog = alertDialog;
+			this.imgLink = imgLink;
+		}
+
+		/**
+		 * 默认取消对话框
+		 */
+		@Override
+		public void onClick(View v) {
+			alertDialog.dismiss();
+		}
+
+	}
+
+	/**
+	 * 查看大图的点击监听器
+	 */
+	private class ViewImageOnClickListener extends ImageClickListener {
+
+		protected ViewImageOnClickListener(AlertDialog alertDialog,
+				String imgLink) {
+			super(alertDialog, imgLink);
+		}
+
+		@Override
+		public void onClick(View v) {
+
+			String localPathString = BitmapCacheUtils
+					.url2LocalCachePath(imgLink);
+
+			// 调用其他程序打开图片
+			if (localPathString != null) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.parse("file://" + localPathString),
+						"image/*");
+				startActivity(intent);
+			}
+
+			super.onClick(v);
+
+		}
+
+	}
+
+	/**
+	 * 重新加载图片的点击监听器
+	 */
+	private class ReloadImageOnClickListener extends ImageClickListener {
+
+		/**
+		 * 显示图片的空间
+		 */
+		protected final LayoutImageView layoutImageView;
+
+		protected ReloadImageOnClickListener(AlertDialog alertDialog,
+				String imgLink, LayoutImageView layoutImageView) {
+			super(alertDialog, imgLink);
+			this.layoutImageView = layoutImageView;
+		}
+
+		@Override
+		public void onClick(View v) {
+			BitmapCacheUtils.removeCacheFromLocal(imgLink);// 清除本地缓存
+			BitmapCacheUtils.removeCacheFromMem(imgLink);// 清除内存缓存
+			BitmapCacheUtils.displayBitmap(SummaryBodyActivity.this,
+					layoutImageView, imgLink, null);
+
+			super.onClick(v);
+		}
+	}
+
+	/**
+	 * 复制图像的点击监听器
+	 */
+	private class CopyImgLinkOnClickListener extends ImageClickListener {
+
+		protected CopyImgLinkOnClickListener(AlertDialog alertDialog,
+				String imgLink) {
+			super(alertDialog, imgLink);
+		}
+
+		@Override
+		public void onClick(View v) {// 复制图片链接
+
+			ClipboardManager clipManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+			clipManager.setText(imgLink);
+
+			Toast.makeText(SummaryBodyActivity.this, "复制成功", Toast.LENGTH_SHORT)
+					.show();
+
+			super.onClick(v);
+		}
+	}
+
 }

@@ -66,6 +66,7 @@ public class BitmapCompressUtils {
 
 		return defaultSampleSize;
 	}
+	
 
 	// ================================ 操作InputStream对象 ========================
 
@@ -205,4 +206,5 @@ public class BitmapCompressUtils {
 
 		return bitmap;
 	}
+	
 }

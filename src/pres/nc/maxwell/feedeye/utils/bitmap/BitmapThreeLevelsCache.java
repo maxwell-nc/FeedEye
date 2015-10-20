@@ -242,7 +242,7 @@ public class BitmapThreeLevelsCache {
 	 */
 	private boolean getLocalCache() {
 
-		File cacheFile = getCacheFile();
+		File cacheFile = getCacheFile(mURL);
 
 		if (cacheFile.exists()) {// 本地缓存存在
 
@@ -300,7 +300,7 @@ public class BitmapThreeLevelsCache {
 
 		});
 
-		mHttpUtils.connect(mURL, 5000, 25000, mThreadPool);
+		mHttpUtils.connect(mURL, 15000, 60000, mThreadPool);
 
 	}
 
@@ -311,7 +311,7 @@ public class BitmapThreeLevelsCache {
 	 */
 	private BufferedOutputStream getBufferedOutputStream() {
 
-		File file = getCacheFile();
+		File file = getCacheFile(mURL);
 
 		// 创建用于保存图片的输出流
 		BufferedOutputStream bufferedOutputStream = null;
@@ -331,14 +331,14 @@ public class BitmapThreeLevelsCache {
 	 * 
 	 * @return 要操作的File对象
 	 */
-	private File getCacheFile() {
+	public static File getCacheFile(String url) {
 
 		// 判断SD卡容量,未实现
 		// File sdFile = Environment.getExternalStorageDirectory();
 		// long freeSpace = sdFile.getFreeSpace();
 
 		// 以URL的MD5值为文件名
-		String fileName = MD5Utils.getMD5String(mURL);
+		String fileName = MD5Utils.getMD5String(url);
 
 		File file = IOUtils.getFileInSdcard("/FeedEye/ImgCache", fileName);
 

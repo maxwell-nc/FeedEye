@@ -111,10 +111,10 @@ public class IOUtils {
 				.getAbsolutePath() + dir;
 
 		// 如果文件夹不存在, 创建文件夹
-		File errLogFile = new File(savePath);
+		File dirFile = new File(savePath);
 
-		if (!errLogFile.exists()) {
-			errLogFile.mkdirs();
+		if (!dirFile.exists()) {
+			dirFile.mkdirs();
 		}
 
 		File file = new File(savePath, filename);
@@ -144,16 +144,17 @@ public class IOUtils {
 		}
 
 	}
-	
-	
+
 	/**
 	 * 转换URI为绝对路径
-	 * @param activity Activity对象
-	 * @param uri Uri
+	 * 
+	 * @param activity
+	 *            Activity对象
+	 * @param uri
+	 *            Uri
 	 * @return 绝对路径文本
 	 */
-	public static String getAbsolutePathFromURI(Activity activity,
-			Uri uri) {
+	public static String getAbsolutePathFromURI(Activity activity, Uri uri) {
 		String absPath = null;
 		String[] projection = {MediaStore.Images.Media.DATA};
 		Cursor cursor = activity.getContentResolver().query(uri, projection,
@@ -167,5 +168,25 @@ public class IOUtils {
 		cursor.close();
 		return absPath;
 	}
-	
+
+	/**
+	 * 添加.nomeadia文件
+	 * @param dir SD卡中的目录，如"/xxx"
+	 * @return 是否成功创建
+	 */
+	public static boolean addNoMediaMarkFileInSdcard(String dir) {
+
+		File nomedia = getFileInSdcard(dir, ".nomedia");
+		if (!nomedia.exists()) {
+			try {
+				nomedia.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 }

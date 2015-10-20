@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import pres.nc.maxwell.feedeye.utils.IOUtils;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import android.app.Application;
 
@@ -26,7 +27,11 @@ public class FeedEyeApplication extends Application {
 		 */
 		Thread.currentThread().setUncaughtExceptionHandler(
 				new ExpectionHandler());
-
+		
+		//添加.nomedia文件
+		boolean ret = IOUtils.addNoMediaMarkFileInSdcard("/FeedEye/ImgCache");
+		LogUtils.e(this, ret+"-------");
+		
 		super.onCreate();
 	}
 

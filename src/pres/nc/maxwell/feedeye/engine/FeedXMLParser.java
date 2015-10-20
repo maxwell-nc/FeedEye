@@ -251,7 +251,7 @@ public class FeedXMLParser {
 
 		});
 
-		mHttpUtils.connect(mFeedUrl, 10000, 10000,
+		mHttpUtils.connect(mFeedUrl, 15000, 30000,
 				Executors.newSingleThreadExecutor());
 	}
 
@@ -441,7 +441,7 @@ public class FeedXMLParser {
 			}
 		});
 
-		mHttpUtils.connect(mFeedUrl, 15000, 15000,
+		mHttpUtils.connect(mFeedUrl, 15000, 45000,
 				Executors.newSingleThreadExecutor());
 	}
 

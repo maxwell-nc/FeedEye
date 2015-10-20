@@ -1,5 +1,6 @@
 package pres.nc.maxwell.feedeye.utils.bitmap;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,18 +50,20 @@ public class BitmapCacheUtils {
 	 *      android.graphics.Bitmap.Config, ExecutorService)
 	 */
 	public static void displayBitmapOnLayoutChange(final Context context,
-			LayoutImageView imageView, final String url, final ExecutorService threadPool) {
+			LayoutImageView imageView, final String url,
+			final ExecutorService threadPool) {
 
-		imageView.addOnLayoutChangeListener(new SupportOnLayoutChangeListener() {
-			
-			@Override
-			public void onLayoutChange(LayoutImageView thisView) {
-				displayBitmap(context, thisView, url, true, -1, -1, -1, null,
-						threadPool);
-				thisView.removeOnLayoutChangeListener(this);				
-			}
-			
-		});
+		imageView
+				.addOnLayoutChangeListener(new SupportOnLayoutChangeListener() {
+
+					@Override
+					public void onLayoutChange(LayoutImageView thisView) {
+						displayBitmap(context, thisView, url, true, -1, -1, -1,
+								null, threadPool);
+						thisView.removeOnLayoutChangeListener(this);
+					}
+
+				});
 
 	}
 
@@ -121,7 +124,7 @@ public class BitmapCacheUtils {
 		if (threadPool == null) {
 
 			if (DEFAULT_EXECUTOR_SERVICE == null) {
-				DEFAULT_EXECUTOR_SERVICE = Executors.newFixedThreadPool(10);
+				DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 			}
 			threadPool = DEFAULT_EXECUTOR_SERVICE;
 
@@ -177,11 +180,46 @@ public class BitmapCacheUtils {
 	 * @param url
 	 *            图片地址标记
 	 */
-	public static void removeCache(String url) {
+	public static void removeCacheFromMem(String url) {
 		@SuppressWarnings("unused")
 		Bitmap bitmap = BitmapLruCacheDispatcher.getInstance()
 				.getmMemoryCache().remove(url);
 		bitmap = null;// 清空缓存
+	}
+
+	/**
+	 * 从本地缓存中删除
+	 * 
+	 * @param url
+	 *            要删除的图片网址标记
+	 * @return 是否成功删除
+	 */
+	public static boolean removeCacheFromLocal(String url) {
+		File file = BitmapThreeLevelsCache.getCacheFile(url);
+
+		if (file.exists()) {// 本地缓存存在
+			return file.delete();
+		} else {
+			return false;
+		}
+
+	}
+
+	/**
+	 * 转换地址为本地cache地址
+	 * 
+	 * @param url
+	 *            图片网址
+	 * @return 文件位置
+	 */
+	public static String url2LocalCachePath(String url) {
+		File file = BitmapThreeLevelsCache.getCacheFile(url);
+
+		if (file.exists()) {// 本地缓存存在
+			return file.getAbsolutePath();
+		} else {
+			return null;
+		}
 	}
 
 }
