@@ -16,6 +16,7 @@ import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.ArrayListLoadingMoreAdapter;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog.MainThemeAlertDialogAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
@@ -277,7 +278,7 @@ public class FeedPager extends BasePager {
 	 * 利用ViewHolder优化ListView，减少findViewById的次数
 	 */
 	static class ViewHolder {
-		public ImageView mItemPic; // 图片
+		public LayoutImageView mItemPic; // 图片
 		public TextView mItemTitle; // 订阅标题
 		public TextView mItemPreview; // 订阅预览
 		public TextView mItemTime; // 时间
@@ -332,7 +333,7 @@ public class FeedPager extends BasePager {
 				// 利用ViewHolder记录子孩子View对象
 				holder = new ViewHolder();
 
-				holder.mItemPic = (ImageView) view
+				holder.mItemPic = (LayoutImageView) view
 						.findViewById(R.id.iv_item_feed_pic);// 图片
 				holder.mItemTitle = (TextView) view
 						.findViewById(R.id.tv_item_feed_title);// 标题
@@ -421,7 +422,7 @@ public class FeedPager extends BasePager {
 		}
 
 		// 使用三级缓存加载图片
-		BitmapCacheUtils.displayBitmap(mActivity, viewHolder.mItemPic,
+		BitmapCacheUtils.displayBitmapOnLayoutChange(mActivity, viewHolder.mItemPic,
 				feedItem.picURL, null);
 
 		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);

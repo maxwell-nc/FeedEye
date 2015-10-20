@@ -6,7 +6,7 @@
     android:gravity="center_vertical"
     android:paddingTop="6dp" >
 
-    <ImageView
+    <pres.nc.maxwell.feedeye.view.LayoutImageView
         android:id="@+id/iv_item_pic"
         android:layout_width="16dp"
         android:layout_height="16dp"

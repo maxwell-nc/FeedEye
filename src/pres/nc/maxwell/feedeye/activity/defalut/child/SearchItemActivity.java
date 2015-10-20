@@ -7,6 +7,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -23,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -311,7 +311,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 						R.layout.view_lv_item_result_search, null);
 				holder = new ViewHolder();
 
-				holder.pic = (ImageView) itemView
+				holder.pic = (LayoutImageView) itemView
 						.findViewById(R.id.iv_item_pic);
 				holder.title = (TextView) itemView.findViewById(R.id.tv_title);
 
@@ -319,7 +319,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 			}
 
 			// 使用三级缓存加载图片
-			BitmapCacheUtils.displayBitmap(mThisActivity, holder.pic,
+			BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity, holder.pic,
 					mResultList.get(position).picURL,null);
 
 			String title = mResultList.get(position).baseInfo.title;
@@ -367,7 +367,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 * ViewHolder
 	 */
 	static class ViewHolder {
-		ImageView pic;
+		LayoutImageView pic;
 		TextView title;
 	}
 

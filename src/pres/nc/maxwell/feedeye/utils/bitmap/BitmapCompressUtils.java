@@ -38,7 +38,7 @@ public class BitmapCompressUtils {
 	 * @return 采样大小
 	 */
 	public int AutoCalculateSampleSize(int viewHeight, int viewWidth) {
-		
+
 		mOptions.inJustDecodeBounds = true;
 
 		if (mInputStream != null) {
@@ -57,7 +57,8 @@ public class BitmapCompressUtils {
 			int heightRadio = height / viewHeight;
 			int widthRadio = width / viewWidth;
 
-			defaultSampleSize = heightRadio > widthRadio ? heightRadio
+			defaultSampleSize = heightRadio > widthRadio
+					? heightRadio
 					: widthRadio;
 		}
 
@@ -98,7 +99,8 @@ public class BitmapCompressUtils {
 		mOptions.inPreferredConfig = config;
 		mOptions.inJustDecodeBounds = false;
 
-		LogUtils.w("BitmapCompressUtils", "手动设置压缩选项，采样率为："+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "手动设置压缩选项，采样率为："
+				+ mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
 
@@ -129,7 +131,8 @@ public class BitmapCompressUtils {
 			e.printStackTrace();
 		}
 
-		LogUtils.w("BitmapCompressUtils", "自动设置压缩选项，采样率为："+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "自动设置压缩选项，采样率为："
+				+ mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory
 				.decodeStream(mInputStream, null, mOptions);
 
@@ -168,8 +171,8 @@ public class BitmapCompressUtils {
 		mOptions.inPreferredConfig = config;
 		mOptions.inJustDecodeBounds = false;
 
-
-		LogUtils.w("BitmapCompressUtils", "手动设置压缩选项，采样率为："+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "手动设置压缩选项，采样率为："
+				+ mOptions.inSampleSize);
 		Bitmap bitmap = BitmapFactory.decodeFile(mFile.getPath(), mOptions);
 
 		return bitmap;
@@ -189,11 +192,15 @@ public class BitmapCompressUtils {
 		if (mFile == null) {
 			return null;
 		}
+		LogUtils.w("BitmapCompressUtils", "需求控件高度：" + viewHeight);
+		LogUtils.w("BitmapCompressUtils", "需求控件宽度：" + viewWidth);
 
 		mOptions.inSampleSize = AutoCalculateSampleSize(viewHeight, viewWidth);
 		mOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
-		LogUtils.w("BitmapCompressUtils", "自动设置压缩选项，采样率为："+mOptions.inSampleSize);
+		LogUtils.w("BitmapCompressUtils", "自动设置压缩选项，采样率为："
+				+ mOptions.inSampleSize);
+		
 		Bitmap bitmap = BitmapFactory.decodeFile(mFile.getPath(), mOptions);
 
 		return bitmap;

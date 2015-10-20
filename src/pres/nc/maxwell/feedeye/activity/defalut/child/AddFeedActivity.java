@@ -11,6 +11,7 @@ import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -73,7 +74,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 	/**
 	 * 自定义的图标
 	 */
-	private ImageView mCustomImage;
+	private LayoutImageView mCustomImage;
 
 	/**
 	 * 自定义的图片路径
@@ -105,7 +106,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 		mTitleText = (EditText) mCustomContainerView
 				.findViewById(R.id.et_title);
 
-		mCustomImage = (ImageView) mCustomContainerView
+		mCustomImage = (LayoutImageView) mCustomContainerView
 				.findViewById(R.id.iv_pic);
 		mCustomImagePath = (TextView) mCustomContainerView
 				.findViewById(R.id.tv_pic_tips);
@@ -189,7 +190,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 						mThisActivity, uri);
 				mCustomImagePath.setText(customImagePath);
 				// 显示出来
-				BitmapCacheUtils.displayBitmap(mThisActivity, mCustomImage,
+				BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity, mCustomImage,
 						customImagePath, null);
 			}
 

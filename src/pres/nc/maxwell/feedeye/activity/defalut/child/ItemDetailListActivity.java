@@ -22,6 +22,7 @@ import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheList
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.ArrayListLoadingMoreAdapter;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
 import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
@@ -38,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -499,9 +499,9 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 */
 	static class ViewHolder {
 		TextView title;
-		ImageView previewPic1;
-		ImageView previewPic2;
-		ImageView previewPic3;
+		LayoutImageView previewPic1;
+		LayoutImageView previewPic2;
+		LayoutImageView previewPic3;
 		TextView preview;
 		TextView time;
 	}
@@ -572,11 +572,11 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				holder.title = (TextView) itemView.findViewById(R.id.tv_title);
 				holder.preview = (TextView) itemView
 						.findViewById(R.id.tv_preview);
-				holder.previewPic1 = (ImageView) itemView
+				holder.previewPic1 = (LayoutImageView) itemView
 						.findViewById(R.id.iv_preview1);
-				holder.previewPic2 = (ImageView) itemView
+				holder.previewPic2 = (LayoutImageView) itemView
 						.findViewById(R.id.iv_preview2);
-				holder.previewPic3 = (ImageView) itemView
+				holder.previewPic3 = (LayoutImageView) itemView
 						.findViewById(R.id.iv_preview3);
 				holder.time = (TextView) itemView.findViewById(R.id.tv_time);
 
@@ -596,15 +596,15 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				holder.previewPic3.setVisibility(itemCache.pic3Visibility);
 
 				if (itemCache.link1 != null) {
-					BitmapCacheUtils.displayBitmap(mThisActivity,
+					BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 							holder.previewPic1, itemCache.link1, null);
 				}
 				if (itemCache.link2 != null) {
-					BitmapCacheUtils.displayBitmap(mThisActivity,
+					BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 							holder.previewPic2, itemCache.link2, null);
 				}
 				if (itemCache.link3 != null) {
-					BitmapCacheUtils.displayBitmap(mThisActivity,
+					BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 							holder.previewPic3, itemCache.link3, null);
 				}
 
@@ -695,18 +695,18 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					holder.previewPic1.setVisibility(View.VISIBLE);
 					holder.previewPic2.setVisibility(View.INVISIBLE);// 占位
 					holder.previewPic3.setVisibility(View.INVISIBLE);// 占位
-					BitmapCacheUtils.displayBitmap(mThisActivity,
+					BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 							holder.previewPic1, imgLinks.get(0), null);
 
 					if (availableImgCount >= 2) {
 						holder.previewPic2.setVisibility(View.VISIBLE);
 						holder.previewPic3.setVisibility(View.INVISIBLE);// 占位
-						BitmapCacheUtils.displayBitmap(mThisActivity,
+						BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 								holder.previewPic2, imgLinks.get(1), null);
 
 						if (availableImgCount >= 3) {
 							holder.previewPic3.setVisibility(View.VISIBLE);
-							BitmapCacheUtils.displayBitmap(mThisActivity,
+							BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
 									holder.previewPic3, imgLinks.get(2), null);
 						}
 					}

@@ -376,10 +376,15 @@ public class BitmapThreeLevelsCache {
 	private Bitmap decodeFile(File bitmapFile) {
 		Bitmap bitmapCache = null;
 
-		// 测量ImageView布局宽高
-		mImageView.measure(0, 0);// 使用onLayoutListener会出现奇怪问题
-		int viewHeight = mImageView.getMeasuredHeight();
-		int viewWidth = mImageView.getMeasuredWidth();
+		int viewHeight = mImageView.getHeight();
+		int viewWidth = mImageView.getWidth();
+
+		if (viewHeight == 0 || viewWidth == 0 ) {
+			// 测量ImageView布局宽高
+			mImageView.measure(0, 0);
+			viewHeight = mImageView.getMeasuredHeight();
+			viewWidth = mImageView.getMeasuredWidth();
+		}
 
 		if (isAutoCompress) {// 自动压缩图片
 			bitmapCache = new BitmapCompressUtils((File) bitmapFile)

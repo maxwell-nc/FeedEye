@@ -27,7 +27,7 @@
         android:layout_below="@id/et_title"
         android:text="自定义图标" />
 
-    <ImageView
+    <pres.nc.maxwell.feedeye.view.LayoutImageView
         android:id="@+id/iv_pic"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -35,8 +35,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="25dp"
         android:scaleType="center"
-        android:src="@drawable/selector_add_bound" >
-    </ImageView>
+        android:src="@drawable/selector_add_bound" />
 
     <TextView
         android:id="@+id/tv_pic_tips"

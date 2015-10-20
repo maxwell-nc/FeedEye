@@ -7,6 +7,8 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
+import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -45,6 +47,7 @@ public class SummaryBodyActivity extends Activity {
 		TextView mHeaderTitle = (TextView) findViewById(R.id.tv_title);
 		TextView mHeaderSouceTime = (TextView) findViewById(R.id.tv_source_time);
 		TextView mHeaderLink = (TextView) findViewById(R.id.tv_link);
+		final LayoutImageView mContentImg = (LayoutImageView) findViewById(R.id.iv_pic1);
 		TextView mContentText = (TextView) findViewById(R.id.tv_content);
 
 		mHeaderTitle.setText(feedXMLContentInfo.title);
@@ -62,18 +65,25 @@ public class SummaryBodyActivity extends Activity {
 						TimeUtils.STANDARD_TIME_PATTERN);
 		mHeaderSouceTime.setText(sourceTime);
 		mHeaderLink.setText(feedXMLContentInfo.link);
-
+		final ArrayList<String> list = new ArrayList<String>();
 		if (TextUtils.isEmpty(feedXMLContentInfo.content)) {
 
 			mContentText.setText(HTTPUtils.html2Text(
-					feedXMLContentInfo.description, false, new ArrayList<String>()));
+					feedXMLContentInfo.description, false, list));
 
 		} else {
 
 			mContentText.setText(HTTPUtils.html2Text(
-					feedXMLContentInfo.content, false, new ArrayList<String>()));
+					feedXMLContentInfo.content, false, list));
 		}
 
+		if (list.size() > 0 && list.get(0) != null) {
+			BitmapCacheUtils.removeCache(list.get(0));
+
+			BitmapCacheUtils.displayBitmapOnLayoutChange(
+					SummaryBodyActivity.this, mContentImg, list.get(0), null);
+
+		}
 	}
 
 }
