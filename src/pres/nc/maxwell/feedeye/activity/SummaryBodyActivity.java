@@ -10,8 +10,9 @@ import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ImageClickListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -177,23 +178,17 @@ public class SummaryBodyActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				MainThemeLongClickDialog dialog = new MainThemeLongClickDialog(
+				MainThemeOnClickDialog dialog = new MainThemeOnClickDialog(
 						SummaryBodyActivity.this, new DialogDataAdapter() {
 
 							@Override
-							public int[] getTextViewResIds() {
-								int[] ids = {R.id.tv_link, R.id.tv_reload,
-										R.id.tv_view};
-								return ids;
+							public int[] getItemNames() {
+								int[] strings = {R.string.copy_img_link,R.string.reload,R.string.view_big_img};
+								return strings;
 							}
 
 							@Override
-							public int getLayoutViewId() {
-								return R.layout.view_long_click_content_image;
-							}
-
-							@Override
-							public OnClickListener[] getItemOnClickListener(
+							public OnClickListener[] getItemOnClickListeners(
 									final AlertDialog alertDialog) {
 
 								OnClickListener[] listeners = {
@@ -234,44 +229,6 @@ public class SummaryBodyActivity extends Activity {
 		tv.setText(text);
 
 		return tv;
-	}
-
-	/**
-	 * 默认的图片点击监听器
-	 */
-	private class ImageClickListener implements OnClickListener {
-
-		/**
-		 * 消息对话框
-		 */
-		protected final AlertDialog alertDialog;
-
-		/**
-		 * 图片链接
-		 */
-		protected final String imgLink;
-
-		/**
-		 * 初始化
-		 * 
-		 * @param alertDialog
-		 *            消息对话框
-		 * @param imgLink
-		 *            图片链接
-		 */
-		protected ImageClickListener(AlertDialog alertDialog, String imgLink) {
-			this.alertDialog = alertDialog;
-			this.imgLink = imgLink;
-		}
-
-		/**
-		 * 默认取消对话框
-		 */
-		@Override
-		public void onClick(View v) {
-			alertDialog.dismiss();
-		}
-
 	}
 
 	/**

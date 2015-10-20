@@ -14,14 +14,14 @@ import pres.nc.maxwell.feedeye.utils.SystemInfoUtils;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView;
-import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.ArrayListLoadingMoreAdapter;
+import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog.MainThemeAlertDialogAdapter;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.AlertDialogOnClickListener;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -288,7 +288,9 @@ public class FeedPager extends BasePager {
 	/**
 	 * 订阅列表的适配器
 	 */
-	class FeedPagerListViewAdapter extends ArrayListLoadingMoreAdapter<FeedItem> {
+	class FeedPagerListViewAdapter
+			extends
+				ArrayListLoadingMoreAdapter<FeedItem> {
 
 		public FeedPagerListViewAdapter(ArrayList<FeedItem> unshowList,
 				ArrayList<FeedItem> showedList, int onceShowedCount) {
@@ -422,8 +424,8 @@ public class FeedPager extends BasePager {
 		}
 
 		// 使用三级缓存加载图片
-		BitmapCacheUtils.displayBitmapOnLayoutChange(mActivity, viewHolder.mItemPic,
-				feedItem.picURL, null);
+		BitmapCacheUtils.displayBitmapOnLayoutChange(mActivity,
+				viewHolder.mItemPic, feedItem.picURL, null);
 
 		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);
 		viewHolder.mItemPreview.setText(feedItem.baseInfo.summary);
@@ -477,34 +479,26 @@ public class FeedPager extends BasePager {
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				final int position, long id) {
 
-			new MainThemeLongClickDialog(mActivity, new DialogDataAdapter() {
+			new MainThemeOnClickDialog(mActivity, new DialogDataAdapter() {
 
 				@Override
-				public int getLayoutViewId() {
-					return R.layout.view_long_click_lv_feed;
+				public int[] getItemNames() {
+					int[] strings = {R.string.modify_title,
+							R.string.delete_feed, R.string.cancel};
+					return strings;
 				}
 
 				@Override
-				public int[] getTextViewResIds() {
-					int[] ids = {R.id.tv_modify, R.id.tv_delete, R.id.tv_cancel};
-					return ids;
-				}
-
-				@Override
-				public OnClickListener[] getItemOnClickListener(
+				public OnClickListener[] getItemOnClickListeners(
 						final AlertDialog alertDialog) {
 
 					OnClickListener[] listeners = {
 							new ModifyClickListener(position, alertDialog),// 修改标题
 							new DeleteClickListener(position, alertDialog), // 删除
-							new OnClickListener() {// 取消
-
-								@Override
-								public void onClick(View v) {
-									alertDialog.dismiss();// 对话框关闭
-								}
-
-							}};
+							new AlertDialogOnClickListener(position,
+									alertDialog) {
+							}// 取消,默认实现
+					};
 
 					return listeners;
 				}
@@ -525,7 +519,7 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				alertDialog.dismiss();// 对话框关闭
+				super.onClick(v);
 
 				// 显示修改的对话框
 				new MainThemeAlertDialog(mActivity)
@@ -631,7 +625,7 @@ public class FeedPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				alertDialog.dismiss();// 对话框关闭
+				super.onClick(v);
 
 				// 再次确认删除
 				new MainThemeAlertDialog(mActivity)

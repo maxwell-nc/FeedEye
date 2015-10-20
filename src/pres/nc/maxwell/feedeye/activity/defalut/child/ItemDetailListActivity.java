@@ -23,9 +23,9 @@ import pres.nc.maxwell.feedeye.view.DragRefreshListView;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.ArrayListLoadingMoreAdapter;
 import pres.nc.maxwell.feedeye.view.DragRefreshListView.OnRefreshListener;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.AlertDialogOnClickListener;
-import pres.nc.maxwell.feedeye.view.MainThemeLongClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.AlertDialogOnClickListener;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -337,7 +337,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 							mListViewAdapter.insertMoreItem();
 
 							// 更新并清空缓存
-							mListViewAdapter.notifyDataSetChangedAndClearCache();
+							mListViewAdapter
+									.notifyDataSetChangedAndClearCache();
 
 							// 设置本地缓存,最新的部分（旧的舍弃）
 							XMLCacheUtils
@@ -517,7 +518,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 * 清空缓存
 		 */
 		public void notifyDataSetChangedAndClearCache() {
-			
+
 			listItemCaches.clear();// 清空缓存
 			super.notifyDataSetChanged();
 		}
@@ -701,13 +702,15 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 					if (availableImgCount >= 2) {
 						holder.previewPic2.setVisibility(View.VISIBLE);
 						holder.previewPic3.setVisibility(View.INVISIBLE);// 占位
-						BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
-								holder.previewPic2, imgLinks.get(1), null);
+						BitmapCacheUtils.displayBitmapOnLayoutChange(
+								mThisActivity, holder.previewPic2,
+								imgLinks.get(1), null);
 
 						if (availableImgCount >= 3) {
 							holder.previewPic3.setVisibility(View.VISIBLE);
-							BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
-									holder.previewPic3, imgLinks.get(2), null);
+							BitmapCacheUtils.displayBitmapOnLayoutChange(
+									mThisActivity, holder.previewPic3,
+									imgLinks.get(2), null);
 						}
 					}
 
@@ -801,37 +804,29 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				final int position, long id) {
 
-			new MainThemeLongClickDialog(mThisActivity,
-					new DialogDataAdapter() {
+			new MainThemeOnClickDialog(mThisActivity, new DialogDataAdapter() {
 
-						@Override
-						public int getLayoutViewId() {
-							return R.layout.view_long_click_lv_detail;
-						}
+				@Override
+				public int[] getItemNames() {
+					int[] strings = {R.string.favor, R.string.share_to_friends,
+							R.string.copy_link};
+					return strings;
+				}
 
-						@Override
-						public int[] getTextViewResIds() {
-							int[] ids = {R.id.tv_favor, R.id.tv_share,
-									R.id.tv_copy};
-							return ids;
-						}
+				@Override
+				public OnClickListener[] getItemOnClickListeners(
+						final AlertDialog alertDialog) {
 
-						@Override
-						public OnClickListener[] getItemOnClickListener(
-								final AlertDialog alertDialog) {
+					OnClickListener[] listeners = {
+							new FavorOnClickListener(position, alertDialog),// 收藏
+							new ShareOnClickListener(position, alertDialog),// 分享
+							new CopyLinkOnClickListener(position, alertDialog)// 复制
+					};
 
-							OnClickListener[] listeners = {
-									new FavorOnClickListener(position,
-											alertDialog),// 收藏
-									new ShareOnClickListener(position,
-											alertDialog),// 分享
-									new CopyLinkOnClickListener(position,
-											alertDialog)// 复制
-							};
+					return listeners;
+				}
 
-							return listeners;
-						}
-					}).show();
+			}).show();
 
 			return true;
 		}
@@ -898,9 +893,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				// 获取标题
 				String msgTitle = mContentInfoShowedList.get(realPosition).title;
+				
 				// 获取摘要
-				String msgSummary = mContentInfoShowedList.get(realPosition).description
-						.substring(0, 120);
+				String msgSummary = mContentInfoShowedList.get(realPosition).description;
+				if (msgSummary.length() > 120) {
+					msgSummary = msgSummary.substring(0, 120);
+				}
 
 				msgSummary = HTTPUtils.html2Text(msgSummary, true, null);
 				// 获取链接
