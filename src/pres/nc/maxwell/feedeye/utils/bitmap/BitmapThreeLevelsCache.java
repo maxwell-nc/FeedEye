@@ -300,7 +300,7 @@ public class BitmapThreeLevelsCache {
 
 		});
 
-		mHttpUtils.connect(mURL, 10000, 10000, mThreadPool);
+		mHttpUtils.connect(mURL, 5000, 25000, mThreadPool);
 
 	}
 

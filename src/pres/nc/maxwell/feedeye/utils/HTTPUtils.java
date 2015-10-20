@@ -112,12 +112,12 @@ public class HTTPUtils {
 	 */
 	public void connect(String url, int connectTimeout, int readTimeout,
 			ExecutorService threadPool) {
-		
+
 		mThreadPool = threadPool;
 		mCurrentTask = new ConnectTask();
 		mCurrentTask.executeOnExecutor(threadPool, new ConnectInfo(url,
 				connectTimeout, readTimeout));
-		
+
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class HTTPUtils {
 			try {
 
 				String fixUrl = params[0].url;
-				
+
 				if (fixUrl.startsWith("https://")) {
 					// 信任所有HTTPS连接
 					HttpsURLConnection
@@ -162,17 +162,17 @@ public class HTTPUtils {
 							.openConnection();
 				} else {// 非HTTPS
 					connection = null;
-					
+
 					if (fixUrl.startsWith("//")) {// 如： //xxx.com/xx
 						fixUrl = "http:" + fixUrl;
 					}
-					
+
 					connection = (HttpURLConnection) new URL(fixUrl)
 							.openConnection();
 				}
 
 				LogUtils.i("HTTPUtils", "Link:" + fixUrl);
-				
+
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
 
@@ -287,5 +287,36 @@ public class HTTPUtils {
 		}
 
 		return text;
+	}
+
+	public static String[] html2Texts(String html,
+			final ArrayList<String> imgLinks) {
+
+		String longText = null;
+
+		if (imgLinks != null) {
+
+			longText = Html.fromHtml(html, new ImageGetter() {
+
+				public Drawable getDrawable(String source) {
+
+					if ("src".equals(source) || TextUtils.isEmpty(source)) {
+						imgLinks.add("无法识别的图片地址");
+					} else {
+						imgLinks.add(source);
+					}
+
+					return null;
+				}
+
+			}, null).toString();
+
+		} else {
+			longText = Html.fromHtml(html).toString();
+		}
+
+		String[] textFragments = longText.split("\ufffc");
+
+		return textFragments;
 	}
 }

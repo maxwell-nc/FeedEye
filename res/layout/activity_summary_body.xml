@@ -25,6 +25,7 @@
         android:layout_weight="1" >
 
         <LinearLayout
+            android:id="@+id/ll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
@@ -73,24 +74,7 @@
                 android:layout_marginTop="8dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
-
-            <pres.nc.maxwell.feedeye.view.LayoutImageView
-                android:id="@+id/iv_pic1"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerInside" />
-            
-            <TextView
-                android:id="@+id/tv_content"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="正文内容"
-                android:textColor="@color/drak_grey"
-                android:textIsSelectable="true"
-                android:textSize="14sp" >
-            </TextView>
+           
         </LinearLayout>
     </ScrollView>
 
