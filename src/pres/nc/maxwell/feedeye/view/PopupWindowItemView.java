@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 /**
  * PopWindow上的一个按钮
+ * 
+ * @see PopupWindowUtils
  */
 public class PopupWindowItemView extends LinearLayout {
 

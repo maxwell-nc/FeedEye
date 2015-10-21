@@ -866,7 +866,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				// 获取链接
 				String link = mContentInfoShowedList.get(realPosition).link;
 
-				SystemUtils.copyTextToClipBoard(mThisActivity,link);
+				SystemUtils.copyTextToClipBoard(mThisActivity, link);
 
 				alertDialog.dismiss();// 对话框关闭
 			}
@@ -888,7 +888,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				// 获取标题
 				String msgTitle = mContentInfoShowedList.get(realPosition).title;
-				
+
 				// 获取摘要
 				String msgSummary = mContentInfoShowedList.get(realPosition).description;
 				if (msgSummary.length() > 120) {
@@ -899,13 +899,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				// 获取链接
 				String link = mContentInfoShowedList.get(realPosition).link;
 
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.SEND");
-				intent.addCategory(Intent.CATEGORY_DEFAULT);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, msgTitle + ":\n"
-						+ msgSummary + "...\n" + link);
-				mThisActivity.startActivity(intent);
+				SystemUtils.startShareIntentActivity(mThisActivity, msgTitle
+						+ ":\n" + msgSummary + "...\n" + link);
 
 				alertDialog.dismiss();// 对话框关闭
 			}

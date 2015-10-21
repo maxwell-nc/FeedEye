@@ -22,16 +22,14 @@ import pres.nc.maxwell.feedeye.view.MainThemeAlertDialog.MainThemeAlertDialogAda
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.AlertDialogOnClickListener;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.PopupWindowUtils;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -765,44 +763,26 @@ public class FeedPager extends BasePager {
 		@Override
 		public void onClick(View v) {
 
-			if (closePopupWindow()) {
-				mPopupWindow.dismiss();
+			if (PopupWindowUtils.tryToClosePopupWindow(mPopupWindow)) {
 				return;
 			}
 
-			View popupView = View.inflate(mActivity,
-					R.layout.popup_window_add_feed, null);
-
-			// 测量宽高
-			popupView.measure(0, 0);
-			int popupViewWidth = popupView.getMeasuredWidth();
-			int popupViewHeight = popupView.getMeasuredHeight();
-
-			mPopupWindow = new PopupWindow(popupView, popupViewWidth,
-					popupViewHeight);
-
-			// 透明背景
-			mPopupWindow.setBackgroundDrawable(new ColorDrawable(
-					Color.TRANSPARENT));
-
-			// 设置动画
-			mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-
-			// 设置焦点
-			mPopupWindow.setFocusable(true);
+			PopupWindowUtils popupWindowUtils = new PopupWindowUtils(mActivity);
+			mPopupWindow = popupWindowUtils
+					.newPopupWindowInstance(R.layout.popup_window_add_feed);
 
 			// 显示
-			mPopupWindow.showAtLocation(mContainer, Gravity.TOP + Gravity.LEFT,
-					(int) mFuncButtonRight.getRight() - popupViewWidth,
-					(int) (mFuncButtonRight.getBottom() + SystemUtils
-							.getStatusBarHeight(mActivity)));
+			popupWindowUtils.showNearView(mContainer, mFuncButtonRight);
 
 			// 添加订阅
-			popupView.findViewById(R.id.pwiv_add).setOnClickListener(
-					new OnClickListener() {
+			popupWindowUtils.popupView.findViewById(R.id.pwiv_add)
+					.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
+
+							PopupWindowUtils
+									.tryToClosePopupWindow(mPopupWindow);
 
 							addNewFeedItem();
 
@@ -811,53 +791,42 @@ public class FeedPager extends BasePager {
 					});
 
 			// 分享应用
-			popupView.findViewById(R.id.pwiv_share).setOnClickListener(
-					new OnClickListener() {
+			popupWindowUtils.popupView.findViewById(R.id.pwiv_share)
+					.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
-							// 分享
-							Intent intent = new Intent();
-							intent.setAction("android.intent.action.SEND");
-							intent.addCategory(Intent.CATEGORY_DEFAULT);
-							intent.setType("text/plain");
-							intent.putExtra(Intent.EXTRA_TEXT,
-									"我发现了一个好玩的应用，他的名字叫做FeedEye，赶紧来下载吧！地址是：https://github.com/maxwell-nc/FeedEye");
-							mActivity.startActivity(intent);
 
-							closePopupWindow();
+							PopupWindowUtils
+									.tryToClosePopupWindow(mPopupWindow);
+
+							SystemUtils
+									.startShareIntentActivity(mActivity,
+											"我发现了一个好玩的应用，他的名字叫做FeedEye，赶紧来下载吧！地址是：https://github.com/maxwell-nc/FeedEye");
+
 						}
 					});
 
 			// 帮助和反馈
-			popupView.findViewById(R.id.pwiv_help).setOnClickListener(
-					new OnClickListener() {
+			popupWindowUtils.popupView.findViewById(R.id.pwiv_help)
+					.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
+
+							PopupWindowUtils
+									.tryToClosePopupWindow(mPopupWindow);
+
 							// 打开项目页面
 							Intent intent = new Intent(
 									Intent.ACTION_VIEW,
 									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
 							mActivity.startActivity(intent);
-							closePopupWindow();
+
 						}
 					});
 
 		}
-	}
-
-	/**
-	 * 关闭popupWindow
-	 * 
-	 * @return 是否成功关闭
-	 */
-	private boolean closePopupWindow() {
-		if (mPopupWindow != null && mPopupWindow.isShowing()) {
-			mPopupWindow.dismiss();
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -866,8 +835,6 @@ public class FeedPager extends BasePager {
 	 * @see MainActivity#onActivityResult
 	 */
 	private void addNewFeedItem() {
-
-		closePopupWindow();
 
 		Intent intent = new Intent(mActivity, AddFeedActivity.class);
 

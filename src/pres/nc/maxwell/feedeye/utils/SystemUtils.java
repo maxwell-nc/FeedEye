@@ -1,6 +1,8 @@
 package pres.nc.maxwell.feedeye.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.ClipboardManager;
 import android.widget.Toast;
 
@@ -10,6 +12,20 @@ import android.widget.Toast;
 @SuppressWarnings("deprecation")
 public class SystemUtils {
 
+	/**
+	 * 打开发送意图的
+	 * @param activity 用于启动的Activity
+	 * @param text 发送的文本
+	 */
+	public static void startShareIntentActivity(Activity activity, String text){
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_SEND);
+		intent.addCategory(Intent.CATEGORY_DEFAULT);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT,text);
+		activity.startActivity(intent);
+	}
+	
 	/**
 	 * 复制文本到粘贴板
 	 * @param text 文本

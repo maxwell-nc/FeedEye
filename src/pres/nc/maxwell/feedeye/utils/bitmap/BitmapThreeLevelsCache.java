@@ -12,7 +12,6 @@ import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.MD5Utils;
-import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCompressUtils;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 

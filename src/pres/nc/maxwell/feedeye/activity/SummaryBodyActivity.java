@@ -12,7 +12,9 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
+import pres.nc.maxwell.feedeye.view.PopupWindowUtils;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
+import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ExtraCustomViewAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ImageClickListener;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,9 +25,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -64,6 +69,31 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private Activity mThisActivity;
 
+	/**
+	 * 标题容器
+	 */
+	private RelativeLayout mBarContainer;
+
+	/**
+	 * 调整字体大小按钮
+	 */
+	private ImageView mBarTextSize;
+
+	/**
+	 * 全屏按钮
+	 */
+	private ImageView mBarFullScreen;
+
+	/**
+	 * 更多选项按钮
+	 */
+	private ImageView mBarMoreOption;
+
+	/**
+	 * 正文TextView集合
+	 */
+	private ArrayList<TextView> mContentTextViews;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -74,6 +104,27 @@ public class SummaryBodyActivity extends Activity {
 		initData();
 	}
 
+	@Override
+	protected void onDestroy() {
+		// 中断操作
+		BitmapCacheUtils.shutdownDefalutThreadPool();
+		super.onDestroy();
+	}
+
+	@Override
+	public void onBackPressed() {
+
+		// 检查是否全屏，是则退出全屏不退出Activity
+		if (mBarContainer != null) {
+			if (mBarContainer.getVisibility() == View.GONE) {
+				mBarContainer.setVisibility(View.VISIBLE);
+				return;
+			}
+		}
+
+		super.onBackPressed();
+	}
+
 	/**
 	 * 初始化View
 	 */
@@ -81,6 +132,15 @@ public class SummaryBodyActivity extends Activity {
 
 		mThisActivity = this;
 
+		// 标题栏部分
+		mBarContainer = (RelativeLayout) findViewById(R.id.rl_bar);
+		mBarTextSize = (ImageView) mBarContainer
+				.findViewById(R.id.iv_text_size);
+		mBarFullScreen = (ImageView) mBarContainer
+				.findViewById(R.id.iv_fullscreen);
+		mBarMoreOption = (ImageView) mBarContainer.findViewById(R.id.iv_more);
+
+		// 正文部分
 		mBodyWrapper = (ScrollView) findViewById(R.id.sv_wrapper);
 		mBodyContainer = (LinearLayout) mBodyWrapper
 				.findViewById(R.id.ll_container);
@@ -130,6 +190,7 @@ public class SummaryBodyActivity extends Activity {
 		mHeaderTitle.setOnClickListener(listener);
 		mHeaderSouceTime.setOnClickListener(listener);
 		mHeaderLink.setOnClickListener(listener);
+		mBodyContainer.setOnClickListener(listener);
 
 		String[] texts;// 存放各段文本
 		final ArrayList<String> imgList = new ArrayList<String>();// 存放图片链接的集合
@@ -168,7 +229,259 @@ public class SummaryBodyActivity extends Activity {
 
 		}
 
+		// 设置全屏点击监听
+		mBarFullScreen.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mBarContainer.setVisibility(View.GONE);
+			}
+
+		});
+
+		// 设置字体改变点击监听
+		mBarTextSize.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				MainThemeOnClickDialog dialog = new MainThemeOnClickDialog(
+						mThisActivity, new DialogDataAdapter() {
+
+							@Override
+							public int[] getItemNames() {
+								int[] strings = {R.string.little_text_size,
+										R.string.middle_text_size,
+										R.string.large_text_size};
+								return strings;
+							}
+
+							@Override
+							public OnClickListener[] getItemOnClickListeners(
+									final AlertDialog alertDialog) {
+								OnClickListener[] listeners = {
+										new OnClickListener() {
+
+											@Override
+											public void onClick(View v) {// 小号字体14sp
+												setTextSize(14);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 中号字体24sp
+
+											@Override
+											public void onClick(View v) {
+												setTextSize(24);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 大号字体32sp
+
+											@Override
+											public void onClick(View v) {
+												setTextSize(32);
+												alertDialog.dismiss();
+											}
+										}};
+								return listeners;
+							}
+
+						});
+
+				dialog.setExtraCustomViewAdapter(new ExtraCustomViewAdapter() {
+
+					/**
+					 * 显示TextView字体大小
+					 * 
+					 * @param sizeText
+					 *            显示字体大小的TextView
+					 * @param increase
+					 *            在原来的大小上的增量
+					 * @return 显示的sp大小
+					 */
+					public int showTextViewTextSize(TextView sizeText,
+							int increase) {
+
+						float pxSize = mContentTextViews.get(0).getTextSize();
+						// 转换为sp
+						int spSize = DensityUtils.px2sp(mThisActivity, pxSize)
+								+ increase;
+						sizeText.setText(spSize + "sp");
+
+						return spSize;
+					}
+
+					@Override
+					public View getExtraCustomFooterView() {
+
+						// 添加手动设置的字体View
+						LinearLayout view = (LinearLayout) View.inflate(
+								mThisActivity,
+								R.layout.view_extra_custom_footer_text_size,
+								null);
+
+						ImageView addBtn = (ImageView) view
+								.findViewById(R.id.iv_add);
+						ImageView descBtn = (ImageView) view
+								.findViewById(R.id.iv_desc);
+						final TextView sizeText = (TextView) view
+								.findViewById(R.id.tv_size);
+
+						// 显示当前的字体大小
+						showTextViewTextSize(sizeText, 0);
+
+						addBtn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								setTextSize(showTextViewTextSize(sizeText, 1));
+							}
+
+						});
+
+						descBtn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								setTextSize(showTextViewTextSize(sizeText, -1));
+							}
+
+						});
+
+						return view;
+
+					}
+				});
+
+				dialog.show();
+
+			}
+
+		});
+
+		// 设置更多选项
+		mBarMoreOption.setOnClickListener(new OnClickListener() {
+
+			private PopupWindow mPopupWindow;
+
+			@Override
+			public void onClick(View v) {
+
+				if (PopupWindowUtils.tryToClosePopupWindow(mPopupWindow)) {
+					return;
+				}
+
+				PopupWindowUtils popupWindowUtils = new PopupWindowUtils(
+						mThisActivity);
+				mPopupWindow = popupWindowUtils
+						.newPopupWindowInstance(R.layout.popup_window_summary_body_more_option);
+
+				// 显示
+				popupWindowUtils.showNearView(mBarContainer, mBarMoreOption);
+
+				// 复制链接点击监听
+				popupWindowUtils.popupView.findViewById(R.id.pwiv_link)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								PopupWindowUtils
+										.tryToClosePopupWindow(mPopupWindow);
+
+								SystemUtils.copyTextToClipBoard(mThisActivity,
+										mHeaderLink.getText().toString());
+
+							}
+
+						});
+
+				// 收藏点击监听
+				popupWindowUtils.popupView.findViewById(R.id.pwiv_favor)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								// TODO:收藏
+
+							}
+
+						});
+
+				// 分享点击监听
+				popupWindowUtils.popupView.findViewById(R.id.pwiv_share)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								PopupWindowUtils
+										.tryToClosePopupWindow(mPopupWindow);
+
+								String text = mHeaderTitle.getText().toString()
+										+ ":\n"
+										+ mHeaderLink.getText().toString();
+								SystemUtils.startShareIntentActivity(
+										mThisActivity, text);
+
+							}
+
+						});
+
+				// 在浏览器中查看点击监听
+				popupWindowUtils.popupView.findViewById(R.id.pwiv_browser)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								PopupWindowUtils
+										.tryToClosePopupWindow(mPopupWindow);
+								
+								//打开浏览器
+								Intent intent = new Intent(Intent.ACTION_VIEW);
+								Uri uri = Uri.parse(mHeaderLink.getText()
+										.toString());// 网址
+								intent.setData(uri);
+								startActivity(intent);
+								
+							}
+
+						});
+
+				// 查看原文点击监听
+				popupWindowUtils.popupView.findViewById(R.id.pwiv_origin)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								// TODO:
+
+							}
+
+						});
+
+			}
+
+		});
+
 	}
+
+	/**
+	 * 设置正文字体大小
+	 * 
+	 * @param spValue
+	 *            字体sp值
+	 */
+	private void setTextSize(float spValue) {
+
+		for (TextView tv : mContentTextViews) {
+			tv.setTextSize(spValue);
+		}
+
+	}
+
 	/**
 	 * 获得正文样式的LayoutImageView
 	 * 
@@ -238,8 +551,15 @@ public class SummaryBodyActivity extends Activity {
 
 		// textIsSelectable在低版本中只能由布局设置
 		TextView tv = (TextView) View.inflate(this,
-				R.layout.textview_summary_body_content_fragment, null);
+				R.layout.view_summary_body_content, null);
 		tv.setText(text);
+
+		if (mContentTextViews == null) {
+			mContentTextViews = new ArrayList<TextView>();
+		}
+
+		// 记录下来
+		mContentTextViews.add(tv);
 
 		return tv;
 	}

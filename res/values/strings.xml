@@ -21,5 +21,8 @@
     <string name="reload">重新加载</string>
     <string name="view_big_img">查看大图</string>
     <string name="copy_title">复制标题</string>
+    <string name="little_text_size">小号字体(14sp)</string>
+    <string name="middle_text_size">中号字体(24sp)</string>
+    <string name="large_text_size">大号字体(32sp)</string>
 
 </resources>

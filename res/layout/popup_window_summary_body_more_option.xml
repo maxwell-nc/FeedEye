@@ -8,11 +8,18 @@
     android:padding="1dp" >
 
     <pres.nc.maxwell.feedeye.view.PopupWindowItemView
-        android:id="@+id/pwiv_add"
+        android:id="@+id/pwiv_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        maxwell-nc:src="@drawable/btn_title_add"
-        maxwell-nc:text="添加新订阅" />
+        maxwell-nc:src="@drawable/btn_copy_link"
+        maxwell-nc:text="复制链接" />
+
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_favor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        maxwell-nc:src="@drawable/btn_favor"
+        maxwell-nc:text="收藏文章" />
 
     <pres.nc.maxwell.feedeye.view.PopupWindowItemView
         android:id="@+id/pwiv_share"
@@ -22,10 +29,17 @@
         maxwell-nc:text="分享给好友" />
 
     <pres.nc.maxwell.feedeye.view.PopupWindowItemView
-        android:id="@+id/pwiv_help"
+        android:id="@+id/pwiv_browser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        maxwell-nc:src="@drawable/btn_title_feedback"
-        maxwell-nc:text="帮助及反馈" />
+        maxwell-nc:src="@drawable/btn_browser"
+        maxwell-nc:text="在浏览器打开" />
+
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_origin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        maxwell-nc:src="@drawable/btn_original_content"
+        maxwell-nc:text="查看原文" />
 
 </LinearLayout>

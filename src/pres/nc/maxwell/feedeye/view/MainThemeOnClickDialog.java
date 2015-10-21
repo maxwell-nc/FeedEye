@@ -18,38 +18,24 @@ import android.widget.TextView;
 public class MainThemeOnClickDialog {
 
 	/**
-	 * 数据适配器
-	 */
-	public interface DialogDataAdapter {
-
-		/**
-		 * 获得条目的名字数组
-		 * 
-		 * @return 条目的名字数组
-		 */
-		public int[] getItemNames();
-
-		/**
-		 * 获取每个条目的点击监听器数组
-		 * 
-		 * @param alertDialog
-		 *            当前显示的对话框
-		 * @return 每个条目的点击监听器数组
-		 */
-		public OnClickListener[] getItemOnClickListeners(
-				final AlertDialog alertDialog);
-
-	}
-
-	/**
 	 * 依附的Activity
 	 */
 	private Activity mActivity;
 
 	/**
-	 * 数据适配器
+	 * 基本数据适配器
 	 */
 	private DialogDataAdapter mAdapter;
+
+	/**
+	 * 额外的自定义View数据适配器
+	 */
+	private ExtraCustomViewAdapter mCustomViewAdapter;
+
+	/**
+	 * 绘制条目的监听器
+	 */
+	private OnDrawItemsListener onDrawItemsListener;
 
 	/**
 	 * 创建新的对话框，必须手动调用show()方法才显示
@@ -63,6 +49,26 @@ public class MainThemeOnClickDialog {
 	public MainThemeOnClickDialog(Activity activity, DialogDataAdapter adapter) {
 		this.mActivity = activity;
 		this.mAdapter = adapter;
+	}
+
+	/**
+	 * 设置绘制条目监听器
+	 * 
+	 * @param listener
+	 *            监听器
+	 */
+	public void setOnDrawItemListener(OnDrawItemsListener listener) {
+		this.onDrawItemsListener = listener;
+	}
+
+	/**
+	 * 设置额外的自定义View数据适配器
+	 * 
+	 * @param adapter
+	 *            数据适配器
+	 */
+	public void setExtraCustomViewAdapter(ExtraCustomViewAdapter adapter) {
+		this.mCustomViewAdapter = adapter;
 	}
 
 	/**
@@ -90,16 +96,29 @@ public class MainThemeOnClickDialog {
 					false);
 			item.setText(mActivity.getString(mAdapter.getItemNames()[i]));
 
+			// 检查监听器
+			if (onDrawItemsListener != null) {
+				onDrawItemsListener.onDrawItems(item);
+			}
+
 			items.add(item);// 添加到TextView集合
 			wrapper.addView(item);
 
-			if (i != itemCount - 1) {// 最后一个不添加下划线
+			// 最后一个不添加下划线
+			if (i != itemCount - 1
+					|| (mCustomViewAdapter != null && i == itemCount - 1)) {
 				View hrLine = inflater.inflate(
 						R.layout.view_main_theme_onclick_dialog_hr_line,
 						wrapper, false);
 
 				wrapper.addView(hrLine);
 			}
+
+		}
+
+		// 添加底部自定义view
+		if (mCustomViewAdapter != null) {
+			wrapper.addView(mCustomViewAdapter.getExtraCustomFooterView());
 		}
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
@@ -113,6 +132,56 @@ public class MainThemeOnClickDialog {
 		for (int i = 0; i < listeners.length; i++) {
 			items.get(i).setOnClickListener(listeners[i]);
 		}
+
+	}
+
+	/**
+	 * 额外的自定义View数据适配器
+	 */
+	public interface ExtraCustomViewAdapter {
+
+		/**
+		 * 获取额外的自定义View,添加在尾部
+		 * 
+		 * @return 自定义的View
+		 */
+		public View getExtraCustomFooterView();
+	}
+
+	/**
+	 * 绘制条目的监听器
+	 */
+	public interface OnDrawItemsListener {
+
+		/**
+		 * 绘制条目中
+		 * 
+		 * @param item
+		 *            正在绘制的TextView
+		 */
+		public void onDrawItems(TextView item);
+	}
+
+	/**
+	 * 数据适配器
+	 */
+	public interface DialogDataAdapter {
+
+		/**
+		 * 获得条目的名字数组
+		 * 
+		 * @return 条目的名字数组
+		 */
+		public int[] getItemNames();
+
+		/**
+		 * 获取每个条目的点击监听器数组
+		 * 
+		 * @param alertDialog
+		 *            当前显示的对话框
+		 * @return 每个条目的点击监听器数组
+		 */
+		public OnClickListener[] getItemOnClickListeners(AlertDialog alertDialog);
 
 	}
 
