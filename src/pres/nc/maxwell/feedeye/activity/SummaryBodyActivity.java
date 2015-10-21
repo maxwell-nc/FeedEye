@@ -12,10 +12,11 @@ import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
-import pres.nc.maxwell.feedeye.view.PopupWindowUtils;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ExtraCustomViewAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ImageClickListener;
+import pres.nc.maxwell.feedeye.view.PopupWindowUtils;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -25,11 +26,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -94,6 +100,26 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private ArrayList<TextView> mContentTextViews;
 
+	/**
+	 * Web内容容器
+	 */
+	private LinearLayout mWebContainer;
+
+	/**
+	 * Web内容进度条
+	 */
+	private ProgressBar mWebProgress;
+
+	/**
+	 * Web内容显示WebView
+	 */
+	private WebView mWebView;
+
+	/**
+	 * 是否正在使用WebView
+	 */
+	private boolean isUseWebView = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -120,6 +146,19 @@ public class SummaryBodyActivity extends Activity {
 				mBarContainer.setVisibility(View.VISIBLE);
 				return;
 			}
+		}
+
+		// 网页后退或者不显示网页
+		if (isUseWebView) {
+
+			if (mWebView.canGoBack()) {
+				mWebView.goBack();
+			} else {
+				// 显示正文部分
+				mBodyWrapper.setVisibility(View.VISIBLE);
+				mWebContainer.setVisibility(View.GONE);
+			}
+			return;
 		}
 
 		super.onBackPressed();
@@ -149,6 +188,12 @@ public class SummaryBodyActivity extends Activity {
 		mHeaderSouceTime = (TextView) mBodyContainer
 				.findViewById(R.id.tv_source_time);
 		mHeaderLink = (TextView) mBodyContainer.findViewById(R.id.tv_link);
+
+		// web内容部分
+		mWebContainer = (LinearLayout) findViewById(R.id.ll_web_container);
+		mWebProgress = (ProgressBar) mWebContainer
+				.findViewById(R.id.pb_progress);
+		mWebView = (WebView) mWebContainer.findViewById(R.id.wv_origin);
 
 	}
 
@@ -245,6 +290,20 @@ public class SummaryBodyActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
+				// TODO：
+
+				if (isUseWebView) {
+
+				} else {
+					setContentTextSize();
+				}
+
+			}
+
+			/**
+			 * 设置正文内容字体
+			 */
+			private void setContentTextSize() {
 				MainThemeOnClickDialog dialog = new MainThemeOnClickDialog(
 						mThisActivity, new DialogDataAdapter() {
 
@@ -287,6 +346,7 @@ public class SummaryBodyActivity extends Activity {
 
 						});
 
+				// 添加手动修改大小的View
 				dialog.setExtraCustomViewAdapter(new ExtraCustomViewAdapter() {
 
 					/**
@@ -353,7 +413,6 @@ public class SummaryBodyActivity extends Activity {
 				});
 
 				dialog.show();
-
 			}
 
 		});
@@ -437,14 +496,14 @@ public class SummaryBodyActivity extends Activity {
 
 								PopupWindowUtils
 										.tryToClosePopupWindow(mPopupWindow);
-								
-								//打开浏览器
+
+								// 打开浏览器
 								Intent intent = new Intent(Intent.ACTION_VIEW);
 								Uri uri = Uri.parse(mHeaderLink.getText()
 										.toString());// 网址
 								intent.setData(uri);
 								startActivity(intent);
-								
+
 							}
 
 						});
@@ -458,6 +517,28 @@ public class SummaryBodyActivity extends Activity {
 
 								// TODO:
 
+								PopupWindowUtils
+										.tryToClosePopupWindow(mPopupWindow);
+
+								// 设置标记
+								isUseWebView = true;
+
+								String loadLink = mHeaderLink.getText()
+										.toString();
+
+								String orgLink = mWebView.getUrl();
+
+								// 隐藏正文部分
+								mBodyWrapper.setVisibility(View.GONE);
+								mWebContainer.setVisibility(View.VISIBLE);
+								
+								if (orgLink == null
+										|| !loadLink.equals(orgLink)) {
+									mWebView.loadUrl(loadLink);
+								}
+
+								
+
 							}
 
 						});
@@ -465,6 +546,9 @@ public class SummaryBodyActivity extends Activity {
 			}
 
 		});
+
+		// 设置WebView参数
+		setWebViewParams();
 
 	}
 
@@ -562,6 +646,54 @@ public class SummaryBodyActivity extends Activity {
 		mContentTextViews.add(tv);
 
 		return tv;
+	}
+
+	/**
+	 * 设置WebView的参数
+	 */
+	@SuppressLint("SetJavaScriptEnabled")
+	private void setWebViewParams() {
+		
+		// 获取webview设置
+		WebSettings settings = mWebView.getSettings();
+
+		// 双击放大缩小
+		settings.setUseWideViewPort(true);
+
+		// 放大缩小按钮
+		settings.setBuiltInZoomControls(true);
+
+		// 开启javascript
+		// settings.setJavaScriptEnabled(true);
+
+		// 拦截跳转
+		mWebView.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+				mWebView.loadUrl(url);
+				return true;
+			}
+		});
+
+		// 监听进度
+		mWebView.setWebChromeClient(new WebChromeClient() {
+
+			@Override
+			public void onProgressChanged(WebView view, int newProgress) {
+
+				if (newProgress != 100) {
+					mWebProgress.setVisibility(View.VISIBLE);
+					mWebProgress.setProgress(newProgress);
+				} else {// 隐藏
+					mWebProgress.setVisibility(View.GONE);
+					mWebProgress.setProgress(0);
+				}
+
+				super.onProgressChanged(view, newProgress);
+			}
+
+		});
 	}
 
 	/**
