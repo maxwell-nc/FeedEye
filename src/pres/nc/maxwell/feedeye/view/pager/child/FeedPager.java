@@ -71,9 +71,9 @@ public class FeedPager extends BasePager {
 	private ArrayList<FeedItem> mItemInfoShowedList;
 
 	/**
-	 * ListView为空显示的提示图片
+	 * ListView为空显示的提示
 	 */
-	private ImageView mNothingImg;
+	private TextView mNothingTips;
 
 	/**
 	 * Bitmap三级缓存
@@ -116,8 +116,8 @@ public class FeedPager extends BasePager {
 		mListView = (DragRefreshListView) mViewContent
 				.findViewById(R.id.lv_feed_list);
 
-		// ListView为空时显示的图片
-		mNothingImg = (ImageView) mViewContent.findViewById(R.id.iv_nothing);
+		// ListView为空时显示的提示
+		mNothingTips = (TextView) mViewContent.findViewById(R.id.tv_nothing);
 
 		mItemInfoUnshowList = new ArrayList<FeedItem>();
 		mItemInfoShowedList = new ArrayList<FeedItem>();
@@ -135,7 +135,7 @@ public class FeedPager extends BasePager {
 		// 在上面的AsyncTask执行后会执行doWhenFinishedReadDB()
 
 		// 设置点击没有订阅信息的图片添加订阅
-		mNothingImg.setOnClickListener(new OnClickListener() {
+		mNothingTips.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -196,7 +196,7 @@ public class FeedPager extends BasePager {
 			mListView.setVisibility(View.INVISIBLE);// 防止下拉BUG
 
 			// 提示没有数据，需要添加
-			mNothingImg.setVisibility(View.VISIBLE);
+			mNothingTips.setVisibility(View.VISIBLE);
 		} else {// 有数据
 			setListViewData(500);
 		}
@@ -301,8 +301,14 @@ public class FeedPager extends BasePager {
 
 			int itemCount = super.getCount();
 
-			if (mItemInfoUnshowList.size() == 0) {// 没有更多了
-				mTitle.setText("我的订阅(" + itemCount + ")");
+			if (mItemInfoUnshowList.isEmpty()) {// 没有更多了
+				
+				if (mItemInfoShowedList.isEmpty()) {//无数据
+					mTitle.setText("我的订阅");
+				}else {
+					mTitle.setText("我的订阅(" + itemCount + ")");
+				}
+				
 			} else {
 				mTitle.setText("我的订阅(" + itemCount + "+)");
 			}
@@ -753,6 +759,12 @@ public class FeedPager extends BasePager {
 		// 从适配器数据中删除并通知数据更新
 		mItemInfoShowedList.remove(position);
 		mListViewAdapter.notifyDataSetChanged();
+
+		// 如果为空则置为空白状态
+		if (mItemInfoShowedList.isEmpty()) {
+			mListView.setVisibility(View.INVISIBLE);
+			mNothingTips.setVisibility(View.VISIBLE);
+		}
 	}
 
 	/**
@@ -859,7 +871,7 @@ public class FeedPager extends BasePager {
 		if (mItemInfoShowedList.size() == 0) {// 无数据时
 			mListView.setAdapter(mListViewAdapter);
 			mListView.setVisibility(View.VISIBLE);
-			mNothingImg.setVisibility(View.INVISIBLE);
+			mNothingTips.setVisibility(View.INVISIBLE);
 		}
 
 		mItemInfoShowedList.add(0, feedItem);// 插到第一个

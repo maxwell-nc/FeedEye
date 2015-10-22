@@ -1,6 +1,5 @@
 package pres.nc.maxwell.feedeye.activity;
 
-
 import pres.nc.maxwell.feedeye.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Window;
 import android.widget.TextView;
 
 /**
@@ -24,10 +22,8 @@ public class SplashActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//不显示标题栏
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash);
-		
+
 		initView();
 		showVersionInSplash();
 
@@ -36,10 +32,9 @@ public class SplashActivity extends Activity {
 			// TODO: 以后可能回从服务器检查更新
 			@Override
 			public void run() {
-				SystemClock.sleep(1500);
-				Intent intent = new Intent(getApplicationContext(),
-						MainActivity.class);
-				startActivity(intent);
+				SystemClock.sleep(2000);
+				startActivity(new Intent(SplashActivity.this,
+						MainActivity.class));
 				finish();
 			};
 
@@ -59,6 +54,8 @@ public class SplashActivity extends Activity {
 	 */
 	private void showVersionInSplash() {
 
+		
+		//获取版本名称
 		PackageInfo packageInfo = null;
 		try {
 			packageInfo = getPackageManager().getPackageInfo(getPackageName(),
@@ -67,7 +64,7 @@ public class SplashActivity extends Activity {
 			// can not reach
 			e.printStackTrace();
 		}
-		
+
 		if (packageInfo != null) {
 			String versionName = getResources().getString(
 					R.string.splash_version)
@@ -84,7 +81,7 @@ public class SplashActivity extends Activity {
 	 */
 	@Override
 	public void onBackPressed() {
-		//不作处理
-		//super.onBackPressed();
+		// 不作处理
+		// super.onBackPressed();
 	}
 }

@@ -1,25 +1,51 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash" >
+    android:background="@color/theme_color"
+    android:gravity="center"
+    android:orientation="vertical" >
 
-    <ProgressBar
-        android:id="@+id/pb_loading"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp" />
+        android:src="@drawable/splash_icon"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_splash_header_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/splash_header_text"
+        android:textColor="#ffffffff"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/tv_splash_second_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/splash_second_text"
+        android:textColor="#ffffffff"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_splash_ver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/pb_loading"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="15dp"
+        android:layout_marginTop="15dp"
         android:text="@string/splash_version"
-        android:textColor="#ffffffff" />
+        android:textColor="#aaffffff"
+        android:textSize="12sp" />
 
-</RelativeLayout>
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@anim/refresh_rotate_white"
+        android:indeterminateDuration="400" />
+
+</LinearLayout>

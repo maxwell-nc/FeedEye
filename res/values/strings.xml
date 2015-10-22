@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">FeedEye</string>
+    <string name="app_name">简阅</string>
     <string name="splash_version">版本号：</string>
+    <string name="splash_header_text">放眼看世界</string>
+    <string name="splash_second_text">阅读更简单</string>
     <string name="unknown_version">未知版本</string>
     <string name="navi_feed">订阅</string>
     <string name="navi_discover">发现</string>
@@ -29,5 +31,6 @@
     <string name="normal_text_zoom">中等(100%)</string>
     <string name="larger_text_zoom">较大(150%)</string>
     <string name="largest_text_zoom">最大(175%)</string>
+    <string name="add_feed_tips">还没添加订阅，赶紧添加吧</string>
 
 </resources>
