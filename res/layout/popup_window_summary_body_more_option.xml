@@ -36,6 +36,22 @@
         maxwell-nc:text="在浏览器打开" />
 
     <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_simple_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        maxwell-nc:src="@drawable/btn_read"
+        maxwell-nc:text="优化阅读" />
+
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
+        android:id="@+id/pwiv_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        maxwell-nc:src="@drawable/btn_refresh"
+        maxwell-nc:text="重新加载" />
+
+    <pres.nc.maxwell.feedeye.view.PopupWindowItemView
         android:id="@+id/pwiv_origin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

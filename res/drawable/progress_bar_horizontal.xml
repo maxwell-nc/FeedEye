@@ -17,8 +17,8 @@
         <clip>
             <shape>
                 <gradient
-                    android:endColor="@color/theme_color"
-                    android:startColor="@color/theme_color_light" />
+                    android:endColor="@color/bird_green"
+                    android:startColor="@color/bird_green_light" />
             </shape>
         </clip>
     </item>

@@ -22,6 +22,16 @@ public class PopupWindowItemView extends LinearLayout {
 	private LinearLayout mThisView;
 
 	/**
+	 * 显示文本的TextView
+	 */
+	private TextView mTextView;
+
+	/**
+	 * 显示图标的ImageView
+	 */
+	private ImageView mImageView;
+
+	/**
 	 * 命名空间
 	 */
 	private static final String NAMESPACE = "http://schemas.android.com/apk/res/pres.nc.maxwell.feedeye";
@@ -61,14 +71,39 @@ public class PopupWindowItemView extends LinearLayout {
 		initView();
 
 		if (resId != -1) {
-			((ImageView) mThisView.findViewById(R.id.iv_pic))
-					.setImageResource(resId);
+			mImageView = (ImageView) mThisView.findViewById(R.id.iv_pic);
+			mImageView.setImageResource(resId);
 		}
 
 		if (!TextUtils.isEmpty(text)) {
-			((TextView) mThisView.findViewById(R.id.tv_title)).setText(text);
+			mTextView = (TextView) mThisView.findViewById(R.id.tv_title);
+			mTextView.setText(text);
 		}
 
 	}
 
+	/**
+	 * 设置文本
+	 * @param text 显示的文本
+	 */
+	public void setText(CharSequence text){
+		mTextView.setText(text);
+	}
+	
+	/**
+	 * 返回文本
+	 * @return 显示的文本
+	 */
+	public CharSequence getText(){
+		return mTextView.getText();
+	}
+	
+	/**
+	 * 设置图标
+	 * @param resId 图标资源id
+	 */
+	public void setIcon(int resId){
+		mImageView.setImageResource(resId);
+	}
+	
 }

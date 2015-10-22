@@ -15,6 +15,7 @@ import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.DialogDataAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ExtraCustomViewAdapter;
 import pres.nc.maxwell.feedeye.view.MainThemeOnClickDialog.ImageClickListener;
+import pres.nc.maxwell.feedeye.view.PopupWindowItemView;
 import pres.nc.maxwell.feedeye.view.PopupWindowUtils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -44,6 +46,11 @@ import android.widget.TextView;
  * 正文内容的Activity
  */
 public class SummaryBodyActivity extends Activity {
+
+	/**
+	 * 顶部模式文本
+	 */
+	private TextView mModeText;
 
 	/**
 	 * 正文头部的标题
@@ -111,14 +118,29 @@ public class SummaryBodyActivity extends Activity {
 	private ProgressBar mWebProgress;
 
 	/**
+	 * Web内容加载中
+	 */
+	private ProgressBar mWebLoading;
+
+	/**
 	 * Web内容显示WebView
 	 */
 	private WebView mWebView;
 
 	/**
+	 * 显示加载失败，重新加载的布局
+	 */
+	private RelativeLayout mWebNothingReload;
+
+	/**
 	 * 是否正在使用WebView
 	 */
 	private boolean isUseWebView = false;
+
+	/**
+	 * 弹出的选项
+	 */
+	private PopupWindow mPopupWindow;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,10 +176,9 @@ public class SummaryBodyActivity extends Activity {
 			if (mWebView.canGoBack()) {
 				mWebView.goBack();
 			} else {
-				// 显示正文部分
-				mBodyWrapper.setVisibility(View.VISIBLE);
-				mWebContainer.setVisibility(View.GONE);
+				changeViewMode(false);
 			}
+
 			return;
 		}
 
@@ -170,6 +191,9 @@ public class SummaryBodyActivity extends Activity {
 	private void initView() {
 
 		mThisActivity = this;
+
+		// 顶部模式文本
+		mModeText = (TextView) findViewById(R.id.tv_mode_name);
 
 		// 标题栏部分
 		mBarContainer = (RelativeLayout) findViewById(R.id.rl_bar);
@@ -193,7 +217,9 @@ public class SummaryBodyActivity extends Activity {
 		mWebContainer = (LinearLayout) findViewById(R.id.ll_web_container);
 		mWebProgress = (ProgressBar) mWebContainer
 				.findViewById(R.id.pb_progress);
+		mWebLoading = (ProgressBar) mWebContainer.findViewById(R.id.pb_loading);
 		mWebView = (WebView) mWebContainer.findViewById(R.id.wv_origin);
+		mWebNothingReload = (RelativeLayout) findViewById(R.id.rl_nothing);
 
 	}
 
@@ -290,14 +316,89 @@ public class SummaryBodyActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				// TODO：
-
 				if (isUseWebView) {
-
+					setWebContentTextSize();
 				} else {
 					setContentTextSize();
 				}
 
+			}
+
+			/**
+			 * 设置网页原文内容字体
+			 */
+			@SuppressWarnings("deprecation")
+			private void setWebContentTextSize() {
+
+				MainThemeOnClickDialog dialog = new MainThemeOnClickDialog(
+						mThisActivity, new DialogDataAdapter() {
+
+							@Override
+							public int[] getItemNames() {
+								int[] strings = {R.string.smallest_text_zoom,
+										R.string.smaller_text_zoom,
+										R.string.normal_text_zoom,
+										R.string.larger_text_zoom,
+										R.string.largest_text_zoom};
+								return strings;
+							}
+
+							@Override
+							public OnClickListener[] getItemOnClickListeners(
+									final AlertDialog alertDialog) {
+								OnClickListener[] listeners = {
+										new OnClickListener() {
+
+											@Override
+											public void onClick(View v) {// 50%
+												mWebView.getSettings()
+														.setTextSize(
+																WebSettings.TextSize.SMALLEST);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 75%
+
+											@Override
+											public void onClick(View v) {
+												mWebView.getSettings()
+														.setTextSize(
+																WebSettings.TextSize.SMALLER);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 100%
+
+											@Override
+											public void onClick(View v) {
+												mWebView.getSettings()
+														.setTextSize(
+																WebSettings.TextSize.NORMAL);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 150%
+
+											@Override
+											public void onClick(View v) {
+												mWebView.getSettings()
+														.setTextSize(
+																WebSettings.TextSize.LARGER);
+												alertDialog.dismiss();
+											}
+										}, new OnClickListener() {// 175%
+
+											@Override
+											public void onClick(View v) {
+												mWebView.getSettings()
+														.setTextSize(
+																WebSettings.TextSize.LARGEST);
+												alertDialog.dismiss();
+											}
+										}};
+								return listeners;
+							}
+
+						});
+
+				dialog.show();
 			}
 
 			/**
@@ -417,10 +518,35 @@ public class SummaryBodyActivity extends Activity {
 
 		});
 
+		// 初始化popupWindow
+		final PopupWindowUtils popupWindowUtils = new PopupWindowUtils(
+				mThisActivity);
+		mPopupWindow = popupWindowUtils
+				.newPopupWindowInstance(R.layout.popup_window_summary_body_more_option);
+
+		// 获取优化阅读按钮
+		final PopupWindowItemView pwItemLink = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_link);
+		final PopupWindowItemView pwItemFavor = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_favor);
+		final PopupWindowItemView pwItemShare = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_share);
+		final PopupWindowItemView pwItemsBrowser = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_browser);
+		final PopupWindowItemView pwItemSimpleRead = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_simple_read);
+		final PopupWindowItemView pwItemOrigin = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_origin);
+		final PopupWindowItemView pwItemRefresh = (PopupWindowItemView) popupWindowUtils.popupView
+				.findViewById(R.id.pwiv_refresh);
+
+		// 设置点击监听器
+		setPopupWindowOnClickListener(popupWindowUtils, pwItemLink,
+				pwItemFavor, pwItemShare, pwItemsBrowser, pwItemSimpleRead,
+				pwItemRefresh, pwItemOrigin);
+
 		// 设置更多选项
 		mBarMoreOption.setOnClickListener(new OnClickListener() {
-
-			private PopupWindow mPopupWindow;
 
 			@Override
 			public void onClick(View v) {
@@ -429,119 +555,21 @@ public class SummaryBodyActivity extends Activity {
 					return;
 				}
 
-				PopupWindowUtils popupWindowUtils = new PopupWindowUtils(
-						mThisActivity);
-				mPopupWindow = popupWindowUtils
-						.newPopupWindowInstance(R.layout.popup_window_summary_body_more_option);
+				if (isUseWebView) {
+					// 显示优化阅读
+					pwItemSimpleRead.setVisibility(View.VISIBLE);
+					pwItemRefresh.setVisibility(View.VISIBLE);
+
+					pwItemOrigin.setText("返回简阅模式");
+				} else {
+					pwItemSimpleRead.setVisibility(View.GONE);
+					pwItemSimpleRead.setVisibility(View.GONE);
+
+					pwItemOrigin.setText("查看原文");
+				}
 
 				// 显示
 				popupWindowUtils.showNearView(mBarContainer, mBarMoreOption);
-
-				// 复制链接点击监听
-				popupWindowUtils.popupView.findViewById(R.id.pwiv_link)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								PopupWindowUtils
-										.tryToClosePopupWindow(mPopupWindow);
-
-								SystemUtils.copyTextToClipBoard(mThisActivity,
-										mHeaderLink.getText().toString());
-
-							}
-
-						});
-
-				// 收藏点击监听
-				popupWindowUtils.popupView.findViewById(R.id.pwiv_favor)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								// TODO:收藏
-
-							}
-
-						});
-
-				// 分享点击监听
-				popupWindowUtils.popupView.findViewById(R.id.pwiv_share)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								PopupWindowUtils
-										.tryToClosePopupWindow(mPopupWindow);
-
-								String text = mHeaderTitle.getText().toString()
-										+ ":\n"
-										+ mHeaderLink.getText().toString();
-								SystemUtils.startShareIntentActivity(
-										mThisActivity, text);
-
-							}
-
-						});
-
-				// 在浏览器中查看点击监听
-				popupWindowUtils.popupView.findViewById(R.id.pwiv_browser)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								PopupWindowUtils
-										.tryToClosePopupWindow(mPopupWindow);
-
-								// 打开浏览器
-								Intent intent = new Intent(Intent.ACTION_VIEW);
-								Uri uri = Uri.parse(mHeaderLink.getText()
-										.toString());// 网址
-								intent.setData(uri);
-								startActivity(intent);
-
-							}
-
-						});
-
-				// 查看原文点击监听
-				popupWindowUtils.popupView.findViewById(R.id.pwiv_origin)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-
-								// TODO:
-
-								PopupWindowUtils
-										.tryToClosePopupWindow(mPopupWindow);
-
-								// 设置标记
-								isUseWebView = true;
-
-								String loadLink = mHeaderLink.getText()
-										.toString();
-
-								String orgLink = mWebView.getUrl();
-
-								// 隐藏正文部分
-								mBodyWrapper.setVisibility(View.GONE);
-								mWebContainer.setVisibility(View.VISIBLE);
-								
-								if (orgLink == null
-										|| !loadLink.equals(orgLink)) {
-									mWebView.loadUrl(loadLink);
-								}
-
-								
-
-							}
-
-						});
 
 			}
 
@@ -549,6 +577,173 @@ public class SummaryBodyActivity extends Activity {
 
 		// 设置WebView参数
 		setWebViewParams();
+
+	}
+	/**
+	 * 设置popupWindow的点击监听器
+	 * 
+	 * @param popupWindowUtils
+	 *            创建popupWindow的工具类对象
+	 * @param pwItemsimpleRead
+	 *            优化阅读按钮对象
+	 */
+	private void setPopupWindowOnClickListener(
+			final PopupWindowUtils popupWindowUtils,
+			final PopupWindowItemView... items) {
+
+		// 复制链接点击监听
+		items[0].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				SystemUtils.copyTextToClipBoard(mThisActivity, mHeaderLink
+						.getText().toString());
+
+			}
+
+		});
+
+		// 收藏点击监听
+		items[1].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				// TODO:收藏
+
+			}
+
+		});
+
+		// 分享点击监听
+		items[2].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				String text = mHeaderTitle.getText().toString() + ":\n"
+						+ mHeaderLink.getText().toString();
+				SystemUtils.startShareIntentActivity(mThisActivity, text);
+
+			}
+
+		});
+
+		// 在浏览器中查看点击监听
+		items[3].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				// 打开浏览器
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				Uri uri = Uri.parse(mHeaderLink.getText().toString());// 网址
+				intent.setData(uri);
+				startActivity(intent);
+
+			}
+
+		});
+
+		// 优化阅读点击监听
+		items[4].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				// 获取webview设置
+				WebSettings settings = mWebView.getSettings();
+
+				if ("优化阅读".equals(items[4].getText().toString())) {
+
+					// 自适应屏幕
+					settings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+					settings.setLoadWithOverviewMode(true);
+
+					items[4].setText("取消优化");
+					items[4].setIcon(R.drawable.btn_unread);
+
+				} else {
+
+					// 自适应屏幕
+					settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+					settings.setLoadWithOverviewMode(false);
+
+					items[4].setText("优化阅读");
+					items[4].setIcon(R.drawable.btn_read);
+
+				}
+
+			}
+
+		});
+
+		// 重新加载点击监听
+		items[5].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				// 重新加载
+				mWebView.reload();
+
+			}
+
+		});
+
+		// 查看原文点击监听
+		items[6].setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				if (isUseWebView) {
+					changeViewMode(false);
+					return;
+				}
+
+				// 加载原文
+				loadOriginWebside();
+
+			}
+
+		});
+
+	}
+
+	/**
+	 * 加载原文
+	 */
+	private void loadOriginWebside() {
+
+		// 设置标记
+		isUseWebView = true;
+
+		// 显示网页
+		changeViewMode(true);
+
+		String loadLink = mHeaderLink.getText().toString();
+
+		String orgLink = mWebView.getUrl();
+
+		// 已经加载完毕的不重新加载
+		if (orgLink == null || !loadLink.equals(orgLink)
+				|| mWebView.getProgress() != 100) {
+			mWebView.loadUrl(loadLink);
+		}
 
 	}
 
@@ -653,7 +848,7 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setWebViewParams() {
-		
+
 		// 获取webview设置
 		WebSettings settings = mWebView.getSettings();
 
@@ -664,15 +859,59 @@ public class SummaryBodyActivity extends Activity {
 		settings.setBuiltInZoomControls(true);
 
 		// 开启javascript
-		// settings.setJavaScriptEnabled(true);
+		settings.setJavaScriptEnabled(true);
 
-		// 拦截跳转
+		// 设置概览模式
+		settings.setLoadWithOverviewMode(true);
+
+		// 使用缓存
+		settings.setAppCacheEnabled(true);
+
+		// DOM Storage
+		settings.setDomStorageEnabled(true);
+
+		// 设置用户代理
+		settings.setUserAgentString("Mozilla/5.0 (Linux; U; Android ;) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
+
+		// 设置支持多窗口
+		settings.setSupportMultipleWindows(true);
+
 		mWebView.setWebViewClient(new WebViewClient() {
+
+			@Override
+			public void onReceivedError(WebView view, int errorCode,
+					String description, final String failingUrl) {
+
+				mWebView.stopLoading();
+				mWebView.clearHistory();
+
+				// 显示重新加载
+				mWebNothingReload.setVisibility(View.VISIBLE);
+				mWebView.setVisibility(View.GONE);
+
+				// 设置重新加载
+				mWebNothingReload.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						mWebView.stopLoading();
+						mWebView.clearHistory();
+
+						mWebNothingReload.setVisibility(View.GONE);
+						mWebView.setVisibility(View.VISIBLE);
+						mWebView.loadUrl(failingUrl);
+					}
+
+				});
+
+			}
+
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-				mWebView.loadUrl(url);
-				return true;
+				// 拦截跳转
+				// mWebView.loadUrl(url);
+				return false;
 			}
 		});
 
@@ -683,17 +922,54 @@ public class SummaryBodyActivity extends Activity {
 			public void onProgressChanged(WebView view, int newProgress) {
 
 				if (newProgress != 100) {
+
+					mWebLoading.setVisibility(View.VISIBLE);
 					mWebProgress.setVisibility(View.VISIBLE);
-					mWebProgress.setProgress(newProgress);
+
+					if (newProgress < 20) {
+						mWebProgress.setProgress(20);
+					} else {
+						mWebProgress.setProgress(newProgress);
+					}
+
 				} else {// 隐藏
+
+					mWebLoading.setVisibility(View.GONE);
 					mWebProgress.setVisibility(View.GONE);
-					mWebProgress.setProgress(0);
+					mWebProgress.setProgress(20);
+
 				}
 
 				super.onProgressChanged(view, newProgress);
 			}
 
 		});
+	}
+	/**
+	 * 改变视图模式
+	 * 
+	 * @param isToWebViewMode
+	 *            是否切换到网页原文模式
+	 */
+	private void changeViewMode(boolean isToWebViewMode) {
+
+		if (!isToWebViewMode) {
+
+			// 显示正文部分
+			mBodyWrapper.setVisibility(View.VISIBLE);
+			mWebContainer.setVisibility(View.GONE);
+			isUseWebView = false;
+			mModeText.setText("简阅模式");
+
+		} else {
+
+			mBodyWrapper.setVisibility(View.GONE);
+			mWebContainer.setVisibility(View.VISIBLE);
+			isUseWebView = true;
+			mModeText.setText("网页原文");
+
+		}
+
 	}
 
 	/**

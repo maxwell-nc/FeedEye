@@ -89,6 +89,13 @@ public class PopupWindowUtils {
 			return;
 		}
 
+		// 重新测量宽高
+		popupView.measure(0, 0);
+		popupViewWidth = popupView.getMeasuredWidth();
+		popupViewHeight = popupView.getMeasuredHeight();
+		popupWindow.setWidth(popupViewWidth);
+		popupWindow.setHeight(popupViewHeight);
+
 		popupWindow.showAtLocation(gravityView, Gravity.NO_GRAVITY,
 				view.getRight() - popupViewWidth, view.getBottom()
 						+ SystemUtils.getStatusBarHeight(activity));

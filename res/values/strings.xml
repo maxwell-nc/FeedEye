@@ -24,5 +24,10 @@
     <string name="little_text_size">小号字体(14sp)</string>
     <string name="middle_text_size">中号字体(24sp)</string>
     <string name="large_text_size">大号字体(32sp)</string>
+    <string name="smallest_text_zoom">最小(50%)</string>
+    <string name="smaller_text_zoom">较小(75%)</string>
+    <string name="normal_text_zoom">中等(100%)</string>
+    <string name="larger_text_zoom">较大(150%)</string>
+    <string name="largest_text_zoom">最大(175%)</string>
 
 </resources>

@@ -171,16 +171,16 @@ public class HTTPUtils {
 							.openConnection();
 				}
 
-				LogUtils.i("HTTPUtils", "Link:" + fixUrl);
 
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
 
 				connection.setRequestProperty("User-Agent",
-						"Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.1)");
+						"Mozilla/5.0 (Linux; U; Android ;) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
 				connection.setRequestMethod("GET");
 				connection.connect();
 
+				LogUtils.i("HTTPUtils", "Link:" + fixUrl);
 				LogUtils.i("HTTPUtils",
 						"ResponseCode:" + connection.getResponseCode());
 				LogUtils.i("HTTPUtils",

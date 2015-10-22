@@ -12,7 +12,7 @@
         android:background="@color/theme_color" >
 
         <TextView
-            android:id="@+id/tv_body_name"
+            android:id="@+id/tv_mode_name"
             android:layout_width="150dp"
             android:layout_height="match_parent"
             android:ellipsize="end"
@@ -20,7 +20,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="内容正文"
+            android:text="简阅模式"
             android:textColor="@color/white"
             android:textSize="22sp" />
 
@@ -65,21 +65,63 @@
         android:orientation="vertical"
         android:visibility="gone" >
 
+        <RelativeLayout
+            android:id="@+id/rl_nothing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:visibility="gone" >
+
+            <ImageView
+                android:id="@+id/iv_refresh_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/listview_refresh_rotate_arrow" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/iv_refresh_pic"
+                android:layout_alignTop="@id/iv_refresh_pic"
+                android:layout_toRightOf="@id/iv_refresh_pic"
+                android:gravity="center_vertical"
+                android:text="点此重新加载"
+                android:textColor="@drawable/selector_press_text_color_theme"
+                android:textSize="22sp" >
+            </TextView>
+        </RelativeLayout>
+
         <ProgressBar
             android:id="@+id/pb_progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:max="100"
-            android:progress="0"
+            android:progress="20"
             android:progressDrawable="@drawable/progress_bar_horizontal"
             android:visibility="gone" />
 
-        <WebView
-            android:id="@+id/wv_origin"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1" >
+
+            <WebView
+                android:id="@+id/wv_origin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@anim/refresh_rotate"
+                android:indeterminateDuration="500"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 
     <ScrollView
