@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
@@ -141,6 +142,11 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private PopupWindow mPopupWindow;
 
+	/**
+	 * 点击更多选项的监听器
+	 */
+	private OnClickListener mOnMoreOptionClickListener;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_summary_body);
@@ -181,6 +187,21 @@ public class SummaryBodyActivity extends Activity {
 		}
 
 		super.onBackPressed();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		// 复写点击菜单键
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			
+			// 模拟点击更多选项
+			mOnMoreOptionClickListener.onClick(mBarMoreOption);
+
+			return true;
+		}
+		
+		return super.onKeyDown(keyCode, event);
 	}
 
 	/**
@@ -543,8 +564,11 @@ public class SummaryBodyActivity extends Activity {
 				pwItemFavor, pwItemShare, pwItemsBrowser, pwItemSimpleRead,
 				pwItemRefresh, pwItemOrigin);
 
-		// 设置更多选项
-		mBarMoreOption.setOnClickListener(new OnClickListener() {
+		//防止PopupWindow抢焦点
+		mPopupWindow.setFocusable(false);
+		
+		//创建点击更多选项的监听器
+		mOnMoreOptionClickListener = new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -571,7 +595,10 @@ public class SummaryBodyActivity extends Activity {
 
 			}
 
-		});
+		};
+
+		// 设置更多选项
+		mBarMoreOption.setOnClickListener(mOnMoreOptionClickListener);
 
 		// 设置WebView参数
 		setWebViewParams();
