@@ -51,11 +51,6 @@ import android.widget.Toast;
 public class FeedPager extends BasePager {
 
 	/**
-	 * 填充到父布局中的FrameLayout中的View对象
-	 */
-	private View mViewContent;
-
-	/**
 	 * 订阅列表
 	 */
 	private DragRefreshListView mListView;

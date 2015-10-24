@@ -13,6 +13,7 @@
     
     <color name="theme_color">#ff196dca</color>
     <color name="theme_color_light">#ff298dea</color>
+    <color name="white_grey">#fffefefe</color>
     <color name="light_grey">#ffeeeeee</color>
     <color name="mid_grey">#55999999</color>
     <color name="drak_grey">#ff555555</color>

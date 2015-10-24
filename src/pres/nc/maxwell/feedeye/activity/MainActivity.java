@@ -8,6 +8,7 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
+import pres.nc.maxwell.feedeye.view.pager.child.FavorPager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import android.app.Activity;
 import android.content.Intent;
@@ -44,6 +45,11 @@ public class MainActivity extends Activity {
 	 */
 	private FeedPager mFeedPager;
 
+	/**
+	 * 收藏页面
+	 */
+	private FavorPager mFavorPager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,11 +79,12 @@ public class MainActivity extends Activity {
 
 		// 添加布局进ViewPager
 		mFeedPager = new FeedPager(this);
+		mFavorPager = new FavorPager(this);
 
-		mPagerList.add(mFeedPager);
-		for (int i = 1; i < 4; i++) {
-			mPagerList.add(new BasePager(this));
-		}
+		mPagerList.add(mFeedPager);// 订阅
+		mPagerList.add(new BasePager(this));
+		mPagerList.add(mFavorPager);// 收藏
+		mPagerList.add(new BasePager(this));
 
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
 

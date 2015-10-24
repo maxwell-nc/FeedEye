@@ -10,14 +10,47 @@ import android.widget.TextView;
 
 public class BasePager {
 
+	/**
+	 * 依附的Activity
+	 */
 	protected Activity mActivity;
-	protected View mBaseView; // 整个布局
-	protected TextView mTitle; // 标题
-	protected ImageView mFuncButtonLeft; // 功能按钮左
-	protected ImageView mFuncButtonRight; // 功能按钮右
-	protected FrameLayout mContainer; // 布局容器
-	protected ProgressBar mLoadingBar; // 加载图标
+	
+	/**
+	 * 整个布局
+	 */
+	protected View mBaseView;
+	
+	/**
+	 * 标题
+	 */
+	protected TextView mTitle; 
+	
+	/**
+	 * 功能按钮左
+	 */
+	protected ImageView mFuncButtonLeft; 
+	
+	/**
+	 * 功能按钮右
+	 */
+	protected ImageView mFuncButtonRight; 
+	
+	/**
+	 * 布局容器
+	 */
+	protected FrameLayout mContainer; 
+	
+	/**
+	 * 加载图标
+	 */
+	protected ProgressBar mLoadingBar;
 
+	/**
+	 * 填充到父布局中的FrameLayout中的View对象
+	 */
+	protected View mViewContent;
+
+	
 	public TextView getTitleView() {
 		return mTitle;
 	}
