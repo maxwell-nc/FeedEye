@@ -190,18 +190,18 @@ public class SummaryBodyActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		
 		// 复写点击菜单键
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
-			
+
 			// 模拟点击更多选项
 			mOnMoreOptionClickListener.onClick(mBarMoreOption);
 
 			return true;
 		}
 		
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyUp(keyCode, event);
 	}
 
 	/**
@@ -564,10 +564,10 @@ public class SummaryBodyActivity extends Activity {
 				pwItemFavor, pwItemShare, pwItemsBrowser, pwItemSimpleRead,
 				pwItemRefresh, pwItemOrigin);
 
-		//防止PopupWindow抢焦点
-		mPopupWindow.setFocusable(false);
-		
-		//创建点击更多选项的监听器
+		// 防止PopupWindow抢焦点
+		// TODO:mPopupWindow.setFocusable(false);
+
+		// 创建点击更多选项的监听器
 		mOnMoreOptionClickListener = new OnClickListener() {
 
 			@Override

@@ -95,6 +95,16 @@ public class FeedPager extends BasePager {
 	private PopupWindow mPopupWindow;
 
 	/**
+	 * 调用点击事件
+	 */
+	private AddFeedOnClickListener addFeedOnClickListener;
+
+	/**
+	 * 调用获取popupView
+	 */
+	private PopupWindowUtils popupWindowUtils;
+	
+	/**
 	 * 构造方法
 	 * 
 	 * @param mActivity
@@ -235,8 +245,11 @@ public class FeedPager extends BasePager {
 				R.drawable.btn_title_add));// 添加按钮
 		mFuncButtonRight.setVisibility(View.VISIBLE);
 
+		addFeedOnClickListener = new AddFeedOnClickListener();
+		popupWindowUtils = new PopupWindowUtils(mActivity);
+		
 		// 添加按钮事件
-		mFuncButtonRight.setOnClickListener(new AddFeedOnClickListener());
+		mFuncButtonRight.setOnClickListener(addFeedOnClickListener);
 
 	};
 
@@ -779,7 +792,6 @@ public class FeedPager extends BasePager {
 				return;
 			}
 
-			PopupWindowUtils popupWindowUtils = new PopupWindowUtils(mActivity);
 			mPopupWindow = popupWindowUtils
 					.newPopupWindowInstance(R.layout.popup_window_add_feed);
 
@@ -880,4 +892,15 @@ public class FeedPager extends BasePager {
 		mListView.setSelection(mListView.getHeaderViewsCount());// 显示第一个非HeaderView
 	}
 
+	/**
+	 * 给外部使用，触发菜单弹出
+	 */
+	public void onClickAddItem(){
+		
+		if (popupWindowUtils!=null && addFeedOnClickListener!=null ) {
+			addFeedOnClickListener.onClick(popupWindowUtils.popupView);
+		}
+		
+	}
+	
 }

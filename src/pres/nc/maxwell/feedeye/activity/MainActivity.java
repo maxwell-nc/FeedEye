@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
@@ -113,6 +114,25 @@ public class MainActivity extends Activity {
 				break;
 		}
 
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+		// 订阅
+		if (mContentPager.getCurrentItem() == 0) {
+			// 复写点击菜单键
+			if (keyCode == KeyEvent.KEYCODE_MENU) {
+
+				// 模拟点击更多选项
+				mFeedPager.onClickAddItem();
+
+				return true;
+			}
+
+		}
+
+		return super.onKeyUp(keyCode, event);
 	}
 
 }

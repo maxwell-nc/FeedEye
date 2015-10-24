@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.widget.PopupWindow;
 
 /**
@@ -54,6 +56,27 @@ public class PopupWindowUtils {
 	public PopupWindow newPopupWindowInstance(int viewId) {
 
 		popupView = View.inflate(activity, viewId, null);
+
+		// 让popupView可以监听按键事件
+		popupView.setFocusableInTouchMode(true);
+
+		popupView.setOnKeyListener(new OnKeyListener() {
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+				// 如果开启了则关闭
+				if (keyCode == KeyEvent.KEYCODE_MENU
+						&& event.getAction() == KeyEvent.ACTION_UP) {
+
+					tryToClosePopupWindow(popupWindow);
+					return true;
+				}
+
+				return false;
+			}
+
+		});
 
 		// 测量宽高
 		popupView.measure(0, 0);
