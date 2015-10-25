@@ -46,7 +46,7 @@ public class FeedEyeApplication extends Application {
 		@Override
 		public void uncaughtException(Thread thread, Throwable ex) {
 
-			String timeStr = TimeUtils.LoopToTransTime("getCurrentTime",
+			String timeStr = TimeUtils.LoopToTransTime(TimeUtils.GET_CURRENT_TIME_MARK,
 					"yyyy-MM-dd-HH-mm-ss");
 
 			File file = IOUtils.getFileInSdcard("/FeedEye/ErrLog", timeStr

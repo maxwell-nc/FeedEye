@@ -332,7 +332,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 							Intent returnData = new Intent();
 							returnData.putExtra("FeedItem", feedItem);
 
-							setResult(0, returnData);
+							setResult(1, returnData);
 
 							Toast.makeText(mThisActivity, "添加成功",
 									Toast.LENGTH_LONG).show();

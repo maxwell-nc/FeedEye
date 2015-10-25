@@ -8,7 +8,9 @@ import java.util.concurrent.Executors;
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.SummaryBodyActivity;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
+import pres.nc.maxwell.feedeye.db.FavorItemDAO;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
+import pres.nc.maxwell.feedeye.domain.FavorItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
@@ -16,7 +18,6 @@ import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemUtils;
-import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
@@ -122,6 +123,21 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	 * 是否自动加载最新信息
 	 */
 	private boolean isAutoRefresh = false;
+
+	/**
+	 * 用于传递收藏FavorItem
+	 */
+	private Intent mFavorItemIntent = new Intent();
+
+	/**
+	 * 新收藏的FavorItem集合
+	 */
+	private ArrayList<FavorItem> mFavorItems = new ArrayList<FavorItem>();
+
+	/**
+	 * 数据缓存
+	 */
+	private SparseArray<ListItemCache> mListItemCaches;
 
 	@Override
 	protected void onDestroy() {
@@ -518,7 +534,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 */
 		public void notifyDataSetChangedAndClearCache() {
 
-			listItemCaches.clear();// 清空缓存
+			mListItemCaches.clear();// 清空缓存
 			super.notifyDataSetChanged();
 		}
 
@@ -529,11 +545,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		 */
 		private ExecutorService showTextThreadPool;
 
-		/**
-		 * 数据缓存，key是位置
-		 */
-		private SparseArray<ListItemCache> listItemCaches;
-
 		public ItemDetailListAdapter(ArrayList<FeedXMLContentInfo> unshowList,
 				ArrayList<FeedXMLContentInfo> showedList, int onceShowedCount) {
 			mListView.super(unshowList, showedList, onceShowedCount);
@@ -541,7 +552,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			// 初始化线程池
 			showTextThreadPool = Executors.newCachedThreadPool();
 
-			listItemCaches = new SparseArray<ListItemCache>();
+			mListItemCaches = new SparseArray<ListItemCache>();
 		}
 
 		/**
@@ -586,7 +597,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			// 处理逻辑
 			holder.title.setText(mContentInfoShowedList.get(position).title);
 
-			ListItemCache itemCache = listItemCaches.get(position);
+			ListItemCache itemCache = mListItemCaches.get(position);
 
 			if (itemCache != null) {// 使用缓存
 
@@ -618,13 +629,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				// 异步加载文本信息
 				new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
-						position, holder, listItemCaches);
+						position, holder);
 
 			}
 
 			holder.time.setText("发表于："
-					+ TimeUtils.LoopToTransTime(mContentInfoShowedList
-							.get(position).pubDate));
+					+ mContentInfoShowedList.get(position).pubDate);
 
 			return itemView;
 		}
@@ -654,15 +664,12 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		int position;
 		ViewHolder holder;
 		ArrayList<String> imgLinks;
-		SparseArray<ListItemCache> listItemCaches;
 
-		@SuppressWarnings("unchecked")
 		@Override
 		protected String doInBackground(Object... params) {// 子线程
 
 			position = ((Integer) params[0]).intValue();
 			holder = (ViewHolder) params[1];
-			listItemCaches = (SparseArray<ListItemCache>) params[2];
 
 			String textString = (String) getPreviewText(position);
 			return textString;
@@ -734,7 +741,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				itemCache.previewString = result;
 
-				listItemCaches.put(position - mListView.getHeaderViewsCount(),
+				mListItemCaches.put(position - mListView.getHeaderViewsCount(),
 						itemCache);
 
 			}
@@ -842,11 +849,33 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			@Override
 			public void onClick(View v) {
 
-				// TODO：添加收藏的逻辑
+				position = position - mListView.getHeaderViewsCount();
+
+				FavorItem favorItem = new FavorItem();
+
+				favorItem.feedSourceName = mFeedItem.baseInfo.title;
+				favorItem.feedURL = mFeedItem.feedURL;
+								
+				favorItem.contentInfo = mContentInfoShowedList.get(position);
+				ListItemCache cache = mListItemCaches.get(position);
+				
+				favorItem.picLink1 = cache.link1;
+				favorItem.picLink2 = cache.link2;
+				favorItem.picLink3 = cache.link3;
+				
+				favorItem.summary = cache.previewString;
+
+				new FavorItemDAO(mThisActivity).addItem(favorItem);
+
+				mFavorItems.add(favorItem);
+				mFavorItemIntent.putExtra("FavorItems", mFavorItems);
+				setResult(1, mFavorItemIntent);
+
+				Toast.makeText(mThisActivity, "成功添加收藏", Toast.LENGTH_SHORT)
+						.show();
 
 				alertDialog.dismiss();// 对话框关闭
 			}
-
 		}
 
 		/**
@@ -873,6 +902,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		}
 
 		/**
+		 * 
 		 * 分享的点击事件
 		 */
 		class ShareOnClickListener extends AlertDialogOnClickListener {

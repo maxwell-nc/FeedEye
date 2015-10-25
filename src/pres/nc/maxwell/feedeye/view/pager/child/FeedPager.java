@@ -98,7 +98,7 @@ public class FeedPager extends BasePager {
 	 * 调用获取popupView
 	 */
 	private PopupWindowUtils popupWindowUtils;
-	
+
 	/**
 	 * 构造方法
 	 * 
@@ -242,7 +242,7 @@ public class FeedPager extends BasePager {
 
 		addFeedOnClickListener = new AddFeedOnClickListener();
 		popupWindowUtils = new PopupWindowUtils(mActivity);
-		
+
 		// 添加按钮事件
 		mFuncButtonRight.setOnClickListener(addFeedOnClickListener);
 
@@ -310,13 +310,13 @@ public class FeedPager extends BasePager {
 			int itemCount = super.getCount();
 
 			if (mItemInfoUnshowList.isEmpty()) {// 没有更多了
-				
-				if (mItemInfoShowedList.isEmpty()) {//无数据
+
+				if (mItemInfoShowedList.isEmpty()) {// 无数据
 					mTitle.setText("我的订阅");
-				}else {
+				} else {
 					mTitle.setText("我的订阅(" + itemCount + ")");
 				}
-				
+
 			} else {
 				mTitle.setText("我的订阅(" + itemCount + "+)");
 			}
@@ -442,7 +442,8 @@ public class FeedPager extends BasePager {
 		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);
 		viewHolder.mItemPreview.setText(feedItem.baseInfo.summary);
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItem.baseInfo.time, "a HH:mm", Locale.getDefault()));
+				feedItem.baseInfo.time, "MM/dd a",
+				Locale.getDefault()));
 
 		return true;
 
@@ -464,7 +465,7 @@ public class FeedPager extends BasePager {
 				Intent intent = new Intent(mActivity,
 						ItemDetailListActivity.class);
 				intent.putExtra("FeedItem", mItemInfoShowedList.get(position));
-				mActivity.startActivity(intent);
+				mActivity.startActivityForResult(intent, 2);
 
 			}
 		});
@@ -890,12 +891,12 @@ public class FeedPager extends BasePager {
 	/**
 	 * 给外部使用，触发菜单弹出
 	 */
-	public void onClickAddItem(){
-		
-		if (popupWindowUtils!=null && addFeedOnClickListener!=null ) {
+	public void onClickAddItem() {
+
+		if (popupWindowUtils != null && addFeedOnClickListener != null) {
 			addFeedOnClickListener.onClick(popupWindowUtils.popupView);
 		}
-		
+
 	}
-	
+
 }

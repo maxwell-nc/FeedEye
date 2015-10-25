@@ -18,6 +18,11 @@ public class TimeUtils {
 	public static final String STANDARD_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
 	/**
+	 * 获取当前时间标记
+	 */
+	public static final String GET_CURRENT_TIME_MARK = "getCurrentTime";
+	
+	/**
 	 * 任意时间转换为本地事件
 	 * 
 	 * @param orgTime
@@ -62,7 +67,7 @@ public class TimeUtils {
 	 * 任意文本转本地时间，匹配不到则返回系统时间
 	 * 
 	 * @param orgTime
-	 *            时间文本，传入"getCurrentTime"为获取当前时间
+	 *            时间文本，传入{@link #GET_CURRENT_TIME_MARK}为获取当前时间
 	 * @return "yyyy-MM-dd HH:mm:ss"格式的时间
 	 */
 	public static String LoopToTransTime(String orgTime) {
@@ -75,7 +80,7 @@ public class TimeUtils {
 	 * 任意文本转本地时间，匹配不到则返回系统时间
 	 * 
 	 * @param orgTime
-	 *            时间文本，传入"getCurrentTime"为获取当前时间
+	 *            时间文本，传入{@link #GET_CURRENT_TIME_MARK}为获取当前时间
 	 * @param pattern
 	 *            输出的时间格式
 	 * @return 时间
@@ -88,7 +93,7 @@ public class TimeUtils {
 
 		String resultTime = null;
 
-		if (orgTime != "getCurrentTime") {// 不是取当前时间
+		if (GET_CURRENT_TIME_MARK.equals(orgTime)) {// 不是取当前时间
 
 			/**
 			 * UTC/GMT时间
@@ -179,11 +184,15 @@ public class TimeUtils {
 	 * String转Timestamp
 	 * 
 	 * @param timeString
-	 *            时间文本
+	 *            时间文本，传入{@link #GET_CURRENT_TIME_MARK}为获取当前时间
 	 * @return Timestamp类型，失败返回null
 	 */
 	public static Timestamp string2Timestamp(String timeString) {
 
+		if (GET_CURRENT_TIME_MARK.equals(timeString)) {
+			timeString = LoopToTransTime(GET_CURRENT_TIME_MARK);
+		}
+		
 		return Timestamp.valueOf(timeString);
 
 	}

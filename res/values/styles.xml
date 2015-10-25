@@ -47,7 +47,13 @@
     <style name="hr_line">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.1dp</item>
-        <item name="android:background">@color/hr_line</item>
+        <item name="android:background">@color/split_line</item>
     </style>
 
+    <style name="vt_line">
+        <item name="android:layout_width">0.1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/split_line</item>
+    </style>
+    
 </resources>

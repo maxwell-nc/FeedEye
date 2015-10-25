@@ -17,7 +17,7 @@
     <color name="light_grey">#ffeeeeee</color>
     <color name="mid_grey">#55999999</color>
     <color name="drak_grey">#ff555555</color>
-    <color name="hr_line">#66999999</color>
+    <color name="split_line">#66999999</color>
 
     <color name="bird_green">#ffdcff1f</color>
     <color name="bird_green_light">#ffe1f95d</color>

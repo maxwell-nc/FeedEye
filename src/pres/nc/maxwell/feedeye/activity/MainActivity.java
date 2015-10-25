@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
+import pres.nc.maxwell.feedeye.domain.FavorItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
@@ -93,12 +95,12 @@ public class MainActivity extends Activity {
 	/**
 	 * 返回Activity时处理返回数据
 	 * 
-	 * 请求码为1时：
-	 * 
-	 * @See 请求返回数据{@link FeedPager#addNewFeedItem()}
-	 * @See 返回数据：
+	 * @See 请求码为1时：<br>
+	 *      返回数据：
 	 *      {@link pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity#addItem()}
-	 * @See 接收返回数据{@link FeedPager#finishedAddItem()}
+	 * 
+	 * @see 请求码为2时：<br>
+	 *      返回数据：{@link ItemDetailListActivity#FavorOnClickListener}
 	 * 
 	 */
 	@Override
@@ -108,13 +110,26 @@ public class MainActivity extends Activity {
 		switch (requestCode) {
 			case 1 :// 添加界面
 
-				if (resultCode != -1) {
+				if (resultCode == 1) {// 添加成功
 
 					FeedItem feedItem = (FeedItem) data.getExtras()
 							.getSerializable("FeedItem");
 
 					if (feedItem != null) {
 						mFeedPager.finishedAddItem(feedItem);
+					}
+
+				}
+				break;
+			case 2 :// 收藏增加通知
+				if (resultCode == 1) {// 收藏增加
+
+					@SuppressWarnings("unchecked")
+					ArrayList<FavorItem> favorItems = (ArrayList<FavorItem>) data.getExtras()
+							.getSerializable("FavorItems");
+
+					if (favorItems != null) {
+						mFavorPager.addFavorItemAtFirst(favorItems);
 					}
 
 				}
@@ -142,79 +157,79 @@ public class MainActivity extends Activity {
 		return super.onKeyUp(keyCode, event);
 	}
 
-}
+	/**
+	 * 导航按钮点击事件监听器
+	 */
+	class CheckedChange implements OnCheckedChangeListener {
 
-/**
- * 导航按钮点击事件监听器
- */
-class CheckedChange implements OnCheckedChangeListener {
+		private NoScrollViewPager mContentPager;
 
-	private NoScrollViewPager mContentPager;
+		public CheckedChange(NoScrollViewPager mContentPager) {
+			super();
+			this.mContentPager = mContentPager;
+		}
 
-	public CheckedChange(NoScrollViewPager mContentPager) {
-		super();
-		this.mContentPager = mContentPager;
+		/**
+		 * 点击切换界面，去掉ViewPager的切换效果
+		 */
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			switch (checkedId) {
+				case R.id.rb_feed :// 订阅
+					mContentPager.setCurrentItem(0, false);
+					break;
+				case R.id.rb_discover :// 发现
+					mContentPager.setCurrentItem(1, false);
+					break;
+				case R.id.rb_favor :// 收藏
+					mContentPager.setCurrentItem(2, false);
+					break;
+				case R.id.rb_setting :// 设置
+					mContentPager.setCurrentItem(3, false);
+					break;
+			}
+		}
 	}
 
 	/**
-	 * 点击切换界面，去掉ViewPager的切换效果
+	 * ViewPager填充页面适配器
 	 */
-	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		switch (checkedId) {
-			case R.id.rb_feed :// 订阅
-				mContentPager.setCurrentItem(0, false);
-				break;
-			case R.id.rb_discover :// 发现
-				mContentPager.setCurrentItem(1, false);
-				break;
-			case R.id.rb_favor :// 收藏
-				mContentPager.setCurrentItem(2, false);
-				break;
-			case R.id.rb_setting :// 设置
-				mContentPager.setCurrentItem(3, false);
-				break;
+	class PagerInflateAdapter extends PagerAdapter {
+
+		private List<BasePager> mPagerList;
+
+		public PagerInflateAdapter(List<BasePager> mPagerList) {
+			super();
+			this.mPagerList = mPagerList;
 		}
-	}
-}
 
-/**
- * ViewPager填充页面适配器
- */
-class PagerInflateAdapter extends PagerAdapter {
+		@Override
+		public int getCount() {
+			return mPagerList.size();
+		}
 
-	private List<BasePager> mPagerList;
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return view == object;
+		}
 
-	public PagerInflateAdapter(List<BasePager> mPagerList) {
-		super();
-		this.mPagerList = mPagerList;
-	}
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			BasePager pager = mPagerList.get(position);
+			// pager.getTitleView().setText("测试列表" + position);
 
-	@Override
-	public int getCount() {
-		return mPagerList.size();
-	}
+			View view = pager.getView();
+			container.addView(view);
 
-	@Override
-	public boolean isViewFromObject(View view, Object object) {
-		return view == object;
-	}
+			return view;
+		}
 
-	@Override
-	public Object instantiateItem(ViewGroup container, int position) {
-		BasePager pager = mPagerList.get(position);
-		// pager.getTitleView().setText("测试列表" + position);
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			container.removeView((View) object);
+			// super.destroyItem(container, position, object);
+		}
 
-		View view = pager.getView();
-		container.addView(view);
-
-		return view;
-	}
-
-	@Override
-	public void destroyItem(ViewGroup container, int position, Object object) {
-		container.removeView((View) object);
-		// super.destroyItem(container, position, object);
 	}
 
 }

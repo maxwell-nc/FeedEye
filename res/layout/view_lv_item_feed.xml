@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="horizontal" >
 
         <pres.nc.maxwell.feedeye.view.LayoutImageView
@@ -27,11 +27,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:ellipsize="middle"
             android:singleLine="true"
-            android:text="订阅标题订阅标题订阅标题(13)"
+            android:text="订阅标题"
             android:textColor="@drawable/selector_press_text_color"
             android:textSize="18sp" />
 
@@ -40,9 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="2dp"
             android:gravity="right"
-            android:text="上午18:30"
+            android:text="09/12 上午"
             android:textColor="@drawable/selector_press_text_color_grey"
             android:textSize="10sp" />
     </LinearLayout>

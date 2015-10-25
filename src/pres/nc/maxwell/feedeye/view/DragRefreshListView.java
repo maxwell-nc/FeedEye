@@ -282,7 +282,7 @@ public class DragRefreshListView extends ListView {
 			mHeaderRotatewPic.setVisibility(View.INVISIBLE);
 
 			mHeaderTipsText.setText("下拉刷新");
-			mHeaderTimeText.setText("上次刷新：" + TimeUtils.LoopToTransTime("getCurrentTime"));
+			mHeaderTimeText.setText("上次刷新：" + TimeUtils.LoopToTransTime(TimeUtils.GET_CURRENT_TIME_MARK));
 
 		}
 

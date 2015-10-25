@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white" >
+
+    <View
+        android:id="@+id/v_divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/light_grey" />
+
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/v_divider"
+        android:background="@drawable/selector_press_background_light_grey" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="新闻标题"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_title"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="right"
+            android:text="2015-01-03"
+            android:textColor="@color/grey"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_title"
+            android:layout_marginRight="5dp"
+            android:layout_toRightOf="@id/tv_time"
+            android:gravity="right"
+            android:text="来自 [Max的博客]"
+            android:textColor="@color/grey"
+            android:textSize="10sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_time"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="horizontal"
+            android:weightSum="3" >
+
+            <pres.nc.maxwell.feedeye.view.LayoutImageView
+                android:id="@+id/iv_preview1"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter" />
+
+            <pres.nc.maxwell.feedeye.view.LayoutImageView
+                android:id="@+id/iv_preview2"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter" />
+
+            <pres.nc.maxwell.feedeye.view.LayoutImageView
+                android:id="@+id/iv_preview3"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_preview"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:text="通常在实际开发中，为了适配，我们会把View设置为match_parent或者wrap_content、又或者是设置weight权重来分配宽高，而不是使用具体值。那么就出现一个问题了，如果动态测量View的实际宽高。 其实这个问题网上有很多解决方法，无奈给出的方法众多，却没有解析，实际可能根本不管用。所以详细记录下这个问题。"
+            android:textColor="@color/drak_grey"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/v_hr_line"
+        style="@style/hr_line"
+        android:layout_below="@id/rl_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/v_hr_line"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/ll_cancel_favor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_small_favor" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="取消收藏"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View style="@style/vt_line" />
+
+        <LinearLayout
+            android:id="@+id/ll_copy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_small_copy" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="复制内容"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View style="@style/vt_line" />
+
+        <LinearLayout
+            android:id="@+id/ll_send"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_small_send" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="转发给..."
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
