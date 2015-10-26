@@ -298,6 +298,8 @@ public class FeedPager extends BasePager {
 			extends
 				ArrayListLoadingMoreAdapter<FeedItem> {
 
+		ViewHolder holder;
+		
 		public FeedPagerListViewAdapter(ArrayList<FeedItem> unshowList,
 				ArrayList<FeedItem> showedList, int onceShowedCount) {
 			mListView.super(unshowList, showedList, onceShowedCount);
@@ -327,7 +329,6 @@ public class FeedPager extends BasePager {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			RelativeLayout view;
-			ViewHolder holder;
 
 			// 复用ConvertView
 			if (convertView != null && convertView instanceof RelativeLayout) {
@@ -866,7 +867,6 @@ public class FeedPager extends BasePager {
 	/**
 	 * 完成添加订阅信息
 	 * 
-	 * @See 添加测试数据：{@link #addTestData()}
 	 * @param feedItem
 	 *            添加了的FeedItem
 	 */

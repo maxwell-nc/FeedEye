@@ -18,6 +18,7 @@ import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
 import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.SystemUtils;
+import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLCacheUtils.OnFinishGetLocalCacheListener;
@@ -529,6 +530,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 			extends
 				ArrayListLoadingMoreAdapter<FeedXMLContentInfo> {
 
+		ViewHolder holder;
+
 		/**
 		 * 清空缓存
 		 */
@@ -566,7 +569,6 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			ViewHolder holder;
 			FrameLayout itemView;
 
 			if (convertView != null && convertView instanceof FrameLayout) {// 复用
@@ -633,8 +635,8 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 			}
 
-			holder.time.setText("发表于："
-					+ mContentInfoShowedList.get(position).pubDate);
+			String rawTime = mContentInfoShowedList.get(position).pubDate;
+			holder.time.setText("发表于：" + TimeUtils.LoopToTransTime(rawTime));
 
 			return itemView;
 		}
@@ -855,14 +857,17 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 
 				favorItem.feedSourceName = mFeedItem.baseInfo.title;
 				favorItem.feedURL = mFeedItem.feedURL;
-								
+
 				favorItem.contentInfo = mContentInfoShowedList.get(position);
+				// 单独处理时间
+				favorItem.contentInfo.pubDate = TimeUtils
+						.LoopToTransTime(mContentInfoShowedList.get(position).pubDate);
 				ListItemCache cache = mListItemCaches.get(position);
-				
+
 				favorItem.picLink1 = cache.link1;
 				favorItem.picLink2 = cache.link2;
 				favorItem.picLink3 = cache.link3;
-				
+
 				favorItem.summary = cache.previewString;
 
 				new FavorItemDAO(mThisActivity).addItem(favorItem);

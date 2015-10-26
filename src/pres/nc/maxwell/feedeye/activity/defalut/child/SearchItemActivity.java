@@ -291,6 +291,8 @@ public class SearchItemActivity extends DefaultNewActivity {
 	 */
 	class ResultListAdapter extends BaseAdapter {
 
+		ViewHolder holder;
+		
 		@Override
 		public int getCount() {
 			return mResultList.size();
@@ -299,7 +301,7 @@ public class SearchItemActivity extends DefaultNewActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			RelativeLayout itemView;
-			ViewHolder holder;
+			
 			if (convertView != null && convertView instanceof RelativeLayout) {
 
 				itemView = (RelativeLayout) convertView;

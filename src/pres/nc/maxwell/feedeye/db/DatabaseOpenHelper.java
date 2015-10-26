@@ -49,7 +49,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 				+ "feed_url text not null,"// 订阅的地址
 				+ "title varchar(200) not null,"// 正文标题
 				+ "description text not null,"// RSS正文内容或ATOM的摘要
-				+ "pubdate timeStamp not null DEFAULT (datetime('now','localtime')),"// 正文时间
+				+ "pubdate varchar(200) not null,"// 正文时间
 				+ "content_link text not null,"// 正文连接
 				+ "atom_type  varchar(100) not null,"// ATOM正文类型
 				+ "atom_content  text not null,"// ATOM正文内容

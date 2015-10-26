@@ -93,7 +93,7 @@ public class TimeUtils {
 
 		String resultTime = null;
 
-		if (GET_CURRENT_TIME_MARK.equals(orgTime)) {// 不是取当前时间
+		if (!GET_CURRENT_TIME_MARK.equals(orgTime)) {// 不是取当前时间
 
 			/**
 			 * UTC/GMT时间

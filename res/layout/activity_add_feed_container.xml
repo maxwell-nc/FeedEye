@@ -30,8 +30,6 @@
                 android:background="@color/white"
                 android:hint="请输入要订阅的标题(可选)"
                 android:padding="20dp" >
-
-                <requestFocus />
             </EditText>
 
             <TextView

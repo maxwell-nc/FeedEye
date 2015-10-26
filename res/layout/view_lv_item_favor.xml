@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white" >
+    android:background="@color/light_grey"
+    android:paddingTop="6dp" >
 
     <View
         android:id="@+id/v_divider"
@@ -95,12 +96,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/ll_preview"
-            android:paddingBottom="5dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:maxLines="5"
+            android:paddingBottom="5dp"
             android:text="通常在实际开发中，为了适配，我们会把View设置为match_parent或者wrap_content、又或者是设置weight权重来分配宽高，而不是使用具体值。那么就出现一个问题了，如果动态测量View的实际宽高。 其实这个问题网上有很多解决方法，无奈给出的方法众多，却没有解析，实际可能根本不管用。所以详细记录下这个问题。"
             android:textColor="@color/drak_grey"
             android:textSize="14sp" />
@@ -163,7 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
-                android:text="复制内容"
+                android:text="@string/copy_link"
                 android:textSize="12sp" />
         </LinearLayout>
 
