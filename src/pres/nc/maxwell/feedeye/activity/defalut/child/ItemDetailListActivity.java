@@ -147,6 +147,30 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 	}
 
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch (requestCode) {
+			case 1 :// 添加界面
+
+				if (resultCode == 1) {// 收藏增加
+
+					@SuppressWarnings("unchecked")
+					ArrayList<FavorItem> favorItems = (ArrayList<FavorItem>) data
+							.getExtras().getSerializable("FavorItems");
+
+					if (favorItems != null) {
+						mFavorItems.addAll(0, favorItems);
+						mFavorItemIntent.putExtra("FavorItems", mFavorItems);
+						setResult(1, mFavorItemIntent);
+					}
+
+				}
+				break;
+		}
+
+	}
+
+	@Override
 	protected void initView() {
 		super.initView();
 
@@ -247,7 +271,7 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 								- mListView.getHeaderViewsCount()));
 				intent.putExtra("FeedItem", mFeedItem);
 
-				mThisActivity.startActivity(intent);
+				mThisActivity.startActivityForResult(intent, 1);
 
 			}
 

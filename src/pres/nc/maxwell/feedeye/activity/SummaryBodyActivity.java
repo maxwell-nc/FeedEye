@@ -3,6 +3,8 @@ package pres.nc.maxwell.feedeye.activity;
 import java.util.ArrayList;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.db.FavorItemDAO;
+import pres.nc.maxwell.feedeye.domain.FavorItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.DensityUtils;
@@ -41,6 +43,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 正文内容的Activity
@@ -147,6 +150,36 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private OnClickListener mOnMoreOptionClickListener;
 
+	/**
+	 * 订阅条目信息
+	 */
+	private FeedItem mFeedItem;
+
+	/**
+	 * 订阅XML正文内容
+	 */
+	private FeedXMLContentInfo mFeedXMLContentInfo;
+
+	/**
+	 * 用于传递收藏FavorItem
+	 */
+	private Intent mFavorItemIntent = new Intent();
+
+	/**
+	 * 新收藏的FavorItem集合
+	 */
+	private ArrayList<FavorItem> mFavorItems = new ArrayList<FavorItem>();
+
+	/**
+	 * 图片列表
+	 */
+	private ArrayList<String> mImgList;
+
+	/**
+	 * 存放各段文本
+	 */
+	private String[] mTexts;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_summary_body);
@@ -191,7 +224,7 @@ public class SummaryBodyActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		
+
 		// 复写点击菜单键
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
 
@@ -200,7 +233,7 @@ public class SummaryBodyActivity extends Activity {
 
 			return true;
 		}
-		
+
 		return super.onKeyUp(keyCode, event);
 	}
 
@@ -247,33 +280,32 @@ public class SummaryBodyActivity extends Activity {
 	 */
 	private void initData() {
 
-		// 获取传递进来的数据
-		FeedXMLContentInfo feedXMLContentInfo = (FeedXMLContentInfo) getIntent()
-				.getExtras().getSerializable("FeedXMLContentInfo");
-		FeedItem feedItem = (FeedItem) getIntent().getExtras().getSerializable(
+		mFeedXMLContentInfo = (FeedXMLContentInfo) getIntent().getExtras()
+				.getSerializable("FeedXMLContentInfo");
+		mFeedItem = (FeedItem) getIntent().getExtras().getSerializable(
 				"FeedItem");
 
 		// 设置正文头部标题
-		mHeaderTitle.setText(feedXMLContentInfo.title);
+		mHeaderTitle.setText(mFeedXMLContentInfo.title);
 
 		// 提供源
 		String source = "";
-		if (feedItem.baseInfo.title.length() > 15) {
-			source = feedItem.baseInfo.title.substring(0, 12) + "...";
+		if (mFeedItem.baseInfo.title.length() > 15) {
+			source = mFeedItem.baseInfo.title.substring(0, 12) + "...";
 		} else {
-			source = feedItem.baseInfo.title;
+			source = mFeedItem.baseInfo.title;
 		}
 
 		// 获取时间
 		String sourceTime = source
 				+ " / "
-				+ TimeUtils.LoopToTransTime(feedXMLContentInfo.pubDate,
+				+ TimeUtils.LoopToTransTime(mFeedXMLContentInfo.pubDate,
 						TimeUtils.STANDARD_TIME_PATTERN);
 
 		mHeaderSouceTime.setText(sourceTime);
 
 		// 设置连接
-		mHeaderLink.setText(feedXMLContentInfo.link);
+		mHeaderLink.setText(mFeedXMLContentInfo.link);
 
 		// 设置点击监听器
 		HeaderOnClickListener listener = new HeaderOnClickListener();
@@ -282,25 +314,25 @@ public class SummaryBodyActivity extends Activity {
 		mHeaderLink.setOnClickListener(listener);
 		mBodyContainer.setOnClickListener(listener);
 
-		String[] texts;// 存放各段文本
-		final ArrayList<String> imgList = new ArrayList<String>();// 存放图片链接的集合
+		mImgList = new ArrayList<String>();
 
 		// 获得正文内容
-		if (TextUtils.isEmpty(feedXMLContentInfo.content)) {
-			texts = HTTPUtils.html2Texts(feedXMLContentInfo.description,
-					imgList);
+		if (TextUtils.isEmpty(mFeedXMLContentInfo.content)) {
+			mTexts = HTTPUtils.html2Texts(mFeedXMLContentInfo.description,
+					mImgList);
 		} else {
-			texts = HTTPUtils.html2Texts(feedXMLContentInfo.content, imgList);
+			mTexts = HTTPUtils
+					.html2Texts(mFeedXMLContentInfo.content, mImgList);
 		}
 
 		// 添加第一条文本
-		TextView textFragment = getContentStyleTextView(texts[0]);
+		TextView textFragment = getContentStyleTextView(mTexts[0]);
 		mBodyContainer.addView(textFragment);
 
-		int size = imgList.size();
+		int size = mImgList.size();
 		for (int i = 0; i < size; i++) {
 
-			final String imgLink = imgList.get(i);
+			final String imgLink = mImgList.get(i);
 
 			// 如果有图片则显示
 			if (!TextUtils.isEmpty(imgLink)) {
@@ -314,7 +346,7 @@ public class SummaryBodyActivity extends Activity {
 			}
 
 			// 显示下一段文本
-			textFragment = getContentStyleTextView(texts[i + 1]);// 已经有一条文本
+			textFragment = getContentStyleTextView(mTexts[i + 1]);// 已经有一条文本
 			mBodyContainer.addView(textFragment);
 
 		}
@@ -564,9 +596,6 @@ public class SummaryBodyActivity extends Activity {
 				pwItemFavor, pwItemShare, pwItemsBrowser, pwItemSimpleRead,
 				pwItemRefresh, pwItemOrigin);
 
-		// 防止PopupWindow抢焦点
-		// TODO:mPopupWindow.setFocusable(false);
-
 		// 创建点击更多选项的监听器
 		mOnMoreOptionClickListener = new OnClickListener() {
 
@@ -636,6 +665,46 @@ public class SummaryBodyActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+
+				PopupWindowUtils.tryToClosePopupWindow(mPopupWindow);
+
+				FavorItem favorItem = new FavorItem();
+
+				favorItem.feedSourceName = mFeedItem.baseInfo.title;
+				favorItem.feedURL = mFeedItem.feedURL;
+
+				favorItem.contentInfo = mFeedXMLContentInfo;
+				// 单独处理时间
+				favorItem.contentInfo.pubDate = TimeUtils
+						.LoopToTransTime(mFeedXMLContentInfo.pubDate);
+
+				int size = mImgList.size();
+				if (size >= 1) {
+					favorItem.picLink1 = mImgList.get(0);
+					if (size >= 2) {
+						favorItem.picLink1 = mImgList.get(1);
+						if (size >= 3) {
+							favorItem.picLink1 = mImgList.get(2);
+						}
+					}
+				}
+
+				String orgString = mTexts[0];
+
+				if (orgString.length() > 250) {
+					orgString = orgString.substring(0, 250);
+				}
+
+				favorItem.summary = orgString;
+
+				new FavorItemDAO(mThisActivity).addItem(favorItem);
+
+				mFavorItems.add(favorItem);
+				mFavorItemIntent.putExtra("FavorItems", mFavorItems);
+				setResult(1, mFavorItemIntent);
+
+				Toast.makeText(mThisActivity, "成功添加收藏", Toast.LENGTH_SHORT)
+						.show();
 
 				// TODO:收藏
 

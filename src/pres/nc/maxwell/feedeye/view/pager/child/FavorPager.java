@@ -75,12 +75,24 @@ public class FavorPager extends BasePager {
 	 */
 	private FullListAdapter mFullListAdapter;
 
+	/**
+	 * 最近收藏的布局
+	 */
 	private LinearLayout mRecentLayout;
 
+	/**
+	 * 最近收藏无数据显示的View
+	 */
 	private View mRecentNoFavor;
 
+	/**
+	 * 全部收藏的布局
+	 */
 	private LinearLayout mFullLayout;
 
+	/**
+	 * 全部收藏无数据显示的View
+	 */
 	private View mFullNoFavor;
 
 	public FavorPager(Activity mActivity) {
@@ -484,7 +496,7 @@ public class FavorPager extends BasePager {
 
 				intent.putExtra("FeedItem", feedItem);
 
-				mActivity.startActivity(intent);
+				mActivity.startActivityForResult(intent, 2);
 
 			}
 		});
