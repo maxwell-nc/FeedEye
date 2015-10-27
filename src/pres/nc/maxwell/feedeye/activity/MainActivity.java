@@ -10,6 +10,7 @@ import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
+import pres.nc.maxwell.feedeye.view.pager.child.DiscovePager;
 import pres.nc.maxwell.feedeye.view.pager.child.FavorPager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import android.app.Activity;
@@ -48,6 +49,11 @@ public class MainActivity extends Activity {
 	private FeedPager mFeedPager;
 
 	/**
+	 * 发现页面
+	 */
+	private DiscovePager mDiscovePager;
+
+	/**
 	 * 收藏页面
 	 */
 	private FavorPager mFavorPager;
@@ -81,10 +87,11 @@ public class MainActivity extends Activity {
 
 		// 添加布局进ViewPager
 		mFeedPager = new FeedPager(this);
+		mDiscovePager = new DiscovePager(this);
 		mFavorPager = new FavorPager(this);
-
+		
 		mPagerList.add(mFeedPager);// 订阅
-		mPagerList.add(new BasePager(this));
+		mPagerList.add(mDiscovePager);//发现
 		mPagerList.add(mFavorPager);// 收藏
 		mPagerList.add(new BasePager(this));
 

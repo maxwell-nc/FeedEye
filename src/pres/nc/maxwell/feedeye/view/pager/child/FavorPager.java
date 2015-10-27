@@ -33,6 +33,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 收藏页面的Pager
+ */
 public class FavorPager extends BasePager {
 
 	/**
@@ -103,7 +106,7 @@ public class FavorPager extends BasePager {
 	protected void initView() {
 		super.initView();
 
-		mTitle.setText("收藏页面");
+		mTitle.setText("我的收藏");
 		mViewContent = setContainerContent(R.layout.pager_favor);
 
 		mContentPager = (ViewPager) mViewContent.findViewById(R.id.vp_content);
