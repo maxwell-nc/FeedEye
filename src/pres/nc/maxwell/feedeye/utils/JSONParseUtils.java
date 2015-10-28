@@ -17,18 +17,41 @@ import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
  */
 public class JSONParseUtils {
 
+	/**
+	 * 传入解析监听器
+	 * @param onParseListener 解析监听器
+	 */
 	public JSONParseUtils(OnParseListener onParseListener) {
 		this.onParseListener = onParseListener;
 	}
 	
+	/**
+	 * 解析监听器
+	 */
 	private OnParseListener onParseListener;
 	
+	/**
+	 * 解析监听器
+	 */
 	public interface OnParseListener{
 		
+		/**
+		 * 完成解析
+		 * @param items 解析得到的数据
+		 */
 		public void OnFinishParse(ArrayList<DiscoverItem> items);
+		
+		/**
+		 * 解析失败或中断
+		 */
+		public void onFailed();
 
 	}
 	
+	/**
+	 * 解析网络JSON
+	 * @param jsonUrl JSON地址
+	 */
 	public void parseUrl(String jsonUrl) {
 
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
@@ -47,6 +70,10 @@ public class JSONParseUtils {
 			@Override
 			public void onFailure() {
 
+				if (onParseListener!=null) {
+					onParseListener.onFailed();
+				}
+				
 			}
 
 			@Override
@@ -71,10 +98,20 @@ public class JSONParseUtils {
 						item.description = content.getString("description");
 						item.encode = content.getString("encode");
 						JSONArray keywordsArray = content.getJSONArray("keywords");
-						item.key1 = keywordsArray.getString(0);
-						item.key2 = keywordsArray.getString(1);
-						item.key3 = keywordsArray.getString(2);
-						item.key4 = keywordsArray.getString(3);
+						
+						item.labels = new String[4];
+						item.labels[0] = keywordsArray.getString(0);
+						item.labels[1] = keywordsArray.getString(1);
+						item.labels[2] = keywordsArray.getString(2);
+						item.labels[3] = keywordsArray.getString(3);
+						
+						JSONArray colorMarksArray = content.getJSONArray("colorMarks");
+						item.colorMarks = new int[4];
+						item.colorMarks[0] = colorMarksArray.getInt(0);
+						item.colorMarks[1] = colorMarksArray.getInt(1);
+						item.colorMarks[2] = colorMarksArray.getInt(2);
+						item.colorMarks[3] = colorMarksArray.getInt(3);
+						
 						item.link = content.getString("link");
 						item.name = content.getString("name");
 						item.type = content.getString("type");

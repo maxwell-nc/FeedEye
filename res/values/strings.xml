@@ -32,5 +32,6 @@
     <string name="larger_text_zoom">较大(150%)</string>
     <string name="largest_text_zoom">最大(175%)</string>
     <string name="add_feed_tips">还没添加订阅，赶紧添加吧</string>
+    <string name="click_to_reload">点此重新加载</string>
 
 </resources>

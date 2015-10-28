@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
+import pres.nc.maxwell.feedeye.domain.DiscoverItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
@@ -125,9 +126,25 @@ public class AddFeedActivity extends DefaultNewActivity {
 	protected void initData() {
 		super.initData();
 
-		/**
-		 * 点击完成按钮
-		 */
+		// 判断是否有数据输入
+		DiscoverItem discoverItem = (DiscoverItem) getIntent()
+				.getSerializableExtra("DiscoverItem");
+
+		if (discoverItem != null) {
+			mUrlText.setText(discoverItem.link);
+			mTitleText.setText(discoverItem.name);
+			if ("utf-8".equals(discoverItem.encode)) {
+				mEncodingGroup.check(R.id.rb_utf8);
+			}
+			else if ("gbk".equals(discoverItem.encode)) {
+				mEncodingGroup.check(R.id.rb_gb2312);
+			}
+			else if ("iso8859-1".equals(discoverItem.encode)) {
+				mEncodingGroup.check(R.id.rb_iso8859_1);
+			}
+		}
+
+		// 点击完成按钮
 		mFinishButtonView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -139,9 +156,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 		});
 
-		/**
-		 * 判断编码类型
-		 */
+		// 判断编码类型
 		mEncodingGroup
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -190,8 +205,8 @@ public class AddFeedActivity extends DefaultNewActivity {
 						mThisActivity, uri);
 				mCustomImagePath.setText(customImagePath);
 				// 显示出来
-				BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity, mCustomImage,
-						customImagePath, null);
+				BitmapCacheUtils.displayBitmapOnLayoutChange(mThisActivity,
+						mCustomImage, customImagePath, null);
 			}
 
 		}
@@ -221,6 +236,9 @@ public class AddFeedActivity extends DefaultNewActivity {
 
 			mUrlText.startAnimation(AnimationUtils.loadAnimation(mThisActivity,
 					R.anim.edit_text_translate));
+
+			Toast.makeText(mThisActivity, "订阅地址不能为空", Toast.LENGTH_SHORT)
+					.show();
 
 			return;
 		}

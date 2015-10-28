@@ -624,7 +624,9 @@ public class FavorPager extends BasePager {
 	 */
 	private RelativeLayout getFaovrView(int position, View convertView,
 			ViewHolder holder, ArrayList<FavorItem> list) {
+		
 		RelativeLayout view;
+		
 		// 复用ConvertView
 		if (convertView != null && convertView instanceof RelativeLayout) {
 			// 复用View并取出holder

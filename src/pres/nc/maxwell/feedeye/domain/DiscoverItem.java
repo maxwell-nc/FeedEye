@@ -36,21 +36,11 @@ public class DiscoverItem implements Serializable {
 	/**
 	 * 关键词1
 	 */
-	public String key1;
+	public String[] labels;
 	
 	/**
-	 * 关键词2
+	 * 是否高亮关键词
 	 */
-	public String key2;
-	
-	/**
-	 * 关键词3
-	 */
-	public String key3;
-	
-	/**
-	 * 关键词4
-	 */
-	public String key4;
+	public int[] colorMarks;
 	
 }

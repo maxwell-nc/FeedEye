@@ -2,21 +2,21 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
+
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-         <item name="android:windowNoTitle">true</item>
-         
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <!-- 底部导航按钮的样式 -->
@@ -43,17 +43,33 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <!-- 分割线 -->
+    <!-- 水平分割线 -->
     <style name="hr_line">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.1dp</item>
         <item name="android:background">@color/split_line</item>
     </style>
 
+    <!-- 垂直分割线 -->
     <style name="vt_line">
         <item name="android:layout_width">0.1dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/split_line</item>
     </style>
-    
+
+    <!-- 标签文本 -->
+    <style name="label_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:layout_marginRight">3dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/selector_press_background_item</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

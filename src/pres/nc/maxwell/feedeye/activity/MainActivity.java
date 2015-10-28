@@ -95,8 +95,9 @@ public class MainActivity extends Activity {
 		mPagerList.add(mFavorPager);// 收藏
 		mPagerList.add(new BasePager(this));
 
+		mContentPager.setOffscreenPageLimit(3);//设置3个缓存页面+1个显示的
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
-
+		
 	}
 
 	/**
@@ -124,8 +125,10 @@ public class MainActivity extends Activity {
 
 					if (feedItem != null) {
 						mFeedPager.finishedAddItem(feedItem);
+						//切换到订阅信息页面
+						mNaviBtnGroup.getNaviBtnGroupView().check(R.id.rb_feed);
 					}
-
+					
 				}
 				break;
 			case 2 :// 收藏增加通知
