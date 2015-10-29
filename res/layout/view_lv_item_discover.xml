@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/light_grey"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:paddingTop="6dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,8 +49,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/selector_press_background_light_grey"
+            android:ellipsize="end"
             android:gravity="center"
             android:padding="5dp"
+            android:singleLine="true"
             android:text="博客"
             android:textSize="12sp" />
 
@@ -62,8 +64,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/selector_press_background_light_grey"
+            android:ellipsize="end"
             android:gravity="center"
             android:padding="5dp"
+            android:singleLine="true"
             android:text="Android"
             android:textSize="12sp" />
 
@@ -75,8 +79,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/selector_press_background_light_grey"
+            android:ellipsize="end"
             android:gravity="center"
             android:padding="5dp"
+            android:singleLine="true"
             android:text="技术"
             android:textSize="12sp" />
 
@@ -88,8 +94,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/selector_press_background_light_grey"
+            android:ellipsize="end"
             android:gravity="center"
             android:padding="5dp"
+            android:singleLine="true"
             android:text="分享"
             android:textSize="12sp" />
     </LinearLayout>
@@ -102,7 +110,7 @@
         android:orientation="horizontal" >
 
         <TextView
-               android:id="@+id/tv_desc"
+            android:id="@+id/tv_desc"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"

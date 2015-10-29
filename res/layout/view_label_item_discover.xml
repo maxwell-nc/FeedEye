@@ -4,9 +4,10 @@
     android:layout_height="wrap_content"
     android:background="@color/light_grey"
     android:orientation="horizontal"
-    android:paddingLeft="6dp"
-    android:paddingRight="6dp"
-    android:paddingTop="6dp" >
+    android:paddingBottom="4dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="4dp" >
 
     <TextView
         android:id="@+id/tv_label1"

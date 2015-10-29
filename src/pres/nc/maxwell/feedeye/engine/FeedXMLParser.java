@@ -13,6 +13,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.domain.FeedXMLContentInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 import pres.nc.maxwell.feedeye.utils.TimeUtils;
 import pres.nc.maxwell.feedeye.utils.xml.XMLParseUtils;
@@ -361,10 +362,14 @@ public class FeedXMLParser {
 					mBaseInfo.title = "无标题";
 				}
 
+				mBaseInfo.title = trimStartAnd(mBaseInfo.title);
+
 				// 无预览内容
 				if (TextUtils.isEmpty(mBaseInfo.summary)) {
 					mBaseInfo.summary = "没有接收到数据";
 				}
+
+				mBaseInfo.summary = trimStartAnd(mBaseInfo.summary);
 
 				// 无获取到时间，设置为当前时间
 				if (mBaseInfo.time == null) {
@@ -470,36 +475,32 @@ public class FeedXMLParser {
 
 				// ----------------RSS---------------
 
-				if ("item".equals(parser.getName())
-						&& eventType == XmlPullParser.START_TAG) {// RSS内容开始
+				if ("item".equals(name) && eventType == XmlPullParser.START_TAG) {// RSS内容开始
 					contentInfo = new FeedXMLContentInfo();
 					startRssItemFlag = true;
 				}
 
-				if (startRssItemFlag == true
-						&& "title".equals(parser.getName())
+				if (startRssItemFlag == true && "title".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容标题
 					contentInfo.title = parser.nextText();
 				}
 
-				if (startRssItemFlag == true
-						&& "description".equals(parser.getName())
+				if (startRssItemFlag == true && "description".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容描述
 					contentInfo.description = parser.nextText();
 				}
 
-				if (startRssItemFlag == true
-						&& "pubDate".equals(parser.getName())
+				if (startRssItemFlag == true && "pubDate".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// RSS内容时间
 					contentInfo.pubDate = parser.nextText();
 				}
 
-				if (startRssItemFlag == true && "link".equals(parser.getName())
+				if (startRssItemFlag == true && "link".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// RSS连接
 					contentInfo.link = parser.nextText();
 				}
 
-				if (startRssItemFlag == true && "item".equals(parser.getName())
+				if (startRssItemFlag == true && "item".equals(name)
 						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
 					mContentInfoList.add(contentInfo);
 					startRssItemFlag = false;
@@ -507,32 +508,28 @@ public class FeedXMLParser {
 
 				// ----------------ATOM---------------
 
-				if ("entry".equals(parser.getName())
+				if ("entry".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM内容开始
 					contentInfo = new FeedXMLContentInfo();
 					startAtomEntryFlag = true;
 				}
 
-				if (startAtomEntryFlag == true
-						&& "title".equals(parser.getName())
+				if (startAtomEntryFlag == true && "title".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM内容标题
 					contentInfo.title = parser.nextText();
 				}
 
-				if (startAtomEntryFlag == true
-						&& "summary".equals(parser.getName())
+				if (startAtomEntryFlag == true && "summary".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM内容描述
 					contentInfo.description = parser.nextText();
 				}
 
-				if (startAtomEntryFlag == true
-						&& "updated".equals(parser.getName())
+				if (startAtomEntryFlag == true && "updated".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM内容时间
 					contentInfo.pubDate = parser.nextText();
 				}
 
-				if (startAtomEntryFlag == true
-						&& "link".equals(parser.getName())
+				if (startAtomEntryFlag == true && "link".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM连接
 
 					if (TextUtils.isEmpty(contentInfo.link)
@@ -544,16 +541,14 @@ public class FeedXMLParser {
 
 				}
 
-				if (startAtomEntryFlag == true
-						&& "content".equals(parser.getName())
+				if (startAtomEntryFlag == true && "content".equals(name)
 						&& eventType == XmlPullParser.START_TAG) {// ATOM内容
 					contentInfo.contentType = parser.getAttributeValue(null,
 							"type");
-					contentInfo.content = parser.nextText();
+					contentInfo.content = XMLParseUtils.safeNextText(parser);
 				}
 
-				if (startAtomEntryFlag == true
-						&& "entry".equals(parser.getName())
+				if (startAtomEntryFlag == true && "entry".equals(name)
 						&& eventType == XmlPullParser.END_TAG) {// RSS内容结束
 					mContentInfoList.add(contentInfo);
 					startAtomEntryFlag = false;
@@ -581,6 +576,8 @@ public class FeedXMLParser {
 					if (TextUtils.isEmpty(info.title)) {
 						info.title = "无标题";
 					}
+
+					info.title = trimStartAnd(info.title);
 
 					// 无描述
 					if (TextUtils.isEmpty(info.description)) {
@@ -628,4 +625,42 @@ public class FeedXMLParser {
 
 	}
 
+	/**
+	 * 去除标题开头奇怪的字符
+	 * 
+	 * @param str
+	 *            标题
+	 * @return 处理后的字符串
+	 */
+	private String trimStartAnd(String str) {
+
+		LogUtils.e(this, str);
+
+		// 去除开头的换行符
+		while (str.startsWith("\n")) {
+			str = str.replaceFirst("\n", "");
+		}
+
+		// 去除开头的空格
+		while (str.startsWith(" ")) {
+			str = str.replaceFirst(" ", "");
+		}
+
+		// 去除开头的CDATA产生的问题
+		while (str.startsWith("\u0009")) {
+			str = str.replaceFirst("\u0009", "");
+		}
+
+		// 去除尾部的换行符
+		while (str.endsWith("\n")) {
+			str = str.substring(0, str.length() - 1);
+		}
+
+		// 去除尾部的CDATA产生的问题
+		while (str.endsWith("\u0009")) {
+			str = str.substring(0, str.length() - 1);
+		}
+
+		return str;
+	}
 }

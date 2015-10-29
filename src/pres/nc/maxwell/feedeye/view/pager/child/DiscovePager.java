@@ -1,7 +1,6 @@
 package pres.nc.maxwell.feedeye.view.pager.child;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
@@ -29,9 +28,32 @@ import android.widget.Toast;
 public class DiscovePager extends BasePager {
 
 	/**
+	 * 刷新按钮状态
+	 */
+	private static final int STATE_REFRESH = 1;
+
+	/**
+	 * 显示全部按钮状态
+	 */
+	private static final int STATE_SHOW_ALL = 2;
+
+	/**
+	 * 按钮状态
+	 * 
+	 * @see #STATE_REFRESH
+	 * @see #STATE_SHOW_ALL
+	 */
+	private int mButtonState = 1;
+
+	/**
 	 * 标签列表
 	 */
 	private ListView mLabelView;
+
+	/**
+	 * 标签列表数据适配器
+	 */
+	private LabelViewAdapter mLabelViewAdapter;
 
 	/**
 	 * 列表数据适配器
@@ -79,6 +101,7 @@ public class DiscovePager extends BasePager {
 	protected void initData() {
 		super.initData();
 
+		useFunctionButton();
 		LoadData();
 
 	}
@@ -92,6 +115,14 @@ public class DiscovePager extends BasePager {
 		getLoadingBarView().setVisibility(View.VISIBLE);
 		mNothingLayout.setVisibility(View.INVISIBLE);
 
+		// 不显示按钮
+		mFuncButtonLeft.setVisibility(View.INVISIBLE);
+		mFuncButtonRight.setVisibility(View.INVISIBLE);
+
+		// 不显示数据
+		mListView.setVisibility(View.GONE);
+		mLabelView.setVisibility(View.GONE);
+
 		new JSONParseUtils(new OnParseListener() {
 
 			@Override
@@ -100,21 +131,38 @@ public class DiscovePager extends BasePager {
 				mItemsList = items;
 				mItemsShowList = items;
 
-				mListViewAdapter = new ListViewAdapter();
-				mListView.setAdapter(mListViewAdapter);
-				mLabelView.setAdapter(new LabelViewAdapter());
+				if (mListViewAdapter == null) {
+					mListViewAdapter = new ListViewAdapter();
+					mListView.setAdapter(mListViewAdapter);
+				} else {
+					mListViewAdapter.notifyDataSetChanged();
+				}
+
+				if (mLabelViewAdapter == null) {
+					mLabelViewAdapter = new LabelViewAdapter();
+					mLabelView.setAdapter(mLabelViewAdapter);
+				} else {
+					mLabelViewAdapter.notifyDataSetChanged();
+
+					// 非第一次
+					Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT)
+							.show();
+				}
 
 				// 不显示加载条
 				getLoadingBarView().setVisibility(View.INVISIBLE);
-				useFunctionButton();
+
+				// 显示按钮
+				mFuncButtonLeft.setVisibility(View.VISIBLE);
+				mFuncButtonRight.setVisibility(View.VISIBLE);
+
+				mLabelView.setVisibility(View.VISIBLE);
+
 			}
 
 			@Override
 			public void onFailed() {
 
-				// 显示重新加载
-				mListView.setVisibility(View.INVISIBLE);
-				mLabelView.setVisibility(View.INVISIBLE);
 				getLoadingBarView().setVisibility(View.INVISIBLE);
 				mNothingLayout.setVisibility(View.VISIBLE);
 
@@ -127,9 +175,11 @@ public class DiscovePager extends BasePager {
 
 				});
 
+				Toast.makeText(mActivity, "加载失败", Toast.LENGTH_SHORT).show();
 			}
 
 		}).parseUrl("http://192.168.253.1:8080/feedeye/test.json");
+
 	}
 
 	@Override
@@ -148,11 +198,9 @@ public class DiscovePager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				if (mLabelView.getVisibility() == View.VISIBLE) {// 刷新
+				if (mButtonState == STATE_REFRESH) {// 刷新
 
 					LoadData();
-					Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT)
-							.show();
 
 				} else {// 显示全部
 
@@ -199,18 +247,58 @@ public class DiscovePager extends BasePager {
 		LayoutImageView icon;
 	}
 
+	/**
+	 * 标签视图的数据适配器
+	 */
 	class LabelViewAdapter extends BaseAdapter {
 
 		ViewHolder holder;
 
 		/**
-		 * 记录已经显示的标签
+		 * 标签集合，不显示则为""
 		 */
-		HashSet<String> labelsSet = new HashSet<String>();
+		ArrayList<String> labelStrings = new ArrayList<String>();
+
+		public LabelViewAdapter() {
+			calcSingleLabel();
+		}
+
+		/**
+		 * 计算唯一标签
+		 */
+		private void calcSingleLabel() {
+			
+			labelStrings.clear();
+			
+			for (DiscoverItem item : mItemsList) {
+
+				for (int i = 0; i < item.labels.length; i++) {
+					String label = item.labels[i];
+
+					if (!TextUtils.isEmpty(label)
+							&& !labelStrings.contains(label)) {
+						labelStrings.add(label);
+					} else {
+						labelStrings.add("");
+					}
+				}
+
+			}
+		}
 
 		@Override
+		public void notifyDataSetChanged() {
+			
+			//重新计算
+			calcSingleLabel();
+			super.notifyDataSetChanged();
+		}
+		
+		@Override
 		public int getCount() {
-			return mItemsList.size();
+
+			int count = labelStrings.size() / 4;
+			return count;
 		}
 
 		@Override
@@ -242,20 +330,17 @@ public class DiscovePager extends BasePager {
 
 			}
 
-			// 设置数据
-			DiscoverItem discoverItem = mItemsList.get(position);
-
 			// 显示标签
-			showLabel(holder.label1, discoverItem.labels[0]);
-			showLabel(holder.label2, discoverItem.labels[1]);
-			showLabel(holder.label3, discoverItem.labels[2]);
-			showLabel(holder.label4, discoverItem.labels[3]);
+			showLabel(holder.label1, labelStrings.get(position*4 + 0));
+			showLabel(holder.label2, labelStrings.get(position*4 + 1));
+			showLabel(holder.label3, labelStrings.get(position*4 + 2));
+			showLabel(holder.label4, labelStrings.get(position*4 + 3));
 
 			// 改变标签颜色
-			changeLabelColor(holder.label1, discoverItem.colorMarks[0]);
-			changeLabelColor(holder.label2, discoverItem.colorMarks[1]);
-			changeLabelColor(holder.label3, discoverItem.colorMarks[2]);
-			changeLabelColor(holder.label4, discoverItem.colorMarks[3]);
+			changeLabelColor(holder.label1, mItemsList.get(position).colorMarks[0]);
+			changeLabelColor(holder.label2, mItemsList.get(position).colorMarks[1]);
+			changeLabelColor(holder.label3, mItemsList.get(position).colorMarks[2]);
+			changeLabelColor(holder.label4, mItemsList.get(position).colorMarks[3]);
 
 			OnClickListener lableOnClickListener = new OnClickListener() {
 
@@ -274,6 +359,7 @@ public class DiscovePager extends BasePager {
 
 			return view;
 		}
+
 		/**
 		 * 修改标签
 		 * 
@@ -284,12 +370,11 @@ public class DiscovePager extends BasePager {
 		 */
 		private void showLabel(TextView labelView, String label) {
 
-			if (TextUtils.isEmpty(label) || labelsSet.contains(label)) {
+			if (TextUtils.isEmpty(label)) {
 				labelView.setVisibility(View.GONE);
 			} else {
 				labelView.setVisibility(View.VISIBLE);
 				labelView.setText(label);
-				labelsSet.add(label);
 			}
 		}
 
@@ -305,6 +390,9 @@ public class DiscovePager extends BasePager {
 
 	}
 
+	/**
+	 * 列表视图的数据适配器
+	 */
 	class ListViewAdapter extends BaseAdapter {
 
 		ViewHolder holder;
@@ -368,7 +456,7 @@ public class DiscovePager extends BasePager {
 			changeLabelColor(holder.label4, discoverItem.colorMarks[3]);
 
 			// 改变类型图标
-			setTypeIcon(holder.icon,discoverItem.type);
+			setTypeIcon(holder.icon, discoverItem.type);
 
 			OnClickListener lableOnClickListener = new OnClickListener() {
 
@@ -433,23 +521,26 @@ public class DiscovePager extends BasePager {
 
 	/**
 	 * 改变类型图标
-	 * @param icon 图标显示的View
-	 * @param type 显示的类型
+	 * 
+	 * @param icon
+	 *            图标显示的View
+	 * @param type
+	 *            显示的类型
 	 */
 	public void setTypeIcon(LayoutImageView icon, int type) {
-		
-		if (type==DiscoverItem.TYPE_UNDEFINE) {
+
+		if (type == DiscoverItem.TYPE_UNDEFINE) {
 			icon.setImageResource(R.drawable.icon_type_unknown);
-		}else if (type==DiscoverItem.TYPE_BLOG) {
+		} else if (type == DiscoverItem.TYPE_BLOG) {
 			icon.setImageResource(R.drawable.icon_type_blog);
-		}else if (type==DiscoverItem.TYPE_WORK) {
+		} else if (type == DiscoverItem.TYPE_WORK) {
 			icon.setImageResource(R.drawable.icon_type_work);
-		}else if (type==DiscoverItem.TYPE_ENTERTAINMENT) {
+		} else if (type == DiscoverItem.TYPE_ENTERTAINMENT) {
 			icon.setImageResource(R.drawable.icon_type_entertainment);
-		}else if (type==DiscoverItem.TYPE_INFOMATION) {
+		} else if (type == DiscoverItem.TYPE_INFOMATION) {
 			icon.setImageResource(R.drawable.icon_type_infomation);
 		}
-		
+
 	}
 
 	/**
@@ -466,6 +557,9 @@ public class DiscovePager extends BasePager {
 
 			mLabelView.setVisibility(View.GONE);
 			mListView.setVisibility(View.VISIBLE);
+
+			mButtonState = STATE_SHOW_ALL;
+
 		} else {// 显示标签模式
 
 			mFuncButtonLeft.setImageDrawable(mActivity.getResources()
@@ -475,6 +569,8 @@ public class DiscovePager extends BasePager {
 
 			mLabelView.setVisibility(View.VISIBLE);
 			mListView.setVisibility(View.GONE);
+
+			mButtonState = STATE_REFRESH;
 		}
 	}
 

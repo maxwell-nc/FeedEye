@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -276,11 +275,16 @@ public class XMLCacheUtils {
 
 			xmlSerializer.endDocument();
 
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			
+			//删除无效文件
+			file = IOUtils.getFileInSdcard("/FeedEye/DetailCache",
+					MD5Utils.getMD5String(feedItem.feedURL));
+			
+			 if (file.exists() && file.length() == 0){
+				 file.delete();
+			 }
+			
 			e.printStackTrace();
 		}
 

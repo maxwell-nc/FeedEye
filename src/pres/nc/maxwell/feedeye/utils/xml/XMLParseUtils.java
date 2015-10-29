@@ -131,4 +131,25 @@ public class XMLParseUtils {
 
 	}
 
+	/**
+	 * 修复pull解析parser.nextText()的BUG
+	 * @param parser 解析器
+	 * @return 解析的文本
+	 */
+	public static String safeNextText(XmlPullParser parser) {
+		
+		String result = null;
+		
+		try {
+			result = parser.nextText();
+			if (parser.getEventType() != XmlPullParser.END_TAG) {
+				parser.nextTag();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 }

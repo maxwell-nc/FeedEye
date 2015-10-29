@@ -126,7 +126,7 @@ public class JSONParseUtils {
 
 		});
 
-		httpUtils.connect(jsonUrl, 50000, 200000,
+		httpUtils.connect(jsonUrl, 50000, 100000,
 				Executors.newSingleThreadExecutor());
 
 	}
