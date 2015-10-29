@@ -8,6 +8,7 @@ import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
 import pres.nc.maxwell.feedeye.domain.DiscoverItem;
 import pres.nc.maxwell.feedeye.utils.JSONParseUtils;
 import pres.nc.maxwell.feedeye.utils.JSONParseUtils.OnParseListener;
+import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
 import android.content.Intent;
@@ -128,7 +129,7 @@ public class DiscovePager extends BasePager {
 
 			}
 
-		}).parseUrl("http://10.0.3.2:8080/feedeye/test.json");
+		}).parseUrl("http://192.168.253.1:8080/feedeye/test.json");
 	}
 
 	@Override
@@ -159,6 +160,7 @@ public class DiscovePager extends BasePager {
 					mListViewAdapter.notifyDataSetChanged();
 					Toast.makeText(mActivity, "显示了所有发现", Toast.LENGTH_SHORT)
 							.show();
+
 				}
 			}
 
@@ -194,6 +196,7 @@ public class DiscovePager extends BasePager {
 		TextView title;
 		TextView description;
 
+		LayoutImageView icon;
 	}
 
 	class LabelViewAdapter extends BaseAdapter {
@@ -335,6 +338,8 @@ public class DiscovePager extends BasePager {
 				holder.title = (TextView) view.findViewById(R.id.tv_title);
 				holder.description = (TextView) view.findViewById(R.id.tv_desc);
 
+				holder.icon = (LayoutImageView) view.findViewById(R.id.iv_icon);
+
 				holder.label1 = (TextView) view.findViewById(R.id.tv_label1);
 				holder.label2 = (TextView) view.findViewById(R.id.tv_label2);
 				holder.label3 = (TextView) view.findViewById(R.id.tv_label3);
@@ -361,6 +366,9 @@ public class DiscovePager extends BasePager {
 			changeLabelColor(holder.label2, discoverItem.colorMarks[1]);
 			changeLabelColor(holder.label3, discoverItem.colorMarks[2]);
 			changeLabelColor(holder.label4, discoverItem.colorMarks[3]);
+
+			// 改变类型图标
+			setTypeIcon(holder.icon,discoverItem.type);
 
 			OnClickListener lableOnClickListener = new OnClickListener() {
 
@@ -414,15 +422,34 @@ public class DiscovePager extends BasePager {
 	 */
 	private void changeLabelColor(final TextView label, int colorMark) {
 
-		if (colorMark == 0) {
+		if (colorMark == DiscoverItem.COLOR_MARK_BLACK) {
 			label.setTextColor(mActivity.getResources().getColor(R.color.black));
-		}
-
-		if (colorMark == 1) {
+		} else if (colorMark == DiscoverItem.COLOR_MARK_THEME_COLOR) {
 			label.setTextColor(mActivity.getResources().getColor(
 					R.color.theme_color));
 		}
 
+	}
+
+	/**
+	 * 改变类型图标
+	 * @param icon 图标显示的View
+	 * @param type 显示的类型
+	 */
+	public void setTypeIcon(LayoutImageView icon, int type) {
+		
+		if (type==DiscoverItem.TYPE_UNDEFINE) {
+			icon.setImageResource(R.drawable.icon_type_unknown);
+		}else if (type==DiscoverItem.TYPE_BLOG) {
+			icon.setImageResource(R.drawable.icon_type_blog);
+		}else if (type==DiscoverItem.TYPE_WORK) {
+			icon.setImageResource(R.drawable.icon_type_work);
+		}else if (type==DiscoverItem.TYPE_ENTERTAINMENT) {
+			icon.setImageResource(R.drawable.icon_type_entertainment);
+		}else if (type==DiscoverItem.TYPE_INFOMATION) {
+			icon.setImageResource(R.drawable.icon_type_infomation);
+		}
+		
 	}
 
 	/**
@@ -460,10 +487,10 @@ public class DiscovePager extends BasePager {
 	private void selectLabelItem(TextView tv) {
 		// 筛选条件
 		mItemsShowList = new ArrayList<DiscoverItem>();
-		
+
 		String keyword = (String) tv.getText();
 		for (DiscoverItem item : mItemsList) {
-			
+
 			if (item.labels[0].equals(keyword)
 					|| item.labels[1].equals(keyword)
 					|| item.labels[2].equals(keyword)
@@ -472,8 +499,9 @@ public class DiscovePager extends BasePager {
 			}
 
 		}
-		
-		Toast.makeText(mActivity, "已显示:"+keyword+"相关的内容", Toast.LENGTH_SHORT).show();
+
+		Toast.makeText(mActivity, "已显示:" + keyword + "相关的内容",
+				Toast.LENGTH_SHORT).show();
 
 		mListViewAdapter.notifyDataSetChanged();
 	}

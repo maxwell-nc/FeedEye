@@ -114,7 +114,7 @@ public class JSONParseUtils {
 						
 						item.link = content.getString("link");
 						item.name = content.getString("name");
-						item.type = content.getString("type");
+						item.type = content.getInt("type");
 						
 						items.add(item);
 					}

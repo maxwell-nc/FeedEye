@@ -20,7 +20,7 @@
             android:layout_width="18dp"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/icon_type_unknown" />
 
         <TextView
             android:id="@+id/tv_title"
