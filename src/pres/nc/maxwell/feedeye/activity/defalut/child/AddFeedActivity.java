@@ -1,8 +1,5 @@
 package pres.nc.maxwell.feedeye.activity.defalut.child;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.DefaultNewActivity;
 import pres.nc.maxwell.feedeye.db.FeedItemDAO;
@@ -10,6 +7,7 @@ import pres.nc.maxwell.feedeye.domain.DiscoverItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
 import pres.nc.maxwell.feedeye.domain.FeedXMLBaseInfo;
 import pres.nc.maxwell.feedeye.engine.FeedXMLParser;
+import pres.nc.maxwell.feedeye.utils.FaviconUtils;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.bitmap.BitmapCacheUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
@@ -305,36 +303,7 @@ public class AddFeedActivity extends DefaultNewActivity {
 							} else {// 没有设置
 
 								// favicon获取
-
-								Pattern p = Pattern
-										.compile("(?<=//|)((\\w)+\\.)+\\w+");// 匹配顶级域名
-
-								Matcher m = p.matcher(mUrlString);
-
-								if (m.find()) {
-
-									// 补全http头
-									String host = m.group();
-									if (host.startsWith("http://")
-											|| host.startsWith("https://")) {
-										feedItem.picURL = host + "/favicon.ico";
-									} else {
-
-										if (mUrlString.startsWith("https://")) {
-
-											feedItem.picURL = "https://" + host
-													+ "/favicon.ico";
-
-										} else {
-											feedItem.picURL = "http://" + host
-													+ "/favicon.ico";
-										}
-
-									}
-
-								} else {
-									feedItem.picURL = "null";
-								}
+								feedItem.picURL = FaviconUtils.getFaviconUrl(mUrlString);
 
 							}
 

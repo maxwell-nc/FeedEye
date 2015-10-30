@@ -128,6 +128,42 @@ public class DiscovePager extends BasePager {
 			@Override
 			public void OnFinishParse(ArrayList<DiscoverItem> items) {
 
+				showItems(items);
+
+			}
+
+			@Override
+			public void onFailed(ArrayList<DiscoverItem> cacheItems) {
+
+				// 读取缓存
+				if (cacheItems != null && cacheItems.size() != 0) {
+					showItems(cacheItems);
+					return;
+				}
+
+				getLoadingBarView().setVisibility(View.INVISIBLE);
+				mNothingLayout.setVisibility(View.VISIBLE);
+
+				mNothingLayout.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						LoadData();
+					}
+
+				});
+
+				Toast.makeText(mActivity, "加载失败", Toast.LENGTH_SHORT).show();
+
+			}
+
+			/**
+			 * 显示数据
+			 * 
+			 * @param items
+			 *            解析的发现条目集合
+			 */
+			private void showItems(ArrayList<DiscoverItem> items) {
 				mItemsList = items;
 				mItemsShowList = items;
 
@@ -157,25 +193,6 @@ public class DiscovePager extends BasePager {
 				mFuncButtonRight.setVisibility(View.VISIBLE);
 
 				mLabelView.setVisibility(View.VISIBLE);
-
-			}
-
-			@Override
-			public void onFailed() {
-
-				getLoadingBarView().setVisibility(View.INVISIBLE);
-				mNothingLayout.setVisibility(View.VISIBLE);
-
-				mNothingLayout.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						LoadData();
-					}
-
-				});
-
-				Toast.makeText(mActivity, "加载失败", Toast.LENGTH_SHORT).show();
 			}
 
 		}).parseUrl("http://192.168.253.1:8080/feedeye/test.json");
@@ -267,9 +284,9 @@ public class DiscovePager extends BasePager {
 		 * 计算唯一标签
 		 */
 		private void calcSingleLabel() {
-			
+
 			labelStrings.clear();
-			
+
 			for (DiscoverItem item : mItemsList) {
 
 				for (int i = 0; i < item.labels.length; i++) {
@@ -288,12 +305,12 @@ public class DiscovePager extends BasePager {
 
 		@Override
 		public void notifyDataSetChanged() {
-			
-			//重新计算
+
+			// 重新计算
 			calcSingleLabel();
 			super.notifyDataSetChanged();
 		}
-		
+
 		@Override
 		public int getCount() {
 
@@ -331,16 +348,20 @@ public class DiscovePager extends BasePager {
 			}
 
 			// 显示标签
-			showLabel(holder.label1, labelStrings.get(position*4 + 0));
-			showLabel(holder.label2, labelStrings.get(position*4 + 1));
-			showLabel(holder.label3, labelStrings.get(position*4 + 2));
-			showLabel(holder.label4, labelStrings.get(position*4 + 3));
+			showLabel(holder.label1, labelStrings.get(position * 4 + 0));
+			showLabel(holder.label2, labelStrings.get(position * 4 + 1));
+			showLabel(holder.label3, labelStrings.get(position * 4 + 2));
+			showLabel(holder.label4, labelStrings.get(position * 4 + 3));
 
 			// 改变标签颜色
-			changeLabelColor(holder.label1, mItemsList.get(position).colorMarks[0]);
-			changeLabelColor(holder.label2, mItemsList.get(position).colorMarks[1]);
-			changeLabelColor(holder.label3, mItemsList.get(position).colorMarks[2]);
-			changeLabelColor(holder.label4, mItemsList.get(position).colorMarks[3]);
+			changeLabelColor(holder.label1,
+					mItemsList.get(position).colorMarks[0]);
+			changeLabelColor(holder.label2,
+					mItemsList.get(position).colorMarks[1]);
+			changeLabelColor(holder.label3,
+					mItemsList.get(position).colorMarks[2]);
+			changeLabelColor(holder.label4,
+					mItemsList.get(position).colorMarks[3]);
 
 			OnClickListener lableOnClickListener = new OnClickListener() {
 
