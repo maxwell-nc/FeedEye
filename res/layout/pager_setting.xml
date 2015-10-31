@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/rg_navi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@color/white_grey"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/rb_feed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:button="@null"
+            android:drawablePadding="3dp"
+            android:drawableTop="@drawable/setting_no_img"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="无图模式"
+            android:textColor="@color/drak_grey"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/rb_feed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:button="@null"
+            android:drawablePadding="3dp"
+            android:drawableTop="@drawable/setting_clean"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="清理缓存"
+            android:textColor="@color/drak_grey"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/rb_feed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_press_background_light_grey"
+            android:button="@null"
+            android:drawablePadding="3dp"
+            android:drawableTop="@drawable/setting_night"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="夜间模式"
+            android:textColor="@color/drak_grey"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</merge>

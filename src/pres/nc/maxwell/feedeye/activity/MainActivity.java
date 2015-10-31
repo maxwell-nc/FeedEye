@@ -13,6 +13,7 @@ import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import pres.nc.maxwell.feedeye.view.pager.child.DiscovePager;
 import pres.nc.maxwell.feedeye.view.pager.child.FavorPager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
+import pres.nc.maxwell.feedeye.view.pager.child.SettingPager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -58,6 +59,11 @@ public class MainActivity extends Activity {
 	 */
 	private FavorPager mFavorPager;
 
+	/**
+	 * 设置页面
+	 */
+	private SettingPager mSettingPager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -89,11 +95,12 @@ public class MainActivity extends Activity {
 		mFeedPager = new FeedPager(this);
 		mDiscovePager = new DiscovePager(this);
 		mFavorPager = new FavorPager(this);
+		mSettingPager = new SettingPager(this);
 		
 		mPagerList.add(mFeedPager);// 订阅
 		mPagerList.add(mDiscovePager);//发现
 		mPagerList.add(mFavorPager);// 收藏
-		mPagerList.add(new BasePager(this));
+		mPagerList.add(mSettingPager);//设置
 
 		mContentPager.setOffscreenPageLimit(3);//设置3个缓存页面+1个显示的
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
