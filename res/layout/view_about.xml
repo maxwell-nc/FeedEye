@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="简阅是一个开源的程序支持RSS和Atom订阅，支持订阅和分享内容给朋友们。\n\n项目基于GNU GENERAL PUBLIC LICENSE Version 2协议（俗称GPLv2），源码可以从下面网址获取：\nhttps://github.com/maxwell-nc/FeedEye\n\n作者：Maxwell-nc\n\n我的CSDN技术博客：\nhttp://blog.csdn.net/maxwell_nc\n\n我的GitHub：\nhttps://github.com/maxwell-nc\nhttps://maxwell-nc.github.io" />
+
+</ScrollView>
