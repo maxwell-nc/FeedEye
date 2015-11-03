@@ -28,7 +28,7 @@ public class BitmapCacheUtils {
 	 * 默认的加载错误的资源图片id
 	 */
 	public static final int ERROR_RESOURCE_ID = R.drawable.img_load_image_failed;
-	
+
 	/**
 	 * 默认的ExecutorService
 	 */
@@ -45,21 +45,43 @@ public class BitmapCacheUtils {
 	 *            要显示图片的地址（支持本地图片和网络图片）
 	 * @param threadPool
 	 *            自定义线程池，为空则采用默认线程池
-	 * @see #displayBitmap(Context, ImageView, String, ExecutorService)
-	 * @see #displayBitmap(Context, ImageView, String, boolean, int, int, int,
-	 *      android.graphics.Bitmap.Config, ExecutorService)
 	 */
 	public static void displayBitmapOnLayoutChange(final Context context,
 			LayoutImageView imageView, final String url,
 			final ExecutorService threadPool) {
+
+		displayBitmapOnLayoutChange(context, imageView, url, threadPool, -1, -1);
+
+	}
+
+	/**
+	 * 简单的显示图片，使用网络缓存、默认加载中加载失败图片，自动压缩图片，适合在onCreate使用
+	 * 
+	 * @param context
+	 *            上下文
+	 * @param imageView
+	 *            要显示图片的控件 {@link LayoutImageView}
+	 * @param url
+	 *            要显示图片的地址（支持本地图片和网络图片）
+	 * @param threadPool
+	 *            自定义线程池，为空则采用默认线程池
+	 * @param loadResId
+	 *            加载中的资源图片id（-1为不使用）{@link #LOAD_RESOURCE_ID}
+	 * @param errorResId
+	 *            加载失败的资源图片id（-1为不使用）{@link #ERROR_RESOURCE_ID}
+	 */
+	public static void displayBitmapOnLayoutChange(final Context context,
+			LayoutImageView imageView, final String url,
+			final ExecutorService threadPool, final int loadResId,
+			final int errorResId) {
 
 		imageView
 				.addOnLayoutChangeListener(new SupportOnLayoutChangeListener() {
 
 					@Override
 					public void onLayoutChange(LayoutImageView thisView) {
-						displayBitmap(context, thisView, url, true, -1, -1, -1,
-								null, threadPool);
+						displayBitmap(context, thisView, url, true, loadResId,
+								errorResId, -1, null, threadPool);
 						thisView.removeOnLayoutChangeListener(this);
 					}
 
@@ -78,13 +100,9 @@ public class BitmapCacheUtils {
 	 *            要显示图片的地址（支持本地图片和网络图片）
 	 * @param threadPool
 	 *            自定义线程池，为空则采用默认线程池
-	 * @see #displayBitmapOnLayoutChange(Context, ImageView, String,
-	 *      ExecutorService)
-	 * @see #displayBitmap(Context, ImageView, String, boolean, int, int, int,
-	 *      android.graphics.Bitmap.Config, ExecutorService)
 	 */
-	public static void displayBitmap(final Context context,
-			ImageView imageView, String url, ExecutorService threadPool) {
+	public static void displayBitmap(Context context, ImageView imageView,
+			String url, ExecutorService threadPool) {
 
 		displayBitmap(context, imageView, url, true, -1, -1, -1, null,
 				threadPool);
@@ -100,27 +118,24 @@ public class BitmapCacheUtils {
 	 *            要显示图片的控件
 	 * @param url
 	 *            要显示图片的地址（支持本地图片和网络图片）
-	 * @param sampleSize
-	 *            采样大小（-1为不使用）
-	 * @param config
-	 *            颜色配置（null为不使用）
 	 * @param isEnableNetworkCache
 	 *            是否使用网络缓存
 	 * @param loadResId
 	 *            加载中的资源图片id（-1为不使用）{@link #LOAD_RESOURCE_ID}
 	 * @param errorResId
 	 *            加载失败的资源图片id（-1为不使用）{@link #ERROR_RESOURCE_ID}
+	 * @param sampleSize
+	 *            采样大小（-1为不使用）
+	 * @param config
+	 *            颜色配置（null为不使用）
 	 * @param threadPool
 	 *            自定义线程池
-	 * @see #displayBitmap(Context, ImageView, String)
-	 * @see #displayBitmapOnLayoutChange(Context, ImageView, String,
-	 *      ExecutorService)
 	 */
 	public static void displayBitmap(Context context, ImageView imageView,
 			String url, boolean isEnableNetworkCache, int loadResId,
 			int errorResId, int sampleSize, Bitmap.Config config,
 			ExecutorService threadPool) {
-		
+
 		if (threadPool == null) {
 
 			if (DEFAULT_EXECUTOR_SERVICE == null) {

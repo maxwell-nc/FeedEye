@@ -299,7 +299,7 @@ public class FeedPager extends BasePager {
 				ArrayListLoadingMoreAdapter<FeedItem> {
 
 		ViewHolder holder;
-		
+
 		public FeedPagerListViewAdapter(ArrayList<FeedItem> unshowList,
 				ArrayList<FeedItem> showedList, int onceShowedCount) {
 			mListView.super(unshowList, showedList, onceShowedCount);
@@ -438,13 +438,13 @@ public class FeedPager extends BasePager {
 
 		// 使用三级缓存加载图片
 		BitmapCacheUtils.displayBitmapOnLayoutChange(mActivity,
-				viewHolder.mItemPic, feedItem.picURL, null);
+				viewHolder.mItemPic, feedItem.picURL, null,
+				R.drawable.img_defalut_icon, R.drawable.img_defalut_icon);
 
 		viewHolder.mItemTitle.setText(feedItem.baseInfo.title);
 		viewHolder.mItemPreview.setText(feedItem.baseInfo.summary);
 		viewHolder.mItemTime.setText(TimeUtils.timestamp2String(
-				feedItem.baseInfo.time, "MM/dd a",
-				Locale.getDefault()));
+				feedItem.baseInfo.time, "MM/dd a", Locale.getDefault()));
 
 		return true;
 

@@ -1,80 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/light_grey"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/rg_navi"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:background="@color/white_grey"
-        android:orientation="horizontal" >
+        android:layout_height="match_parent"
+        android:background="@color/light_grey"
+        android:orientation="vertical" >
 
-        <CheckBox
-            android:id="@+id/cb_no_img"
-            style="@style/setting_top_button"
-            android:drawableTop="@drawable/setting_no_img"
-            android:text="无图模式" />
+        <LinearLayout
+            android:id="@+id/rg_navi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/white_grey"
+            android:orientation="horizontal" >
 
-        <CheckBox
-            android:id="@+id/cb_clean"
-            style="@style/setting_top_button"
-            android:drawableTop="@drawable/setting_clean"
-            android:text="清理缓存" />
+            <CheckBox
+                android:id="@+id/cb_no_img"
+                style="@style/setting_top_button"
+                android:drawableTop="@drawable/setting_no_img"
+                android:text="无图模式" />
 
-        <CheckBox
-            android:id="@+id/cb_day_night"
-            style="@style/setting_top_button"
-            android:drawableTop="@drawable/setting_day_night"
-            android:text="夜间模式" />
+            <CheckBox
+                android:id="@+id/cb_clean"
+                style="@style/setting_top_button"
+                android:drawableTop="@drawable/setting_clean"
+                android:text="清理缓存" />
+
+            <CheckBox
+                android:id="@+id/cb_day_night"
+                style="@style/setting_top_button"
+                android:drawableTop="@drawable/setting_day_night"
+                android:text="夜间模式" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_feedback"
+            style="@style/setting_bottom_button"
+            android:layout_marginTop="15dp"
+            android:drawableLeft="@drawable/setting_icon_feedback"
+            android:text="反馈问题" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/tv_recommend"
+            style="@style/setting_bottom_button"
+            android:layout_marginTop="15dp"
+            android:drawableLeft="@drawable/setting_icon_recommend"
+            android:text="推荐给好友" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/tv_update"
+            style="@style/setting_bottom_button"
+            android:layout_marginTop="15dp"
+            android:drawableLeft="@drawable/setting_icon_update"
+            android:text="检查更新" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/tv_about"
+            style="@style/setting_bottom_button"
+            android:layout_marginTop="15dp"
+            android:drawableLeft="@drawable/setting_icon_about"
+            android:text="关于..." >
+        </TextView>
+
+        <View
+            style="@style/hr_line"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:id="@+id/tv_exit"
+            style="@style/setting_bottom_button"
+            android:drawableLeft="@drawable/setting_icon_exit"
+            android:text="退出" >
+        </TextView>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_feedback"
-        style="@style/setting_bottom_button"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/setting_icon_feedback"
-        android:text="反馈问题" >
-    </TextView>
-
-    <TextView
-        android:id="@+id/tv_recommend"
-        style="@style/setting_bottom_button"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/setting_icon_recommend"
-        android:text="推荐给好友" >
-    </TextView>
-
-    <TextView
-        android:id="@+id/tv_update"
-        style="@style/setting_bottom_button"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/setting_icon_update"
-        android:text="检查更新" >
-    </TextView>
-
-    <TextView
-        android:id="@+id/tv_about"
-        style="@style/setting_bottom_button"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/setting_icon_about"
-        android:text="关于..." >
-    </TextView>
-
-    <View
-        style="@style/hr_line"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
-
-    <TextView
-        android:id="@+id/tv_exit"
-        style="@style/setting_bottom_button"
-        android:drawableLeft="@drawable/setting_icon_exit"
-        android:text="退出" >
-    </TextView>
-
-</LinearLayout>
+</ScrollView>

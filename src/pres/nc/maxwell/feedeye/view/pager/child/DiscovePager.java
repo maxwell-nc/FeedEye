@@ -6,7 +6,7 @@ import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.child.AddFeedActivity;
 import pres.nc.maxwell.feedeye.domain.DiscoverItem;
 import pres.nc.maxwell.feedeye.utils.JSONParseUtils;
-import pres.nc.maxwell.feedeye.utils.JSONParseUtils.OnParseListener;
+import pres.nc.maxwell.feedeye.utils.JSONParseUtils.OnParseDiscoverItemListener;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
 import android.app.Activity;
@@ -30,12 +30,12 @@ public class DiscovePager extends BasePager {
 	/**
 	 * 刷新按钮状态
 	 */
-	private static final int STATE_REFRESH = 1;
+	public static final int STATE_REFRESH = 1;
 
 	/**
 	 * 显示全部按钮状态
 	 */
-	private static final int STATE_SHOW_ALL = 2;
+	public static final int STATE_SHOW_ALL = 2;
 
 	/**
 	 * 按钮状态
@@ -43,7 +43,7 @@ public class DiscovePager extends BasePager {
 	 * @see #STATE_REFRESH
 	 * @see #STATE_SHOW_ALL
 	 */
-	private int mButtonState = 1;
+	public int mButtonState = 1;
 
 	/**
 	 * 标签列表
@@ -123,7 +123,7 @@ public class DiscovePager extends BasePager {
 		mListView.setVisibility(View.GONE);
 		mLabelView.setVisibility(View.GONE);
 
-		new JSONParseUtils(new OnParseListener() {
+		new JSONParseUtils(new OnParseDiscoverItemListener() {
 
 			@Override
 			public void OnFinishParse(ArrayList<DiscoverItem> items) {
@@ -195,7 +195,7 @@ public class DiscovePager extends BasePager {
 				mLabelView.setVisibility(View.VISIBLE);
 			}
 
-		}).parseUrl("http://192.168.253.1:8080/feedeye/test.json");
+		}).parseDiscoverItem("https://maxwell-nc.github.io/feedeye/discover.json");
 
 	}
 
@@ -567,7 +567,7 @@ public class DiscovePager extends BasePager {
 	/**
 	 * 切换标签页
 	 */
-	private void switchTab() {
+	public void switchTab() {
 
 		if (mLabelView.getVisibility() == View.VISIBLE) {// 显示详细模式
 

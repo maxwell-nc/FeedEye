@@ -99,11 +99,9 @@ public class MainThemeAlertDialog {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
-		builder.setView(baseView);
-
-		AlertDialog alertDialog = builder.show();
+		final AlertDialog alertDialog = builder.create();
+		alertDialog.setView(baseView, 0, 0, 0, 0);
 		
-
 		//设置确认点击事件
 		OnClickListener customConfirmClickLister = adapter.getOnConfirmClickLister(alertDialog);
 		if (customConfirmClickLister!=null) {
@@ -116,6 +114,7 @@ public class MainThemeAlertDialog {
 			cancelButtom.setOnClickListener(customCancelClickLister);
 		}
 		
+		alertDialog.show();
 	}
 
 }

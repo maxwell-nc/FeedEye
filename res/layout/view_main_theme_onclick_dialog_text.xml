@@ -2,7 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@drawable/selector_press_background_transparent"
+    android:background="@drawable/selector_press_background_white"
     android:gravity="center_vertical|left"
     android:paddingLeft="15dp"
     android:textColor="@drawable/selector_press_text_color"

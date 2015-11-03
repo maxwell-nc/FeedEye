@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pres.nc.maxwell.feedeye.domain.DiscoverItem;
+import pres.nc.maxwell.feedeye.domain.UpdateInfo;
 import pres.nc.maxwell.feedeye.utils.HTTPUtils.OnConnectListener;
 
 /**
@@ -27,22 +28,81 @@ public class JSONParseUtils {
 	/**
 	 * 传入解析监听器
 	 * 
-	 * @param onParseListener
-	 *            解析监听器
+	 * @param basicJsonParseListener
+	 *            基本JSON解析监听器
 	 */
-	public JSONParseUtils(OnParseListener onParseListener) {
-		this.onParseListener = onParseListener;
+	public JSONParseUtils(BasicJsonParseListener basicJsonParseListener) {
+		this.basicJsonParseListener = basicJsonParseListener;
 	}
 
 	/**
-	 * 解析监听器
+	 * 传入解析监听器
+	 * 
+	 * @param onParseDiscoverItemListener
+	 *            解析发现标签监听器
 	 */
-	private OnParseListener onParseListener;
+	public JSONParseUtils(
+			OnParseDiscoverItemListener onParseDiscoverItemListener) {
+		this.onParseDiscoverItemListener = onParseDiscoverItemListener;
+	}
 
 	/**
-	 * 解析监听器
+	 * 传入解析监听器
+	 * 
+	 * @param onParseUpdateInfoListener
+	 *            解析更新信息监听器
 	 */
-	public interface OnParseListener {
+	public JSONParseUtils(OnParseUpdateInfoListener onParseUpdateInfoListener) {
+		this.onParseUpdateInfoListener = onParseUpdateInfoListener;
+	}
+
+	/**
+	 * 基本JSON解析监听器
+	 */
+	private BasicJsonParseListener basicJsonParseListener;
+
+	/**
+	 * 解析发现标签监听器
+	 */
+	private OnParseDiscoverItemListener onParseDiscoverItemListener;
+
+	/**
+	 * 解析更新信息监听器
+	 */
+	private OnParseUpdateInfoListener onParseUpdateInfoListener;
+
+	/**
+	 * 基本JSON解析监听器
+	 */
+	public interface BasicJsonParseListener {
+
+		/**
+		 * 获取到JSON文本时
+		 * 
+		 * @param jsonString
+		 *            JSON文本
+		 */
+		public void onGetJsonString(String jsonString);
+
+		/**
+		 * 成功读取
+		 * 
+		 * @param jsonString
+		 *            JSON文本
+		 */
+		public void onSuccess(String jsonString);
+
+		/**
+		 * 读取失败
+		 */
+		public void onFailure();
+
+	}
+
+	/**
+	 * 解析发现标签监听器
+	 */
+	public interface OnParseDiscoverItemListener {
 
 		/**
 		 * 完成解析
@@ -54,14 +114,35 @@ public class JSONParseUtils {
 
 		/**
 		 * 解析失败或中断
-		 * @param cacheItems 缓存中的数据
+		 * 
+		 * @param cacheItems
+		 *            缓存中的数据
 		 */
 		public void onFailed(ArrayList<DiscoverItem> cacheItems);
 
 	}
 
 	/**
-	 * 解析网络JSON
+	 * 解析更新信息的监听器
+	 */
+	public interface OnParseUpdateInfoListener {
+
+		/**
+		 * 成功获取更新信息，运行在主线程
+		 * 
+		 * @param info
+		 *            更新信息
+		 */
+		public void onGetUpdateInfo(UpdateInfo info);
+
+		/**
+		 * 获取失败
+		 */
+		public void onGetFailed();
+	}
+
+	/**
+	 * 解析JSON
 	 * 
 	 * @param jsonUrl
 	 *            JSON地址
@@ -70,27 +151,20 @@ public class JSONParseUtils {
 
 		HTTPUtils httpUtils = new HTTPUtils(new OnConnectListener() {
 
-			private ArrayList<DiscoverItem> items;
-			private ArrayList<DiscoverItem> cacheItems;
+			private String jsonString;
 
 			@Override
 			public void onSuccess() {
-
-				if (onParseListener != null) {
-					onParseListener.OnFinishParse(items);
+				if (basicJsonParseListener != null) {
+					basicJsonParseListener.onSuccess(jsonString);
 				}
-
 			}
 
 			@Override
 			public void onFailure() {
-
-				cacheItems = putJSONInItemsList(getCache());
-				
-				if (onParseListener != null) {
-					onParseListener.onFailed(cacheItems);
+				if (basicJsonParseListener != null) {
+					basicJsonParseListener.onFailure();
 				}
-
 			}
 
 			@Override
@@ -98,20 +172,109 @@ public class JSONParseUtils {
 				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				IOUtils.writeStream(inputStream, byteArrayOutputStream);
 
-				String jsonString = byteArrayOutputStream.toString();
+				jsonString = byteArrayOutputStream.toString();
 
-				setCache(jsonString);
-
-				items = putJSONInItemsList(jsonString);
+				if (basicJsonParseListener != null) {
+					basicJsonParseListener.onGetJsonString(jsonString);
+				}
 			}
 
 		});
 
 		httpUtils.connect(jsonUrl, 50000, 100000,
 				Executors.newSingleThreadExecutor());
-
 	}
 
+	/**
+	 * 解析发现标签的网络JSON
+	 * 
+	 * @param jsonUrl
+	 *            JSON地址
+	 */
+	public void parseDiscoverItem(String jsonUrl) {
+
+		basicJsonParseListener = new BasicJsonParseListener() {
+
+			private ArrayList<DiscoverItem> items;
+			private ArrayList<DiscoverItem> cacheItems;
+
+			@Override
+			public void onSuccess(String jsonString) {
+				if (onParseDiscoverItemListener != null) {
+					onParseDiscoverItemListener.OnFinishParse(items);
+				}
+			}
+
+			@Override
+			public void onFailure() {
+				cacheItems = putJSONInItemsList(getCache());
+
+				if (onParseDiscoverItemListener != null) {
+					onParseDiscoverItemListener.onFailed(cacheItems);
+				}
+			}
+
+			@Override
+			public void onGetJsonString(String jsonString) {
+				setCache(jsonString);
+
+				items = putJSONInItemsList(jsonString);
+			}
+
+		};
+
+		parseUrl(jsonUrl);
+
+	}
+	
+	/**
+	 * 解析更新信息
+	 * 
+	 * @param jsonUrl
+	 *            JSON地址
+	 */
+	public void parseUpdateInfo(String jsonUrl) {
+		//TODO：
+		basicJsonParseListener = new BasicJsonParseListener() {
+			
+			private UpdateInfo info = new UpdateInfo();
+			
+			@Override
+			public void onSuccess(String jsonString) {
+				if (onParseUpdateInfoListener != null) {
+					onParseUpdateInfoListener.onGetUpdateInfo(info);
+				}
+			}
+			
+			@Override
+			public void onFailure() {
+				if (onParseUpdateInfoListener != null) {
+					onParseUpdateInfoListener.onGetFailed();
+				}
+			}
+			
+			@Override
+			public void onGetJsonString(String jsonString) {
+				try {
+					
+					JSONObject jsonObject = new JSONObject(jsonString);
+					info.versionCode = jsonObject.getInt("versionCode");
+					info.updateDesc = jsonObject.getString("updateDesc");
+					info.updateUrl = jsonObject.getString("updateUrl");
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		};
+		
+		parseUrl(jsonUrl);
+		
+	}
+
+	
+	
 	/**
 	 * 转换JSON文本为DiscoverItem集合
 	 * 
@@ -191,24 +354,29 @@ public class JSONParseUtils {
 
 	}
 
+	/**
+	 * 获取缓存
+	 * 
+	 * @return 缓存JSON
+	 */
 	private String getCache() {
 
 		File file = IOUtils.getFileInSdcard("/FeedEye/DiscoverCache",
 				"discover.json");
-		
+
 		String JsonString = null;
 		BufferedReader br = null;
 		try {
-			
+
 			br = new BufferedReader(new FileReader(file));
-			
+
 			String line = "";
 			StringBuffer buffer = new StringBuffer();
-			
+
 			while ((line = br.readLine()) != null) {
 				buffer.append(line);
 			}
-			
+
 			JsonString = buffer.toString();
 
 		} catch (FileNotFoundException e) {
@@ -216,7 +384,7 @@ public class JSONParseUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return JsonString;
 
 	}

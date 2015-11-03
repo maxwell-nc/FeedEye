@@ -123,8 +123,8 @@ public class MainThemeOnClickDialog {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
-		builder.setView(wrapper);
-		final AlertDialog alertDialog = builder.show();
+		final AlertDialog alertDialog = builder.create();
+		alertDialog.setView(wrapper, 0, 0, 0, 0);
 
 		// 设置点击事件
 		OnClickListener[] listeners = mAdapter
@@ -133,6 +133,7 @@ public class MainThemeOnClickDialog {
 			items.get(i).setOnClickListener(listeners[i]);
 		}
 
+		alertDialog.show();
 	}
 
 	/**

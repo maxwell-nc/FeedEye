@@ -33,6 +33,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -654,9 +655,13 @@ public class ItemDetailListActivity extends DefaultNewActivity {
 				holder.previewPic3.setVisibility(View.GONE);
 
 				// 异步加载文本信息
-				new showHtmlTextTask().executeOnExecutor(showTextThreadPool,
-						position, holder);
-
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					new showHtmlTextTask().executeOnExecutor(
+							showTextThreadPool, position, holder);
+				} else {
+					new showHtmlTextTask().execute(position, holder);
+				}
+				
 			}
 
 			String rawTime = mContentInfoShowedList.get(position).pubDate;

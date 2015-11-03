@@ -1,10 +1,9 @@
 package pres.nc.maxwell.feedeye.activity;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.utils.VersionUtils;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.widget.TextView;
@@ -29,13 +28,15 @@ public class SplashActivity extends Activity {
 
 		new Thread() {
 
-			// TODO: 以后可能回从服务器检查更新
 			@Override
 			public void run() {
-				SystemClock.sleep(2000);
+
+				SystemClock.sleep(1500);
+
+				finish();
 				startActivity(new Intent(SplashActivity.this,
 						MainActivity.class));
-				finish();
+
 			};
 
 		}.start();
@@ -54,21 +55,10 @@ public class SplashActivity extends Activity {
 	 */
 	private void showVersionInSplash() {
 
-		
-		//获取版本名称
-		PackageInfo packageInfo = null;
-		try {
-			packageInfo = getPackageManager().getPackageInfo(getPackageName(),
-					0);
-		} catch (NameNotFoundException e) {
-			// can not reach
-			e.printStackTrace();
-		}
-
-		if (packageInfo != null) {
-			String versionName = getResources().getString(
-					R.string.splash_version)
-					+ packageInfo.versionName;
+		String versionName = VersionUtils.getVersionName(this);
+		if (versionName != null) {
+			versionName = getResources().getString(R.string.splash_version)
+					+ versionName;
 			tv_splash_ver.setText(versionName);
 		} else {
 			tv_splash_ver.setText(R.string.unknown_version);

@@ -14,6 +14,7 @@ import javax.net.ssl.SSLSession;
 
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.Html;
 import android.text.Html.ImageGetter;
 import android.text.TextUtils;
@@ -115,9 +116,14 @@ public class HTTPUtils {
 
 		mThreadPool = threadPool;
 		mCurrentTask = new ConnectTask();
-		mCurrentTask.executeOnExecutor(threadPool, new ConnectInfo(url,
-				connectTimeout, readTimeout));
-
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			mCurrentTask.executeOnExecutor(threadPool, new ConnectInfo(url,
+					connectTimeout, readTimeout));
+		} else {
+			mCurrentTask.execute(new ConnectInfo(url,
+					connectTimeout, readTimeout));
+		}
 	}
 
 	/**
@@ -171,12 +177,13 @@ public class HTTPUtils {
 							.openConnection();
 				}
 
-
 				connection.setConnectTimeout(params[0].connectTimeout);
 				connection.setReadTimeout(params[0].readTimeout);
 
-				connection.setRequestProperty("User-Agent",
-						"Mozilla/5.0 (Linux; U; Android ;) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
+				connection
+						.setRequestProperty(
+								"User-Agent",
+								"Mozilla/5.0 (Linux; U; Android ;) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
 				connection.setRequestMethod("GET");
 				connection.connect();
 
@@ -314,8 +321,8 @@ public class HTTPUtils {
 		} else {
 			longText = Html.fromHtml(html).toString();
 		}
-		
-		longText = longText.replace("\ufffc", "\ufffc\u0020");//添加空格，防止两个图片连续出现的问题
+
+		longText = longText.replace("\ufffc", "\ufffc\u0020");// 添加空格，防止两个图片连续出现的问题
 		String[] textFragments = longText.split("\ufffc");
 
 		return textFragments;

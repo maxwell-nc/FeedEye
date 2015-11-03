@@ -7,6 +7,7 @@ import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
 import pres.nc.maxwell.feedeye.domain.FavorItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
+import pres.nc.maxwell.feedeye.utils.VersionUtils;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
 import pres.nc.maxwell.feedeye.view.pager.BasePager;
@@ -63,7 +64,7 @@ public class MainActivity extends Activity {
 	 * 设置页面
 	 */
 	private SettingPager mSettingPager;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +78,10 @@ public class MainActivity extends Activity {
 	 * 初始化View对象
 	 */
 	private void initView() {
+		
+		// 检查更新
+		VersionUtils.checkUpdate(this);
+		
 		mContentPager = (NoScrollViewPager) findViewById(R.id.vp_content);
 		mNaviBtnGroup = (NavigationButtonGroupView) findViewById(R.id.btn_navi_group);
 	}
@@ -96,15 +101,15 @@ public class MainActivity extends Activity {
 		mDiscovePager = new DiscovePager(this);
 		mFavorPager = new FavorPager(this);
 		mSettingPager = new SettingPager(this);
-		
-		mPagerList.add(mFeedPager);// 订阅
-		mPagerList.add(mDiscovePager);//发现
-		mPagerList.add(mFavorPager);// 收藏
-		mPagerList.add(mSettingPager);//设置
 
-		mContentPager.setOffscreenPageLimit(3);//设置3个缓存页面+1个显示的
+		mPagerList.add(mFeedPager);// 订阅
+		mPagerList.add(mDiscovePager);// 发现
+		mPagerList.add(mFavorPager);// 收藏
+		mPagerList.add(mSettingPager);// 设置
+
+		mContentPager.setOffscreenPageLimit(3);// 设置3个缓存页面+1个显示的
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
-		
+
 	}
 
 	/**
@@ -132,18 +137,18 @@ public class MainActivity extends Activity {
 
 					if (feedItem != null) {
 						mFeedPager.finishedAddItem(feedItem);
-						//切换到订阅信息页面
+						// 切换到订阅信息页面
 						mNaviBtnGroup.getNaviBtnGroupView().check(R.id.rb_feed);
 					}
-					
+
 				}
 				break;
 			case 2 :// 收藏增加通知
 				if (resultCode == 1) {// 收藏增加
 
 					@SuppressWarnings("unchecked")
-					ArrayList<FavorItem> favorItems = (ArrayList<FavorItem>) data.getExtras()
-							.getSerializable("FavorItems");
+					ArrayList<FavorItem> favorItems = (ArrayList<FavorItem>) data
+							.getExtras().getSerializable("FavorItems");
 
 					if (favorItems != null) {
 						mFavorPager.addFavorItemAtFirst(favorItems);
@@ -153,6 +158,19 @@ public class MainActivity extends Activity {
 				break;
 		}
 
+	}
+
+	@Override
+	public void onBackPressed() {
+
+		// 返回标签选择
+		if (mNaviBtnGroup.getNaviBtnGroupView().getCheckedRadioButtonId() == R.id.rb_discover
+				&& mDiscovePager.mButtonState == DiscovePager.STATE_SHOW_ALL) {
+			mDiscovePager.switchTab();
+			return;
+		}
+
+		super.onBackPressed();
 	}
 
 	@Override
