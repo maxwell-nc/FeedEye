@@ -123,6 +123,34 @@ public class IOUtils {
 	}
 
 	/**
+	 * 获得SD卡中的目录的File对象
+	 * 
+	 * @param shortPath
+	 *            SD卡下的目录，如"/xxx"
+	 * @return File对象
+	 */
+	public static File getDirInSdcard(String shortPath) {
+
+		// sdcard位置
+		String fullPath = Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + shortPath;
+
+		File dirFile = new File(fullPath);
+
+		// 非目录返回null
+		if (!dirFile.isDirectory()) {
+			return null;
+		}
+
+		// 如果文件夹不存在, 创建文件夹
+		if (!dirFile.exists()) {
+			dirFile.mkdirs();
+		}
+
+		return dirFile;
+	}
+
+	/**
 	 * 输入流写入到输出流
 	 * 
 	 * @param inputStream
@@ -176,7 +204,9 @@ public class IOUtils {
 
 	/**
 	 * 添加.nomeadia文件
-	 * @param dir SD卡中的目录，如"/xxx"
+	 * 
+	 * @param dir
+	 *            SD卡中的目录，如"/xxx"
 	 * @return 是否成功创建
 	 */
 	public static boolean addNoMediaMarkFileInSdcard(String dir) {
@@ -190,8 +220,33 @@ public class IOUtils {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
+	/**
+	 * 删除目录下的文件，非递归，遇到目录不删除
+	 * 
+	 * @param dirFile
+	 *            目录File对象
+	 * @return 是否成功删除
+	 */
+	public static boolean removeDir(File dirFile) {
+
+		if (!dirFile.isDirectory()) {
+			return false;
+		}
+		File files[] = dirFile.listFiles();
+		for (int i = 0; i < files.length; i++) {
+
+			if (files[i].isDirectory()) {
+				break;
+			}
+
+			if (!files[i].delete()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

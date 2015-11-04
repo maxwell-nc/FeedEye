@@ -7,6 +7,7 @@ import pres.nc.maxwell.feedeye.R;
 import pres.nc.maxwell.feedeye.activity.defalut.child.ItemDetailListActivity;
 import pres.nc.maxwell.feedeye.domain.FavorItem;
 import pres.nc.maxwell.feedeye.domain.FeedItem;
+import pres.nc.maxwell.feedeye.utils.AppSettingUtils;
 import pres.nc.maxwell.feedeye.utils.VersionUtils;
 import pres.nc.maxwell.feedeye.view.NavigationButtonGroupView;
 import pres.nc.maxwell.feedeye.view.NoScrollViewPager;
@@ -78,10 +79,15 @@ public class MainActivity extends Activity {
 	 * 初始化View对象
 	 */
 	private void initView() {
-		
+
 		// 检查更新
-		VersionUtils.checkUpdate(this);
-		
+		String autoUpdate = AppSettingUtils.get(this,
+				AppSettingUtils.KEY_UPDATE_SETTING, "on");
+
+		if ("on".equals(autoUpdate)) {// 开启了自动检查更新
+			VersionUtils.checkUpdate(this);
+		}
+
 		mContentPager = (NoScrollViewPager) findViewById(R.id.vp_content);
 		mNaviBtnGroup = (NavigationButtonGroupView) findViewById(R.id.btn_navi_group);
 	}

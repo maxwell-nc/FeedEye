@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.utils.AppSettingUtils;
+import pres.nc.maxwell.feedeye.utils.LogUtils;
 import pres.nc.maxwell.feedeye.view.LayoutImageView;
 import pres.nc.maxwell.feedeye.view.LayoutImageView.SupportOnLayoutChangeListener;
 import android.content.Context;
@@ -119,7 +121,7 @@ public class BitmapCacheUtils {
 	 * @param url
 	 *            要显示图片的地址（支持本地图片和网络图片）
 	 * @param isEnableNetworkCache
-	 *            是否使用网络缓存
+	 *            是否使用网络缓存（若设置开启了无图模式则此设置无效）
 	 * @param loadResId
 	 *            加载中的资源图片id（-1为不使用）{@link #LOAD_RESOURCE_ID}
 	 * @param errorResId
@@ -161,6 +163,15 @@ public class BitmapCacheUtils {
 		} else {
 			errBitmap = BitmapFactory.decodeResource(context.getResources(),
 					ERROR_RESOURCE_ID);
+		}
+
+		// 获取是否开启无图模式
+		String noNetworkImg = AppSettingUtils.get(context,
+				AppSettingUtils.KEY_NO_IMAGE_SETTING, "false");
+
+		if ("true".equals(noNetworkImg)) {// 开启了无图模式
+			isEnableNetworkCache = false;
+			LogUtils.e("BitmapCacheUtils", "开启了无图模式");
 		}
 
 		// 设置压缩比例

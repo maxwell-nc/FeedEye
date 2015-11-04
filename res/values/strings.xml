@@ -33,5 +33,11 @@
     <string name="largest_text_zoom">最大(175%)</string>
     <string name="add_feed_tips">还没添加订阅，赶紧添加吧</string>
     <string name="click_to_reload">点此重新加载</string>
+    <string name="update_now">立即更新</string>
+    <string name="close_auto_update">关闭自动检查更新</string>
+    <string name="open_auto_update">开启自动检查更新</string>
+    <string name="clean_img_cache">清理图片缓存</string>
+    <string name="clean_err_log">清理错误日志</string>
+    <string name="clean_content_cache">清理内容缓存</string>
 
 </resources>

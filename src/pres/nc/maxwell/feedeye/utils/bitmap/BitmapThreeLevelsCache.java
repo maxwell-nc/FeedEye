@@ -66,14 +66,18 @@ public class BitmapThreeLevelsCache {
 	private ExecutorService mThreadPool;
 
 	/**
-	 * 每次使用请创建新的对象
+	 * 建议每次使用创建新的对象
 	 * 
 	 * @param imageView
-	 *            需要显示的ImageView
+	 *            要图片的ImageView
 	 * @param url
-	 *            要显示图片的URL
+	 *            图片地址
+	 * @param errBitmap
+	 *            错误显示的图片
+	 * @param isEnableNetworkCache
+	 *            是否开启网络缓存
 	 * @param threadPool
-	 *            自定义线程池
+	 *            显示使用的线程池
 	 */
 	public BitmapThreeLevelsCache(ImageView imageView, String url,
 			Bitmap errBitmap, boolean isEnableNetworkCache,
@@ -378,7 +382,7 @@ public class BitmapThreeLevelsCache {
 		int viewHeight = mImageView.getHeight();
 		int viewWidth = mImageView.getWidth();
 
-		if (viewHeight == 0 || viewWidth == 0 ) {
+		if (viewHeight == 0 || viewWidth == 0) {
 			// 测量ImageView布局宽高
 			mImageView.measure(0, 0);
 			viewHeight = mImageView.getMeasuredHeight();
