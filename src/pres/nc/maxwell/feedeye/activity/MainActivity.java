@@ -16,7 +16,6 @@ import pres.nc.maxwell.feedeye.view.pager.child.DiscovePager;
 import pres.nc.maxwell.feedeye.view.pager.child.FavorPager;
 import pres.nc.maxwell.feedeye.view.pager.child.FeedPager;
 import pres.nc.maxwell.feedeye.view.pager.child.SettingPager;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -29,7 +28,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 /**
  * 主页面的Activity
  */
-public class MainActivity extends Activity {
+public class MainActivity extends NightActivity {
 
 	/**
 	 * 主界面页面内容
@@ -115,9 +114,9 @@ public class MainActivity extends Activity {
 
 		mContentPager.setOffscreenPageLimit(3);// 设置3个缓存页面+1个显示的
 		mContentPager.setAdapter(new PagerInflateAdapter(mPagerList));
-
+		   
 	}
-
+	
 	/**
 	 * 返回Activity时处理返回数据
 	 * 

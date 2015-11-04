@@ -48,7 +48,7 @@ import android.widget.Toast;
 /**
  * 正文内容的Activity
  */
-public class SummaryBodyActivity extends Activity {
+public class SummaryBodyActivity extends NightActivity {
 
 	/**
 	 * 顶部模式文本

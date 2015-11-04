@@ -1,7 +1,7 @@
 package pres.nc.maxwell.feedeye.activity.defalut;
 
 import pres.nc.maxwell.feedeye.R;
-import android.app.Activity;
+import pres.nc.maxwell.feedeye.activity.NightActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 /**
  * 带后退按钮默认的Activity
  */
-public class DefaultNewActivity extends Activity {
+public class DefaultNewActivity extends NightActivity {
 
 	/**
 	 * 后退按钮

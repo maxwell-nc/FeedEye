@@ -3,6 +3,7 @@ package pres.nc.maxwell.feedeye.view.pager.child;
 import java.io.File;
 
 import pres.nc.maxwell.feedeye.R;
+import pres.nc.maxwell.feedeye.activity.NightActivity;
 import pres.nc.maxwell.feedeye.utils.AppSettingUtils;
 import pres.nc.maxwell.feedeye.utils.IOUtils;
 import pres.nc.maxwell.feedeye.utils.SystemUtils;
@@ -95,6 +96,14 @@ public class SettingPager extends BasePager {
 		mBtnClean = (CheckBox) mViewContent.findViewById(R.id.cb_clean);
 		mBtnDayNight = (CheckBox) mViewContent.findViewById(R.id.cb_day_night);
 
+		String dayNight = AppSettingUtils.get(mActivity,
+				AppSettingUtils.KEY_DAY_NIGHT, "day");
+		if ("day".equals(dayNight)) {
+			mBtnDayNight.setChecked(true);
+		} else {
+			mBtnDayNight.setChecked(false);// 夜间模式
+		}
+
 		mBtnFeedBack = (TextView) mViewContent.findViewById(R.id.tv_feedback);
 		mBtnRecommend = (TextView) mViewContent.findViewById(R.id.tv_recommend);
 		mBtnUpdate = (TextView) mViewContent.findViewById(R.id.tv_update);
@@ -106,6 +115,25 @@ public class SettingPager extends BasePager {
 	@Override
 	protected void initData() {
 		super.initData();
+
+		// 夜间模式
+		mBtnDayNight.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (!isChecked) {
+					((NightActivity) mActivity).setNight();
+					AppSettingUtils.set(mActivity,
+							AppSettingUtils.KEY_DAY_NIGHT, "night");
+				} else {
+					((NightActivity) mActivity).setDay();
+					AppSettingUtils.set(mActivity,
+							AppSettingUtils.KEY_DAY_NIGHT, "day");
+				}
+			}
+
+		});
 
 		// 清理缓存
 		mBtnClean.setOnClickListener(new CleanCacheOnClickListener());
@@ -357,7 +385,6 @@ public class SettingPager extends BasePager {
 				@Override
 				public OnClickListener[] getItemOnClickListeners(
 						final AlertDialog alertDialog) {
-					// TODO Auto-generated method stub
 
 					OnClickListener[] listeners = {new OnClickListener() {// 清理内容缓存
 

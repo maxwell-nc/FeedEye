@@ -10,6 +10,11 @@ import android.content.SharedPreferences.Editor;
 public class AppSettingUtils {
 
 	/**
+	 * 是否开启夜间模式
+	 */
+	public final static String KEY_DAY_NIGHT = "day_night";
+	
+	/**
 	 * 是否开启程序时自动检查更新
 	 */
 	public final static String KEY_UPDATE_SETTING = "auto_update";
