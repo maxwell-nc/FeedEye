@@ -5,12 +5,14 @@
 
 ## 项目导航图
 
-- ProjectGantt.mmap
-	- 这个文件是项目进度描述和计划图
 - ProjectStructureMap.mmap
 	- 这个文件时项目的结构图
 
 注：*.nmap的文件为MindManger生成的文件
+
+## 预览
+
+![](https://raw.githubusercontent.com/maxwell-nc/FeedEye/master/ProjectStructureMap.jpg)
 
 -----------------
 #English Version
@@ -21,9 +23,8 @@ An open-source application that parse RSS or Atom feed from Internet,you also ca
 
 ## Project Navigation
 
-- ProjectGantt.mmap
-	- this file was described the plan and process of this project.
 - ProjectStructureMap.mmap
 	- this file was described the structure of this project.
 
 Notice：*.nmap files was built by MindManger
+
