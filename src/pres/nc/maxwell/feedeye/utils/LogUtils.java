@@ -10,7 +10,7 @@ public class LogUtils {
 	/**
 	 * 控制日志打印等级，-1代表不打印任何日志，5代表打印所有级别的日志
 	 */
-	private final static int mlogLevel = 5;
+	private final static int mlogLevel = -1;
 
 	/**
 	 * 获取对象的类名

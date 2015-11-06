@@ -174,7 +174,7 @@ public class VersionUtils {
 				Toast.makeText(activity, "请检查网络状况", Toast.LENGTH_SHORT).show();
 			}
 
-		}).parseUpdateInfo("http://10.0.3.2:8080/feedeye/version.json");
+		}).parseUpdateInfo("https://maxwell-nc.github.io/app_content/feedeye/version.json");
 
 	}
 

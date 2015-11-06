@@ -168,9 +168,9 @@ public class SettingPager extends BasePager {
 			@Override
 			public void onClick(View v) {
 
-				// 打开项目页面
+				// 打开项目问题页面
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri
-						.parse("https://github.com/maxwell-nc/FeedEye"));
+						.parse(mActivity.getString(R.string.feedback_url)));
 				mActivity.startActivity(intent);
 
 			}
@@ -182,10 +182,8 @@ public class SettingPager extends BasePager {
 
 			@Override
 			public void onClick(View v) {
-				SystemUtils
-						.startShareIntentActivity(
-								mActivity,
-								"我发现了一个好玩的应用，它的名字叫做简约(FeedEye)，赶紧来下载吧！地址是：https://github.com/maxwell-nc/FeedEye");
+				SystemUtils.startShareIntentActivity(mActivity,
+						mActivity.getString(R.string.share_url));
 			}
 
 		});

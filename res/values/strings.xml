@@ -39,5 +39,7 @@
     <string name="clean_img_cache">清理图片缓存</string>
     <string name="clean_err_log">清理错误日志</string>
     <string name="clean_content_cache">清理内容缓存</string>
+    <string name="feedback_url">https://github.com/maxwell-nc/FeedEye/issues</string>
+    <string name="share_url">我发现了一个好玩的应用，它的名字叫做简约(FeedEye)，赶紧来下载吧！地址是：https://maxwell-nc.github.io/2015/11/02/FeedEye</string>
 
 </resources>

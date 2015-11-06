@@ -195,7 +195,7 @@ public class DiscovePager extends BasePager {
 				mLabelView.setVisibility(View.VISIBLE);
 			}
 
-		}).parseDiscoverItem("https://maxwell-nc.github.io/feedeye/discover.json");
+		}).parseDiscoverItem("https://maxwell-nc.github.io/app_content/feedeye/discover.json");
 
 	}
 

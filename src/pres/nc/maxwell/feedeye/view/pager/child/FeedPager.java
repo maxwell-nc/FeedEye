@@ -821,9 +821,8 @@ public class FeedPager extends BasePager {
 							PopupWindowUtils
 									.tryToClosePopupWindow(mPopupWindow);
 
-							SystemUtils
-									.startShareIntentActivity(mActivity,
-											"我发现了一个好玩的应用，他的名字叫做FeedEye，赶紧来下载吧！地址是：https://github.com/maxwell-nc/FeedEye");
+							SystemUtils.startShareIntentActivity(mActivity,
+									mActivity.getString(R.string.share_url));
 
 						}
 					});
@@ -839,9 +838,9 @@ public class FeedPager extends BasePager {
 									.tryToClosePopupWindow(mPopupWindow);
 
 							// 打开项目页面
-							Intent intent = new Intent(
-									Intent.ACTION_VIEW,
-									Uri.parse("https://github.com/maxwell-nc/FeedEye"));
+							Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+									.parse(mActivity
+											.getString(R.string.feedback_url)));
 							mActivity.startActivity(intent);
 
 						}
