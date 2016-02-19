@@ -226,7 +226,7 @@ public class JSONParseUtils {
 		parseUrl(jsonUrl);
 
 	}
-	
+
 	/**
 	 * 解析更新信息
 	 * 
@@ -234,47 +234,45 @@ public class JSONParseUtils {
 	 *            JSON地址
 	 */
 	public void parseUpdateInfo(String jsonUrl) {
-		//TODO：
+		// TODO：
 		basicJsonParseListener = new BasicJsonParseListener() {
-			
+
 			private UpdateInfo info = new UpdateInfo();
-			
+
 			@Override
 			public void onSuccess(String jsonString) {
 				if (onParseUpdateInfoListener != null) {
 					onParseUpdateInfoListener.onGetUpdateInfo(info);
 				}
 			}
-			
+
 			@Override
 			public void onFailure() {
 				if (onParseUpdateInfoListener != null) {
 					onParseUpdateInfoListener.onGetFailed();
 				}
 			}
-			
+
 			@Override
 			public void onGetJsonString(String jsonString) {
 				try {
-					
+
 					JSONObject jsonObject = new JSONObject(jsonString);
 					info.versionCode = jsonObject.getInt("versionCode");
 					info.updateDesc = jsonObject.getString("updateDesc");
 					info.updateUrl = jsonObject.getString("updateUrl");
-					
+
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 		};
-		
+
 		parseUrl(jsonUrl);
-		
+
 	}
 
-	
-	
 	/**
 	 * 转换JSON文本为DiscoverItem集合
 	 * 
@@ -346,7 +344,6 @@ public class JSONParseUtils {
 			bufferedWriter.write(jsonString);
 			bufferedWriter.flush();
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(bufferedWriter);
@@ -383,8 +380,10 @@ public class JSONParseUtils {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(br);
 		}
-
+		
 		return JsonString;
 
 	}
