@@ -28,3 +28,28 @@ An open-source application that parse RSS or Atom feed from Internet,you also ca
 
 Notice：*.nmap files was built by MindManger
 
+## Screenshoot
+
+add_page:
+![](screenshot/add_page.jpg)
+
+content_page:
+![](screenshot/content_page.jpg)
+
+detail_page:
+![](screenshot/detail_page.jpg)
+
+discover_page:
+![](screenshot/discover_page.jpg)
+
+favor_page:
+![](screenshot/favor_page.jpg)
+
+feed_page:
+![](screenshot/feed_page.jpg)
+
+label_page:
+![](screenshot/label_page.jpg)
+
+setting_page:
+![](screenshot/setting_page.jpg)
